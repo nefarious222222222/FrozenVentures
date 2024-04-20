@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap");
+
+:root {
+  --color-violet: #533d70;
+  --color-stone:#688699;
+  --color-pale-stone: #becdd6;
+  --color-pale-violet: #bfb6d3;
+  --color-light-gray: #e7e7e7;
+  --color-dark-gray: #474747;
+
+  --color-primary-text: #111111;
+  --color-secondary-text: #363636;
+
+  --font-primary: "Inconsolata";
+}
+
+* {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding: 1.5rem;
+}

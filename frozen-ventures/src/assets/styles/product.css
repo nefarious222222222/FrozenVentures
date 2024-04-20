@@ -1,0 +1,49 @@
+/* Product Css */
+.product {
+  background-color: var(--color-pale-violet);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 400px;
+  border-radius: 20px;
+
+  img {
+    width: 100%;
+    border-radius: 20px;
+  }
+
+  .description {
+    padding: 0 0 0 20px;
+
+    p b {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 1.25rem;
+    }
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 20px 20px 0;
+    gap: 20px;
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-weight: 900;
+      color: var(--color-violet);
+      background-color: var(--color-pale-stone);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+        color: var(--color-pale-stone);
+        background-color: var(--color-violet);
+        cursor: pointer;
+    }
+  }
+}
