@@ -1,0 +1,119 @@
+/* Cart Items Css */
+.cart {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 50vh;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+  }
+
+  .label {
+    display: flex;
+    justify-content: space-between;
+
+    p {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 20px 0 0 0;
+    }
+
+    .item {
+      width: 300px;
+      text-align: center;
+    }
+  }
+}
+
+.cart-item {
+  .product {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 30px 0;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+
+    .group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .information {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 300px;
+
+      img {
+        width: 200px;
+        border-radius: 20px;
+      }
+
+      p b {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 400;
+      }
+    }
+
+    .count-handler {
+      width: 300px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      button {
+        border: none;
+        background: none;
+        cursor: pointer;
+      }
+
+      input {
+        width: 100px;
+        border: none;
+        outline: none;
+        text-align: center;
+        font-size: 1.5rem;
+        pointer-events: none;
+      }
+    }
+
+    .total-price {
+      width: 300px;
+    }
+
+    .delete {
+      width: 300px;
+
+      button {
+        border: none;
+        background: none;
+        color: var(--color-violet);
+        padding: 5px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--color-pale-violet);
+        color: var(--color-violet);
+      }
+    }
+  }
+
+  .product:hover {
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+  }
+}

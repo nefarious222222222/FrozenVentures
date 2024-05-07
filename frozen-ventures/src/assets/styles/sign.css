@@ -1,0 +1,119 @@
+.sign {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0;
+  background-image: url(../images/sign-bg.jpg);
+
+  .sign-container {
+    min-width: 25vw;
+    min-height: 50vh;
+    background-color: var(--color-pale-violet);
+    padding: 40px;
+    border-radius: 20px;
+
+    a {
+      text-decoration: none;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-direction: column;
+
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        h1 {
+          font-size: 2.5rem;
+          color: var(--color-violet);
+        }
+
+        img {
+          width: 50px;
+        }
+      }
+
+      .button-container {
+        display: flex;
+        gap: 100px;
+
+        button {
+          background: none;
+          border: none;
+          font-size: 1.25rem;
+          font-weight: 700;
+          border-bottom: solid 2px rgba(0, 0, 0, 0);
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        button.active,
+        button:hover {
+          border-bottom: solid 2px var(--color-violet);
+        }
+      }
+    }
+  }
+}
+
+.sign-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+  height: inherit;
+
+  form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    height: inherit;
+    gap: 20px;
+  }
+
+  .input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    label {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    input {
+      outline: none;
+      padding: 5px;
+      width: 20vw;
+      font-size: 1.25rem;
+      border-radius: 5px;
+      border: none;
+    }
+  }
+
+  button {
+    border: none;
+    border-radius: 10px;
+    margin-top: 20px;
+    padding: 10px;
+    width: fit-content;
+    font-size: 1.25rem;
+    font-weight: 800;
+    background-color: var(--color-stone);
+    color: var(--color-violet);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  button:hover {
+    background-color: var(--color-violet);
+    color: var(--color-stone);
+  }
+}

@@ -1,5 +1,5 @@
 /* Product Css */
-.product {
+.product-container {
   background-color: var(--color-pale-violet);
   display: flex;
   flex-direction: column;

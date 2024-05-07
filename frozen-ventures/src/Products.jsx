@@ -6,25 +6,25 @@ import product4 from "./assets/products/4.jpg";
 export const PRODUCTS = [
   {
     id: 1,
-    productName: "Chucolit",
+    productName: "Chocolate",
     price: 69.99,
     productImage: product1,
   },
   {
     id: 2,
-    productName: "Banilat",
+    productName: "Vanilla",
     price: 69.99,
     productImage: product2,
   },
   {
     id: 3,
-    productName: "Mabatong Daan",
+    productName: "Rocky Road",
     price: 79.99,
     productImage: product3,
   },
   {
     id: 4,
-    productName: "Mancha",
+    productName: "Matcha",
     price: 79.99,
     productImage: product4,
   }

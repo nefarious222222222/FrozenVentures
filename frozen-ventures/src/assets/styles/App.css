@@ -3,7 +3,7 @@
 
 :root {
   --color-violet: #533d70;
-  --color-stone:#688699;
+  --color-stone:#7ea6bd;
   --color-pale-stone: #becdd6;
   --color-pale-violet: #bfb6d3;
   --color-light-gray: #e7e7e7;
@@ -26,4 +26,10 @@
   margin-right: auto;
   margin-left: auto;
   padding: 1.5rem;
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
