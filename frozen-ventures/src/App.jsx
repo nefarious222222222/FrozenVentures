@@ -1,6 +1,11 @@
 import React from "react";
 import "./assets/styles/App.css";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
 import { Home } from "./pages/home/home";
@@ -8,10 +13,16 @@ import { Cart } from "./pages/cart/cart";
 import { Shop } from "./pages/shop/shop";
 import { Sign } from "./pages/auth/sign";
 import { ShopContextProvider } from "./context/shop-context";
+import { easeInOut, motion as m } from "framer-motion";
 
 function App() {
   return (
-    <div className="App">
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: easeInOut }}
+      className="App"
+    >
       <ShopContextProvider>
         <Router>
           <Navbar />
@@ -19,12 +30,19 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/sign/*" element={<WithoutNavbar><Sign /></WithoutNavbar>} />
+            <Route
+              path="/sign/*"
+              element={
+                <WithoutNavbar>
+                  <Sign />
+                </WithoutNavbar>
+              }
+            />
           </Routes>
           <FooterWithLocation />
         </Router>
       </ShopContextProvider>
-    </div>
+    </m.div>
   );
 }
 

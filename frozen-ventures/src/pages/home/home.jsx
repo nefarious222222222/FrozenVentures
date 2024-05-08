@@ -65,10 +65,11 @@ export const Home = () => {
         <div class="tb-container">
           <h2>Need More Flavors?</h2>
           <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid
-            nesciunt odio vitae quia recusandae expedita maxime ad dolor
-            quisquam tempora velit fuga, officiis, dolorem repellendus! Nesciunt
-            at incidunt possimus. Eum.
+            Explore our extensive product catalog for a diverse range of
+            delicious flavors, from classic favorites to innovative creations.
+            Whether you're craving creamy indulgence, there's something to
+            satisfy every palate and treat yourself to the perfect ice cream
+            experience
           </p>
           <button>More Flavors</button>
         </div>
@@ -80,8 +81,8 @@ export const Home = () => {
         <div class="text-container">
           <h2>Services</h2>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore,
-            deserunt!
+            At FrozenVentures, we're passionate about bringing you the finest
+            ice cream flavors and treats to satisfy your sweet cravings.
           </p>
         </div>
 
@@ -90,21 +91,23 @@ export const Home = () => {
             <h3>
               <i class="bx bxs-package"></i> Delivery
             </h3>
-            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+            <p>Enjoy convenient ice cream delivery straight to your door.</p>
           </div>
 
           <div class="service">
             <h3>
               <i class="bx bx-money"></i> Payment
             </h3>
-            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+            <p>We accept payment via GCash and cash for your convenience.</p>
           </div>
 
           <div class="service">
             <h3>
               <i class="bx bxs-donate-heart"></i> Inquiry
             </h3>
-            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+            <p>
+              For inquiries, contact us via email or phone. We're here to help!
+            </p>
           </div>
         </div>
       </section>

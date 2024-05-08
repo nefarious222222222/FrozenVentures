@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "../../assets/styles/sign.css";
 import Logo from "../../assets/images/logo.jpg";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { SignIn } from "./signin";
 import { SignUp } from "./signup";
+import { easeInOut, easeOut, motion as m } from "framer-motion";
 
 export const Sign = () => {
   const [showSignIn, setShowSignIn] = useState(true);
@@ -20,7 +21,12 @@ export const Sign = () => {
   };
 
   return (
-    <div className="container sign">
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease:easeInOut }}
+      className="container sign"
+    >
       <div className="sign-container">
         <header>
           <Link to="/">
@@ -48,6 +54,6 @@ export const Sign = () => {
 
         {showSignIn ? <SignIn /> : <SignUp />}
       </div>
-    </div>
+    </m.div>
   );
 };
