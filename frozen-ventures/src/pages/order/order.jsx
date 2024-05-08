@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../../assets/styles/order.css";
 import { motion as m } from "framer-motion";
+import { PRODUCTS } from "../../Products";
+import { ShopContext } from "../../context/shop-context";
+import { CartItem } from "../cart/cart-item";
+import { OrderItem } from "./order-item";
 
 export const Order = () => {
+  const { cartItems, getTotalCartAmount } = useContext(ShopContext);
+  const totalAmount = getTotalCartAmount();
 
   return (
     <m.div
@@ -16,7 +22,7 @@ export const Order = () => {
 
         <div className="tb-container">
           <p>
-            Order Total: <span>Php 1023.00</span>
+            Order Total: <span>Php {totalAmount}</span>
           </p>
           <button>Place Order</button>
         </div>
@@ -76,7 +82,12 @@ export const Order = () => {
         </div>
 
         <div className="item-checkout">
-
+          {PRODUCTS.map((product) => {
+            if (cartItems[product.id] !== 0) {
+              return <OrderItem data={product} key={product.id} />;
+            }
+            return null;
+          })}
         </div>
       </div>
     </m.div>

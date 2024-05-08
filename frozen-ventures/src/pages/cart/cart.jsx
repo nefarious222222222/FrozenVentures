@@ -6,7 +6,7 @@ import { CartItem } from "./cart-item";
 import { ShoppingCart } from "phosphor-react";
 import { Storefront } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const Cart = () => {
   const { cartItems, getTotalCartAmount } = useContext(ShopContext);

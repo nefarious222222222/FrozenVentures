@@ -10,6 +10,8 @@ export const CartItem = (props) => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const confirmDeleteRef = useRef(null);
 
+  const totalPrice = (cartItems[id] * price).toFixed(2);
+
   const handleDelete = () => {
     setShowConfirmDelete(true);
   };
@@ -65,7 +67,7 @@ export const CartItem = (props) => {
           </button>
         </div>
 
-        <div className="group total-price">Php </div>
+        <div className="group total-price">Php {totalPrice}</div>
 
         <div className="group delete">
           <button onClick={handleDelete}>
