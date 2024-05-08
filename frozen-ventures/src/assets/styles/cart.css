@@ -11,19 +11,23 @@
     color: var(--color-violet);
   }
 
-  .label {
-    display: flex;
-    justify-content: space-between;
+  .cart-container {
+    .label {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: solid 2px gray;
+      padding: 20px 0;
 
-    p {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin: 20px 0 0 0;
-    }
+      p {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 20px 0 0 0;
+      }
 
-    .item {
-      width: 300px;
-      text-align: center;
+      .item {
+        width: 300px;
+        text-align: center;
+      }
     }
   }
 }
@@ -119,6 +123,71 @@
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
     padding: 10px;
   }
+
+  .confirm-delete {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    gap: 20px;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: var(--color-pale-violet);
+    box-shadow: 0 7px 30px rgba(0, 0, 0, 0.2);
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      h2,
+      span {
+        font-size: 2rem;
+      }
+
+      h2 span {
+        color: rgb(172, 1, 1);
+      }
+
+      p {
+        font-size: 1.5rem;
+        font-weight: 500;
+      }
+
+      p span {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-violet);
+      }
+    }
+  }
+
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+
+    button {
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--color-violet);
+      background-color: var(--color-pale-stone);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      color: var(--color-pale-stone);
+      background-color: var(--color-violet);
+    }
+  }
 }
 
 /* Empty Cart Css */
@@ -153,13 +222,18 @@
     align-items: center;
     gap: 20px;
 
-    p, span {
+    p,
+    span {
       font-size: 1.5rem;
     }
 
     span {
       font-weight: 600;
       color: var(--color-violet);
+    }
+
+    a {
+      text-decoration: none;
     }
 
     button {
@@ -187,12 +261,13 @@
 /* Check Out Css */
 
 .check-out {
-  background-color: var(--color-pale-violet);
-  border-radius: 20px;
-  padding: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-radius: 20px;
+  padding: 40px;
+  margin: 40px 0 0 0;
+  background-color: var(--color-pale-violet);
 
   h2 {
     font-size: 2rem;
@@ -269,7 +344,7 @@
       color: black;
 
       p {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: 800;
       }
 
@@ -285,11 +360,12 @@
     }
 
     button {
+      width: 100%;
       margin-top: 20px;
-      padding: 5px;
+      padding: 10px;
       border: none;
       border-radius: 5px;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       font-weight: 800;
       color: var(--color-violet);
       background-color: var(--color-pale-stone);

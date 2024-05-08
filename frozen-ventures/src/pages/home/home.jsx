@@ -9,10 +9,16 @@ import two from "../../assets/images/2.jpg";
 import three from "../../assets/images/3.jpg";
 import four from "../../assets/images/4.jpg";
 import five from "../../assets/images/5.png";
+import { easeInOut, motion as m } from "framer-motion";
 
 export const Home = () => {
   return (
-    <div className="home">
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: easeInOut }}
+      className="home"
+    >
       <section class="container hero">
         <div class="first-container">
           <img src={carrousel} alt="Sheesh" />
@@ -111,6 +117,6 @@ export const Home = () => {
           </div>
         </div>
       </section>
-    </div>
+    </m.div>
   );
 };

@@ -13,16 +13,11 @@ import { Cart } from "./pages/cart/cart";
 import { Shop } from "./pages/shop/shop";
 import { Sign } from "./pages/auth/sign";
 import { ShopContextProvider } from "./context/shop-context";
-import { easeInOut, motion as m } from "framer-motion";
+import { Order } from "./pages/order/order";
 
 function App() {
   return (
-    <m.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, ease: easeInOut }}
-      className="App"
-    >
+    <div className="App">
       <ShopContextProvider>
         <Router>
           <Navbar />
@@ -30,6 +25,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/order" element={<Order />} />
             <Route
               path="/sign/*"
               element={
@@ -42,7 +38,7 @@ function App() {
           <FooterWithLocation />
         </Router>
       </ShopContextProvider>
-    </m.div>
+    </div>
   );
 }
 

@@ -1,22 +1,45 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { ShopContext } from "../../context/shop-context";
 import { Minus, Plus, Trash } from "phosphor-react";
+import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 
 export const CartItem = (props) => {
   const { id, productName, price, productImage } = props.data;
-  const { cartItems, addToCart, removeFromCart } = useContext(ShopContext);
+  const { cartItems, setCartItems, addToCart, removeFromCart, updateCartItemAmount } =
+    useContext(ShopContext);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const confirmDeleteRef = useRef(null);
 
-  const handleMinusClick = () => {
-    if (cartItems[id] > 0) {
-      removeFromCart(id);
+  const handleDelete = () => {
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = () => {
+    const updatedCartItems = { ...cartItems };
+    updatedCartItems[id] = 0;
+    setCartItems(updatedCartItems);
+    setShowConfirmDelete(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDelete(false);
+  };
+
+  const handleClickOutside = (event) => {
+    if (
+      confirmDeleteRef.current &&
+      !confirmDeleteRef.current.contains(event.target)
+    ) {
+      setShowConfirmDelete(false);
     }
   };
 
-  const handlePlusClick = () => {
-    addToCart(id);
-  };
-
-  const totalPrice = cartItems[id] * price;
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="cart-item">
@@ -33,23 +56,51 @@ export const CartItem = (props) => {
         </div>
 
         <div className="group count-handler">
-          <button onClick={handleMinusClick}>
-            <Minus size={25} />
+          <button >
+            <Minus size={25} onClick={() => removeFromCart(id)}/>
           </button>
-          <input value={cartItems[id]} readOnly />
-          <button onClick={handlePlusClick}>
-            <Plus size={25} />
+          <input value={cartItems[id]} onChange={(e) => updateCartItemAmount(Number(e.target.value), id)} readOnly />
+          <button >
+            <Plus size={25} onClick={() => addToCart(id)}/>
           </button>
         </div>
 
-        <div className="group total-price">Php {totalPrice.toFixed(2)}</div>
+        <div className="group total-price">Php </div>
 
         <div className="group delete">
-          <button>
+          <button onClick={handleDelete}>
             <Trash size={45} />
           </button>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showConfirmDelete && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: easeInOut }}
+            className="confirm-delete"
+            ref={confirmDeleteRef}
+          >
+            <div className="text">
+              <h2>
+                <span>Remove {productName}</span> from cart
+              </h2>
+              <p>
+                Are you sure you want to remove <span>{productName}</span> from
+                your cart?
+              </p>
+            </div>
+
+            <div className="button-container">
+              <button onClick={handleConfirmDelete}>Yes</button>
+              <button onClick={handleCancelDelete}>No</button>
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

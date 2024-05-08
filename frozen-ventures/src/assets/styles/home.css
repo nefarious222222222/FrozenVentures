@@ -137,13 +137,13 @@
 
     button {
       width: fit-content;
-      font-size: 1.25rem;
-      font-weight: 700;
-      background-color: var(--color-pale-stone);
-      color: var(--color-violet);
       border: none;
-      border-radius: 10px;
-      padding: 5px 20px;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-weight: 900;
+      font-size: 1.25rem;
+      color: var(--color-violet);
+      background-color: var(--color-pale-stone);
       transition: all 0.3s ease;
     }
 

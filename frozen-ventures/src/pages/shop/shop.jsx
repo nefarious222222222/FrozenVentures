@@ -4,10 +4,16 @@ import carrousel from "../../assets/images/0.jpg";
 import { Button } from "../../components/button";
 import { PRODUCTS } from "../../Products";
 import { Product } from "./product";
+import { easeInOut, motion as m } from "framer-motion";
 
 export const Shop = () => {
   return (
-    <div className="container shop">
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: easeInOut }}
+      className="container shop"
+    >
       <div className="carrousel">
         <img src={carrousel} alt="" />
       </div>
@@ -58,6 +64,6 @@ export const Shop = () => {
           ))}
         </div>
       </div>
-    </div>
+    </m.div>
   );
 };
