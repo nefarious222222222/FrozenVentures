@@ -33,95 +33,106 @@
 }
 
 .cart-item {
-  .product {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin: 30px 0;
-    border-radius: 20px;
-    transition: all 0.3s ease;
+  table {
+    width: 100%;
 
-    .group {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    thead tr {
+      border-bottom: solid 2px gray;
     }
 
-    .information {
+    tr {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 300px;
+      width: inherit;
+      justify-content: space-between;
 
-      img {
-        width: 200px;
-        border-radius: 20px;
-      }
-
-      p b {
+      th {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 20vw;
         font-size: 1.5rem;
-        font-weight: 600;
+        padding: 20px 0;
+        color: gray;
       }
 
-      p {
-        margin: 0;
-        font-size: 1.25rem;
-        font-weight: 400;
-      }
-    }
+      td {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 20vw;
+        padding: 20px 0;
 
-    .count-handler {
-      width: 300px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-
-      button {
-        border: none;
-        background: none;
-        cursor: pointer;
-      }
-
-      input {
-        width: 100px;
-        border: none;
-        outline: none;
-        text-align: center;
-        font-size: 1.5rem;
-        pointer-events: none;
-      }
-    }
-
-    .total-price {
-      width: 300px;
-      font-weight: 600;
-      font-size: 1.5rem;
-    }
-
-    .delete {
-      width: 300px;
-
-      button {
-        border: none;
-        background: none;
-        color: var(--color-violet);
-        padding: 5px;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      button:hover {
-        background-color: var(--color-pale-violet);
-        color: var(--color-violet);
+        p {
+          font-size: 1.25rem;
+          font-weight: 600;
+        }
       }
     }
   }
 
-  .product:hover {
-    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+  .information {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+
+    img {
+      width: 200px;
+      border-radius: 20px;
+    }
+
+    .description {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+
+      p b {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .quantity {
+    display: flex;
+    gap: 10px;
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    input {
+      border: none;
+      outline: none;
+      text-align: center;
+      pointer-events: none;
+      width: 10vw;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  .delete {
+    button {
+      border: none;
+      background: none;
+      color: var(--color-violet);
+      padding: 5px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--color-pale-violet);
+      color: var(--color-violet);
+    }
   }
 
   .confirm-delete {
@@ -260,7 +271,7 @@
 
 /* Check Out Css */
 
-.check-out {
+.cart-checkout {
   display: flex;
   align-items: center;
   justify-content: space-between;

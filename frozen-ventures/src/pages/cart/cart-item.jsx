@@ -4,9 +4,14 @@ import { Minus, Plus, Trash } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 
 export const CartItem = (props) => {
-  const { id, productName, price, productImage } = props.data;
-  const { cartItems, setCartItems, addToCart, removeFromCart, updateCartItemAmount } =
-    useContext(ShopContext);
+  const { id, productName, price, retailerName, productImage } = props.data;
+  const {
+    cartItems,
+    setCartItems,
+    addToCart,
+    removeFromCart,
+    updateCartItemAmount,
+  } = useContext(ShopContext);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const confirmDeleteRef = useRef(null);
 
@@ -45,36 +50,45 @@ export const CartItem = (props) => {
 
   return (
     <div className="cart-item">
-      <div className="product">
-        <div className="group information">
-          <img src={productImage} alt={productName} />
-
-          <div className="description">
-            <p>
-              <b>{productName}</b>
-            </p>
-            <p>Php {price}</p>
-          </div>
-        </div>
-
-        <div className="group count-handler">
-          <button >
-            <Minus size={25} onClick={() => removeFromCart(id)}/>
-          </button>
-          <input value={cartItems[id]} onChange={(e) => updateCartItemAmount(Number(e.target.value), id)} readOnly />
-          <button >
-            <Plus size={25} onClick={() => addToCart(id)}/>
-          </button>
-        </div>
-
-        <div className="group total-price">Php {totalPrice}</div>
-
-        <div className="group delete">
-          <button onClick={handleDelete}>
-            <Trash size={45} />
-          </button>
-        </div>
-      </div>
+      <table>
+        <tbody>
+          <tr>
+            <td className="information">
+              <img src={productImage} alt={productName} />
+              <div className="description">
+                <p>
+                  <b>{productName}</b>
+                </p>
+                <p>{retailerName}</p>
+                <p>Php {price}</p>
+              </div>
+            </td>
+            <td className="quantity">
+              <button onClick={() => removeFromCart(id)}>
+                <Minus size={25} />
+              </button>
+              <input
+                value={cartItems[id]}
+                onChange={(e) =>
+                  updateCartItemAmount(Number(e.target.value), id)
+                }
+                readOnly
+              />
+              <button onClick={() => addToCart(id)}>
+                <Plus size={25} />
+              </button>
+            </td>
+            <td>
+              <p>Php {totalPrice}</p>
+            </td>
+            <td className="delete">
+              <button onClick={handleDelete}>
+                <Trash size={45} />
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <AnimatePresence>
         {showConfirmDelete && (

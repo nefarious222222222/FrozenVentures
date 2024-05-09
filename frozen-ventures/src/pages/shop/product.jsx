@@ -1,13 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/product.css";
 import { ShopContext } from "../../context/shop-context";
-import { Button } from "../../components/button";
 import { WarningCircle } from "phosphor-react";
 import { Link } from "react-router-dom";
 import { motion as m, AnimatePresence } from "framer-motion";
 
 export const Product = (props) => {
-  const { id, productName, price, productImage } = props.data;
+  const { id, productName, price, retailerName, productImage } = props.data;
   const { addToCart } = useContext(ShopContext);
   const [showNotification, setShowNotification] = useState(false);
 
@@ -27,21 +26,18 @@ export const Product = (props) => {
         <p>
           <b>{productName}</b>
         </p>
-        <p>Php {price}</p>
+        <p>{retailerName}</p>
+        <p className="price">Php {price}</p>
       </div>
 
       <div className="button-container">
-        <Button
-          className="addToCartBtn"
-          onClick={handleAddToCart}
-          buttonText={"Add To Cart"}
-        />
+        <button className="addToCartBtn" onClick={handleAddToCart}>
+          Add to cart
+        </button>
         <Link to="/cart">
-          <Button
-            className="buyNowBtn"
-            onClick={() => addToCart(id)}
-            buttonText={"Buy Now"}
-          />
+          <button className="buyNowBtn" onClick={() => addToCart(id)}>
+            Buy Now
+          </button>
         </Link>
       </div>
 

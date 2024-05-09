@@ -1,6 +1,5 @@
 import React from "react";
 import "../../assets/styles/home.css";
-import { Button } from "../../components/button";
 import { PRODUCTS } from "../../Products";
 import { Product } from "../shop/product";
 import carrousel from "../../assets/images/0.jpg";
@@ -42,21 +41,9 @@ export const Home = () => {
           <h2>Top Products</h2>
 
           <div class="type-container">
-            <Button
-              className="top-button"
-              onClick={console.log("Daily")}
-              buttonText={"Daily"}
-            />
-            <Button
-              className="top-button"
-              onClick={console.log("Daily")}
-              buttonText={"Weekly"}
-            />
-            <Button
-              className="top-button"
-              onClick={console.log("Daily")}
-              buttonText={"Monthly"}
-            />
+            <button className="top-button">Daily</button>
+            <button className="top-button">Weekly</button>
+            <button className="top-button">Monthly</button>
           </div>
         </div>
 

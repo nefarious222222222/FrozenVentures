@@ -4,7 +4,6 @@ import logo from "../assets/images/logo.jpg";
 import { Link, useLocation } from "react-router-dom";
 import { Storefront } from "phosphor-react";
 import { ShoppingCart } from "phosphor-react";
-import { Button } from "./button";
 
 export const Navbar = () => {
   const location = useLocation();
@@ -47,7 +46,7 @@ export const Navbar = () => {
           />
         </Link>
         <Link to="/sign">
-          <Button onClick={handleClick} buttonText={"Sign In"} />
+          <button>Sign In</button>
         </Link>
       </div>
     </div>

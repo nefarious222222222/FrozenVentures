@@ -7,12 +7,11 @@ import { ShoppingCart } from "phosphor-react";
 import { Storefront } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import { Link } from "react-router-dom";
+import { CartCheckout } from "./cart-checkout";
 
 export const Cart = () => {
   const { cartItems, getTotalCartAmount } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
-
-  const [shippingMode, setShippingMode] = useState("pickup");
 
   return (
     <m.div
@@ -24,11 +23,17 @@ export const Cart = () => {
       <div className="cart-container">
         <h1>Your Cart Items</h1>
 
-        <div className="label">
-          <p className="item item1">Product</p>
-          <p className="item item2">Quantity</p>
-          <p className="item item3">Total</p>
-          <p className="item item4">Delete</p>
+        <div className="cart-item">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+          </table>
         </div>
 
         <div className="cart-items">
@@ -42,69 +47,7 @@ export const Cart = () => {
       </div>
 
       {totalAmount > 0 ? (
-        <div className="check-out">
-          <div className="shipping-mode">
-            <h2>Choose Shipping Mode:</h2>
-
-            <form className="button-container">
-              <input
-                type="radio"
-                name="shipping"
-                value="pickup"
-                id="pick-up"
-                checked={shippingMode === "pickup"}
-                onChange={() => setShippingMode("pickup")}
-              />
-              <label htmlFor="pick-up">
-                Store Pick Up<span>•</span>
-                <span>Free</span>
-              </label>
-
-              <input
-                type="radio"
-                name="shipping"
-                value="delivery"
-                id="delivery"
-                checked={shippingMode === "delivery"}
-                onChange={() => setShippingMode("delivery")}
-              />
-              <label htmlFor="delivery">
-                Delivery<span>•</span>
-                <span>Php 10.00</span>
-              </label>
-            </form>
-          </div>
-
-          <div className="total-container">
-            <div className="sub-total">
-              <p className="label">Sub Total</p>
-              <p className="price">Php {totalAmount.toFixed(2)}</p>
-            </div>
-
-            <div className="shipping">
-              <p className="label">Shipping</p>
-              <p className="price">
-                {shippingMode === "pickup" ? "Free" : "Php 10.00"}
-              </p>
-            </div>
-
-            <div className="line"></div>
-
-            <div className="total">
-              <p className="label">Total</p>
-              <p className="price">
-                Php{" "}
-                {(totalAmount + (shippingMode === "pickup" ? 0 : 2.99)).toFixed(
-                  2
-                )}
-              </p>
-            </div>
-
-            <Link to="/order">
-              <button className="cocButton">Check Out Now</button>
-            </Link>
-          </div>
-        </div>
+        <CartCheckout />
       ) : (
         <AnimatePresence>
           {Object.values(cartItems).every((quantity) => quantity === 0) && (

@@ -21,6 +21,12 @@
 
     p {
       font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    .price {
+      font-weight: 700;
+      margin: 20px 0;
     }
   }
 

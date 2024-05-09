@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
-  padding: 30px 50px;
+  padding: 30px 50px 100px 50px;
 
   header {
     display: flex;
@@ -109,7 +109,7 @@
     flex-direction: column;
     margin-top: 40px;
 
-    h1 {
+    h2 {
       font-size: 2rem;
       color: var(--color-violet);
     }
@@ -205,6 +205,69 @@
           font-weight: 500;
           color: var(--color-violet);
         }
+      }
+    }
+  }
+
+  .t-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+
+    .total-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+      border-radius: 20px;
+      background-color: var(--color-pale-violet);
+
+      h2 {
+        font-size: 2rem;
+        color: var(--color-violet);
+      }
+
+      .sub-total,
+      .shipping,
+      .total {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 500;
+        color: black;
+
+        p {
+          font-size: 1.25rem;
+          font-weight: 800;
+        }
+
+        .label {
+          font-weight: 500;
+          margin-right: 200px;
+        }
+      }
+
+      .line {
+        border: solid 1px var(--color-dark-gray);
+        margin: 10px 0;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 20px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-violet);
+        background-color: var(--color-pale-stone);
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--color-violet);
+        color: var(--color-pale-stone);
+        cursor: pointer;
       }
     }
   }
