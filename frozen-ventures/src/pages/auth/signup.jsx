@@ -1,7 +1,34 @@
 import React, { useState } from "react";
 import { easeInOut, motion as m } from "framer-motion";
 import "../../firebase/firebase-config";
-import { getFirestore, addDoc, collection } from "firebase/firestore";
+import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
+
+const db = getFirestore();
+
+async function emailExists(email) {
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    for (const doc of querySnapshot.docs) {
+      const userData = doc.data();
+      if (userData.emailAdd === email) {
+        return true;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error("Error checking email existence:", error);
+    return false;
+  }
+}
+
+function validateContactNumber(contact) {
+  return !isNaN(contact) && contact.length === 11;
+}
+
+function validateEmail(email) {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(String(email).toLowerCase());
+}
 
 export const SignUp = () => {
   const [selectedRole, setSelectedRole] = useState("");
@@ -13,32 +40,76 @@ export const SignUp = () => {
   const [inputPhone, setInputPhone] = useState("");
   const [inputEmail, setInputEmail] = useState("");
   const [inputBirthdate, setInputBirthdate] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const handleRoleChange = (e) => {
-    const value = e.target.value;
-    setSelectedRole(value);
+    setSelectedRole(e.target.value);
   };
 
   const handleGenderChange = (e) => {
-    const value = e.target.value;
-    setSelectedGender(value);
+    setSelectedGender(e.target.value);
   };
 
   const db = getFirestore();
 
   const signUpUser = async (e) => {
     e.preventDefault();
-    const docRef = await addDoc(collection(db, "user"), {
-      firstName: inputFName,
-      lastName: inputLName,
-      phoneNum: inputPhone,
-      emailAdd: inputEmail,
-      birthdate: inputBirthdate,
-      password: inputPass,
-      role: selectedRole,
-      gender: selectedGender,
-    });
-    alert("Success");
+
+    const formErrors = [];
+    setErrors(formErrors);
+
+    if (
+      !inputFName ||
+      !inputLName ||
+      !inputPhone ||
+      !inputEmail ||
+      !inputBirthdate ||
+      !inputPass ||
+      !selectedRole ||
+      !selectedGender
+    ) {
+      formErrors.push("All fields are required.");
+      return;
+    }
+
+    if (inputPass !== inputCPass) {
+      formErrors.push("Passwords do not match.");
+      return;
+    }
+
+    if (!validateContactNumber(inputPhone)) {
+      formErrors.push("Contact number is not valid.");
+      return;
+    }
+
+    if (!validateEmail(inputEmail)) {
+      formErrors.push("Email is not valid.");
+      return;
+    }
+
+    const emailExistsResult = await emailExists(inputEmail);
+    if (emailExistsResult) {
+      formErrors.push("Email Already Exists.");
+      return;
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "users"), {
+        firstName: inputFName,
+        lastName: inputLName,
+        phoneNum: inputPhone,
+        emailAdd: inputEmail,
+        birthdate: inputBirthdate,
+        password: inputPass,
+        role: selectedRole,
+        gender: selectedGender,
+      });
+      alert("Success");
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      formErrors.push("An error occurred. Please try again later.");
+      return;
+    }
   };
 
   return (
@@ -49,6 +120,16 @@ export const SignUp = () => {
       className="sign-up"
     >
       <form method="POST">
+        {errors.length > 0 && (
+          <div>
+            {errors.map((error, index) => (
+              <div key={index} className="alertError">
+                <p>{error}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="input-field grid1">
           <label htmlFor="role">Role:</label>
           <select
