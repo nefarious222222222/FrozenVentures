@@ -8,24 +8,28 @@ export const PRODUCTS = [
     id: 1,
     productName: "Chocolate",
     price: 69.99,
+    retailerName: "Selecto",
     productImage: product1,
   },
   {
     id: 2,
     productName: "Vanilla",
     price: 69.99,
+    retailerName: "Saitama",
     productImage: product2,
   },
   {
     id: 3,
     productName: "Rocky Road",
     price: 79.99,
+    retailerName: "Cornemo",
     productImage: product3,
   },
   {
     id: 4,
     productName: "Matcha",
     price: 79.99,
+    retailerName: "DairyMe",
     productImage: product4,
   }
 ];

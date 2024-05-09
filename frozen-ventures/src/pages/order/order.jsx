@@ -3,12 +3,11 @@ import "../../assets/styles/order.css";
 import { motion as m } from "framer-motion";
 import { PRODUCTS } from "../../Products";
 import { ShopContext } from "../../context/shop-context";
-import { CartItem } from "../cart/cart-item";
 import { OrderItem } from "./order-item";
 
 export const Order = () => {
   const { cartItems, getTotalCartAmount } = useContext(ShopContext);
-  const totalAmount = getTotalCartAmount();
+  const totalAmount = getTotalCartAmount().toFixed(2);
 
   return (
     <m.div
@@ -74,11 +73,17 @@ export const Order = () => {
       <div className="item-container">
         <h1>Order Items</h1>
 
-        <div className="label">
-          <p className="item item1">Product</p>
-          <p className="item item2">Quantity</p>
-          <p className="item item3">Total</p>
-          <p className="item item4">Delete</p>
+        <div className="order-item">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Retailer</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+              </tr>
+            </thead>
+          </table>
         </div>
 
         <div className="item-checkout">
