@@ -6,22 +6,22 @@ import product4 from "./assets/products/4.jpg";
 export const PRODUCTS = [
   {
     id: 1,
-    productName: "Chocolate",
-    price: 69.99,
+    productName: "Rocky Road",
+    price: 89.99,
     retailerName: "Selecto",
     productImage: product1,
   },
   {
     id: 2,
     productName: "Vanilla",
-    price: 69.99,
+    price: 64.99,
     retailerName: "Saitama",
     productImage: product2,
   },
   {
     id: 3,
-    productName: "Rocky Road",
-    price: 79.99,
+    productName: "Chocolate",
+    price: 69.99,
     retailerName: "Cornemo",
     productImage: product3,
   },
