@@ -9,15 +9,10 @@ import three from "../../assets/images/3.jpg";
 import four from "../../assets/images/4.jpg";
 import five from "../../assets/images/5.png";
 import { easeInOut, motion as m } from "framer-motion";
+import { useAuth } from "../../context/auth-context";
 
 export const Home = () => {
-
-  useEffect(() => {
-    const userId = sessionStorage.getItem("userId");
-    const userRole = sessionStorage.getItem("userRole");
-  }, []);
-
-
+  const { currentUser } = useAuth();
 
   return (
     <m.div
@@ -34,6 +29,7 @@ export const Home = () => {
         <div class="second-container">
           <h2>Flavors</h2>
           <p>Vaious flavors to suit your preferences</p>
+          <p>{currentUser.displayName ? currentUser.displayName : currentUser.email}</p>
         </div>
 
         <div class="third-container">

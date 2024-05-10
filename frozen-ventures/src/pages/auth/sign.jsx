@@ -5,7 +5,7 @@ import Logo from "../../assets/images/logo.jpg";
 import { Link } from "react-router-dom";
 import { SignIn } from "./signin";
 import { SignUp } from "./signup";
-import { easeInOut, easeOut, motion as m } from "framer-motion";
+import { easeInOut, motion as m } from "framer-motion";
 
 export const Sign = () => {
   const [showSignIn, setShowSignIn] = useState(true);

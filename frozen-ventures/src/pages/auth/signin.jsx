@@ -1,54 +1,58 @@
 import React, { useState, useEffect } from "react";
-import "../../firebase/firebase-config";
 import { easeInOut, motion as m, AnimatePresence } from "framer-motion";
 import { GoogleLogo } from "phosphor-react";
-import { validateUser } from "../../firebase/firebase-operations";
-import { getFirestore, getDoc, doc } from "firebase/firestore";
+import {
+  doSignInWithEmailAndPassword,
+  doSignInWithGoogle,
+} from "../../firebase/firebase-auth";
+import { useAuth } from "../../context/auth-context";
+import { Navigate } from "react-router-dom";
 
 export const SignIn = () => {
-  const [phoneEmail, setPhoneEmail] = useState("");
+  const userSignedIn = useAuth();
+
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const errorTimeout = setTimeout(() => {
       setError("");
-    }, 3000);
+    }, 1500);
 
     return () => clearTimeout(errorTimeout);
   }, [error]);
 
-  const handleSignIn = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    if (!phoneEmail || !password) {
-      setError("Please enter both email/phone and password.");
-      return;
-    }
-
-    const db = getFirestore();
-    const userId = await validateUser(phoneEmail, password);
-    if (userId) {
+    if (!isSigningIn) {
+      setIsSigningIn(true);
       try {
-        const userDocRef = doc(db, "users", userId);
-        const userDocSnapshot = await getDoc(userDocRef);
-        if (userDocSnapshot.exists()) {
-          const userData = userDocSnapshot.data();
-          const userRole = userData && userData.role;
-          if (userRole) {
-            sessionStorage.setItem("userId", userId);
-            sessionStorage.setItem("userRole", userRole);
-            window.location.href = "/";
-          } else {
-            console.error("User role not found.");
-          }
-        } else {
-          console.error("Document does not exist.");
-        }
+        await doSignInWithEmailAndPassword(email, password);
       } catch (error) {
-        console.error("Failed to sign:", error);
+        console.log(error.message);
+        setIsSigningIn(false);
+
+        if (!email) {
+          setError("Email is required");
+        } else if (!password) {
+          setError("Password is required");
+        } else {
+          setError("Incorrect Credentials");
+        }
       }
-    } else {
-      setError("Invalid credentials. Please try again.");
+    }
+  };
+
+  const onGoogleSignIn = (e) => {
+    e.preventDefault();
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      doSignInWithGoogle().catch((err) => {
+        setIsSigningIn(false);
+      });
     }
   };
 
@@ -59,7 +63,8 @@ export const SignIn = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="sign-in"
     >
-      <form onSubmit={handleSignIn}>
+      {userSignedIn && <Navigate to={"/"} replace={true} />}
+      <form onSubmit={onSubmit}>
         <AnimatePresence>
           {error && (
             <m.div
@@ -81,13 +86,13 @@ export const SignIn = () => {
           )}
         </AnimatePresence>
         <div className="input-field">
-          <label htmlFor="phoneEmail">Phone or Email:</label>
+          <label htmlFor="phoneEmail">Email:</label>
           <input
             type="text"
-            id="phoneEmail"
-            name="phoneEmail"
-            value={phoneEmail}
-            onChange={(e) => setPhoneEmail(e.target.value)}
+            id="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 

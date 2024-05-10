@@ -1,6 +1,5 @@
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-
 const db = getFirestore();
 
 export async function emailExists(email) {

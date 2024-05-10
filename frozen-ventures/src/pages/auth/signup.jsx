@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
-import { useFormSubmit } from "./signup-form";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/auth-context";
+import { doCreateUserWithEmailAndPassword } from "../../firebase/firebase-auth";
+import { useFormSubmit } from "./utilities/sign-submit";
+import { emailExists } from "../../firebase/firebase-operations";
+import {
+  validateContactNumber,
+  validateEmail,
+  validatePassword,
+  validateImage,
+} from "./utilities/sign-validation";
 
 export const SignUp = () => {
-  const [selectedRole, setSelectedRole] = useState("");
-  const [selectedGender, setSelectedGender] = useState("");
+  const userSignedIn = useAuth();
+
   const [inputFName, setInputFName] = useState("");
   const [inputLName, setInputLName] = useState("");
   const [inputPass, setInputPass] = useState("");
@@ -12,17 +22,13 @@ export const SignUp = () => {
   const [inputPhone, setInputPhone] = useState("");
   const [inputEmail, setInputEmail] = useState("");
   const [inputBirthdate, setInputBirthdate] = useState("");
-  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedGender, setSelectedGender] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const { errors, setErrors, formSuccess, submitForm } = useFormSubmit();
-
-  useEffect(() => {
-    const errorTimeout = setTimeout(() => {
-      setErrors([]);
-    }, 3000);
-
-    return () => clearTimeout(errorTimeout);
-  }, [errors]);
+  const [errors, setErrors] = useState([]);
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const { formSuccess, submitForm } = useFormSubmit();
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
@@ -37,8 +43,64 @@ export const SignUp = () => {
     setSelectedImage(file);
   };
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const errorTimeout = setTimeout(() => {
+      setErrors([]);
+    }, 1500);
+
+    return () => clearTimeout(errorTimeout);
+  }, [errors]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSigningUp(true);
+
+    const formErrors = [];
+
+    if (!inputFName) {
+      formErrors.push("First name is required");
+    } else if (!inputLName) {
+      formErrors.push("Last name is required");
+    } else if (!inputPhone) {
+      formErrors.push("Phone is required");
+    } else if (!inputBirthdate) {
+      formErrors.push("Birthdate is required");
+    } else if (!inputEmail) {
+      formErrors.push("Email is required");
+    } else if (!selectedImage) {
+      formErrors.push("Image is required");
+    } else if (!selectedRole) {
+      formErrors.push("Role is required");
+    } else if (!selectedGender) {
+      formErrors.push("Gender is required");
+    } else if (!inputPass) {
+      formErrors.push("Password is required");
+    } else if (!inputCPass) {
+      formErrors.push("Confirm password is required");
+    } else if (inputPass !== inputCPass) {
+      formErrors.push("Passwords do not match");
+    } else if (!validateContactNumber(inputPhone)) {
+      formErrors.push("Invalid phone number");
+    } else if (!validateEmail(inputEmail)) {
+      formErrors.push("Invalid email address");
+    } else if (!emailExists(inputEmail)) {
+      formErrors.push("Email address already exists");
+    } else if (!validateImage(selectedImage)) {
+      formErrors.push(
+        "Invalid image must only be 10mb and has an extension of jpg, jpeg, png"
+      );
+    } else if (!validatePassword(inputPass) || !validatePassword(inputCPass)) {
+      formErrors.push(
+        "Password must include an uppercase letter, symbol, and be at least 6 characters."
+      );
+    }
+
+    if (formErrors.length > 0) {
+      setErrors(formErrors);
+      setIsSigningUp(false);
+      return;
+    }
+
     const formData = {
       inputFName,
       inputLName,
@@ -51,7 +113,14 @@ export const SignUp = () => {
       selectedGender,
       selectedImage,
     };
-    submitForm(formData);
+
+    try {
+      await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
+      submitForm(formData);
+    } catch (error) {
+      console.log(error.message);
+      setIsSigningUp(false);
+    }
   };
 
   return (
@@ -61,6 +130,7 @@ export const SignUp = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="sign-up"
     >
+      {userSignedIn && <Navigate to={"/"} replace={true} />}
       <form method="POST" onSubmit={handleSubmit}>
         <AnimatePresence>
           {errors.length > 0 && (
@@ -234,7 +304,9 @@ export const SignUp = () => {
         </div>
 
         <div className="button-container grid3">
-          <button type="submit">Sign Up</button>
+          <button type="submit" disabled={isSigningUp}>
+            {isSigningUp ? "Signing Up..." : "Sign Up"}
+          </button>
         </div>
       </form>
     </m.div>

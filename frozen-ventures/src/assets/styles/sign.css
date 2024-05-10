@@ -63,10 +63,10 @@
 
   .error-container {
     position: absolute;
-    top: 10%;
+    top: 5vh;
+    width: calc(35vw + 55px);
     border-radius: 10px;
     grid-column: 1 / 3;
-    width: 40vw;
     padding: 10px;
     border: solid 2px rgb(114, 17, 17);
     background-color: rgb(255, 181, 181);
@@ -80,9 +80,11 @@
   }
 
   .success-container {
+    position: absolute;
     border-radius: 10px;
     grid-column: 1 / 3;
-    width: 95%;
+    top: 5vh;
+    width: calc(35vw + 55px);
     padding: 10px;
     border: solid 2px rgb(33, 114, 17);
     background-color: rgb(190, 255, 181);
