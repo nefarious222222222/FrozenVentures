@@ -1,24 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
-import "../../firebase/firebase-config";
-import { getFirestore, addDoc, collection } from "firebase/firestore";
-import { emailExists } from "../../firebase/firebase-operations";
-
-function validateContactNumber(contact) {
-  const startsWith09 = /^09/.test(contact);
-  return startsWith09 && !isNaN(contact) && contact.length === 11;
-}
-
-function validateEmail(email) {
-  const re = /\S+@\S+\.\S+/;
-  return re.test(String(email).toLowerCase());
-}
-
-function validatePassword(password) {
-  const containsUppercase = /[A-Z]/.test(password);
-  const containsSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  return containsUppercase && containsSymbol;
-}
+import { useFormSubmit } from "./signup-form";
 
 export const SignUp = () => {
   const [selectedRole, setSelectedRole] = useState("");
@@ -30,12 +12,13 @@ export const SignUp = () => {
   const [inputPhone, setInputPhone] = useState("");
   const [inputEmail, setInputEmail] = useState("");
   const [inputBirthdate, setInputBirthdate] = useState("");
-  const [errors, setErrors] = useState([]);
-  const [formSuccess, setFormSuccess] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const { errors, setErrors, formSuccess, submitForm } = useFormSubmit();
 
   useEffect(() => {
     const errorTimeout = setTimeout(() => {
-      setErrors("");
+      setErrors([]);
     }, 3000);
 
     return () => clearTimeout(errorTimeout);
@@ -49,76 +32,26 @@ export const SignUp = () => {
     setSelectedGender(e.target.value);
   };
 
-  const signUpUser = async (e) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    const formErrors = [];
-    setErrors(formErrors);
-
-    if (
-      !inputFName ||
-      !inputLName ||
-      !inputPhone ||
-      !inputEmail ||
-      !inputBirthdate ||
-      !inputPass ||
-      !selectedRole ||
-      !selectedGender
-    ) {
-      formErrors.push("All fields are required");
-    }
-
-    if (inputPass.length < 8) {
-      formErrors.push("Password must be at least 8 characters long");
-    }
-
-    if (inputPass !== inputCPass) {
-      formErrors.push("Passwords do not match");
-    }
-
-    if (!validateContactNumber(inputPhone)) {
-      formErrors.push("Contact number is not valid");
-    }
-
-    if (!validateEmail(inputEmail)) {
-      formErrors.push("Email is not valid");
-    }
-
-    const emailExistsResult = await emailExists(inputEmail);
-    if (emailExistsResult) {
-      formErrors.push("Email Already Exists");
-    }
-
-    if (!validatePassword(inputPass)) {
-      formErrors.push("Password requires 1 uppercase and 1 symbol");
-    }
-
-    const db = getFirestore();
-
-    if (formErrors.length === 0) {
-      try {
-        await addDoc(collection(db, "users"), {
-          firstName: inputFName,
-          lastName: inputLName,
-          phoneNum: inputPhone,
-          emailAdd: inputEmail,
-          birthdate: inputBirthdate,
-          password: inputPass,
-          role: selectedRole,
-          gender: selectedGender,
-        });
-        setFormSuccess("Account created successfully");
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } catch (error) {
-        console.error("Error adding document: ", error);
-        formErrors.push("An error occurred. Please try again later");
-      }
-    }
-
-    setErrors([...formErrors]);
+    const formData = {
+      inputFName,
+      inputLName,
+      inputPass,
+      inputCPass,
+      inputPhone,
+      inputEmail,
+      inputBirthdate,
+      selectedRole,
+      selectedGender,
+      selectedImage,
+    };
+    submitForm(formData);
   };
 
   return (
@@ -128,7 +61,7 @@ export const SignUp = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="sign-up"
     >
-      <form method="POST">
+      <form method="POST" onSubmit={handleSubmit}>
         <AnimatePresence>
           {errors.length > 0 && (
             <m.div
@@ -173,25 +106,7 @@ export const SignUp = () => {
           </m.div>
         )}
 
-        <div className="input-field grid1">
-          <label htmlFor="role">Role:</label>
-          <select
-            id="role"
-            name="Role"
-            value={selectedRole}
-            onChange={handleRoleChange}
-          >
-            <option value="" disabled>
-              Select Role
-            </option>
-            <option value="Customer">Customer</option>
-            <option value="Retailer">Retailer</option>
-            <option value="Distributor">Distributor</option>
-            <option value="Manufacturer">Manufacturer</option>
-          </select>
-        </div>
-
-        <div className="input-container grid2">
+        <div className="input-container grid1">
           <div className="input-field">
             <label htmlFor="firstName">First Name:</label>
             <input
@@ -200,7 +115,6 @@ export const SignUp = () => {
               name="firstName"
               value={inputFName}
               onChange={(e) => setInputFName(e.target.value)}
-              required
             />
           </div>
 
@@ -212,45 +126,6 @@ export const SignUp = () => {
               name="phoneNum"
               value={inputPhone}
               onChange={(e) => setInputPhone(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="input-field">
-            <label htmlFor="birthdate">Birthdate:</label>
-            <input
-              type="date"
-              id="birthdate"
-              name="birthdate"
-              value={inputBirthdate}
-              onChange={(e) => setInputBirthdate(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="input-field">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={inputPass}
-              onChange={(e) => setInputPass(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="input-container grid3">
-          <div className="input-field">
-            <label htmlFor="lastName">Last Name:</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={inputLName}
-              onChange={(e) => setInputLName(e.target.value)}
-              required
             />
           </div>
 
@@ -262,7 +137,70 @@ export const SignUp = () => {
               name="emailAdd"
               value={inputEmail}
               onChange={(e) => setInputEmail(e.target.value)}
-              required
+            />
+          </div>
+
+          <div className="input-field">
+            <label htmlFor="role">Role:</label>
+            <select
+              id="role"
+              name="Role"
+              value={selectedRole}
+              onChange={handleRoleChange}
+            >
+              <option value="" disabled>
+                Select Role
+              </option>
+              <option value="Customer">Customer</option>
+              <option value="Retailer">Retailer</option>
+              <option value="Distributor">Distributor</option>
+              <option value="Manufacturer">Manufacturer</option>
+            </select>
+          </div>
+
+          <div className="input-field">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={inputPass}
+              onChange={(e) => setInputPass(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="input-container grid2">
+          <div className="input-field">
+            <label htmlFor="lastName">Last Name:</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={inputLName}
+              onChange={(e) => setInputLName(e.target.value)}
+            />
+          </div>
+
+          <div className="input-field">
+            <label htmlFor="birthdate">Birthdate:</label>
+            <input
+              type="date"
+              id="birthdate"
+              name="birthdate"
+              value={inputBirthdate}
+              onChange={(e) => setInputBirthdate(e.target.value)}
+            />
+          </div>
+
+          <div className="input-field image-upload">
+            <label htmlFor="imageUpload">Choose Image:</label>
+            <input
+              type="file"
+              id="imageUpload"
+              name="imageUpload"
+              accept=".jpg, .jpeg, .png"
+              onChange={handleImageChange}
             />
           </div>
 
@@ -291,13 +229,12 @@ export const SignUp = () => {
               name="confirmPass"
               value={inputCPass}
               onChange={(e) => setInputCPass(e.target.value)}
-              required
             />
           </div>
         </div>
 
-        <div className="button-container grid4">
-          <button onClick={(e) => signUpUser(e)}>Sign Up</button>
+        <div className="button-container grid3">
+          <button type="submit">Sign Up</button>
         </div>
       </form>
     </m.div>

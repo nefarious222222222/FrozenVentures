@@ -3,7 +3,7 @@ import "../../firebase/firebase-config";
 import { easeInOut, motion as m, AnimatePresence } from "framer-motion";
 import { GoogleLogo } from "phosphor-react";
 import { validateUser } from "../../firebase/firebase-operations";
-import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 
 export const SignIn = () => {
   const [phoneEmail, setPhoneEmail] = useState("");
@@ -45,7 +45,7 @@ export const SignIn = () => {
           console.error("Document does not exist.");
         }
       } catch (error) {
-        console.error("Error updating isSignedIn field:", error);
+        console.error("Failed to sign:", error);
       }
     } else {
       setError("Invalid credentials. Please try again.");
