@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../../context/auth-context";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/firebase-auth";
 import { useFormSubmit } from "./utilities/sign-submit";
 import { emailExists } from "../../firebase/firebase-operations";
@@ -13,8 +11,6 @@ import {
 } from "./utilities/sign-validation";
 
 export const SignUp = () => {
-  const userSignedIn = useAuth();
-
   const [inputFName, setInputFName] = useState("");
   const [inputLName, setInputLName] = useState("");
   const [inputPass, setInputPass] = useState("");
@@ -83,7 +79,7 @@ export const SignUp = () => {
       formErrors.push("Invalid phone number");
     } else if (!validateEmail(inputEmail)) {
       formErrors.push("Invalid email address");
-    } else if (!emailExists(inputEmail)) {
+    } else if (await emailExists(inputEmail)) {
       formErrors.push("Email address already exists");
     } else if (!validateImage(selectedImage)) {
       formErrors.push(
@@ -130,7 +126,6 @@ export const SignUp = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="sign-up"
     >
-      {userSignedIn && <Navigate to={"/"} replace={true} />}
       <form method="POST" onSubmit={handleSubmit}>
         <AnimatePresence>
           {errors.length > 0 && (

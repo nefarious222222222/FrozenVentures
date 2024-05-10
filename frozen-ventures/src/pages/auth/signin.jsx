@@ -9,8 +9,6 @@ import { useAuth } from "../../context/auth-context";
 import { Navigate } from "react-router-dom";
 
 export const SignIn = () => {
-  const userSignedIn = useAuth();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -63,7 +61,6 @@ export const SignIn = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="sign-in"
     >
-      {userSignedIn && <Navigate to={"/"} replace={true} />}
       <form onSubmit={onSubmit}>
         <AnimatePresence>
           {error && (

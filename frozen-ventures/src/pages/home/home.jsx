@@ -12,7 +12,7 @@ import { easeInOut, motion as m } from "framer-motion";
 import { useAuth } from "../../context/auth-context";
 
 export const Home = () => {
-  const { currentUser } = useAuth();
+  const currentUser = useAuth();
 
   return (
     <m.div
@@ -28,8 +28,7 @@ export const Home = () => {
 
         <div class="second-container">
           <h2>Flavors</h2>
-          <p>Vaious flavors to suit your preferences</p>
-          <p>{currentUser.displayName ? currentUser.displayName : currentUser.email}</p>
+          <p>Various flavors to suit your preferences</p>
         </div>
 
         <div class="third-container">

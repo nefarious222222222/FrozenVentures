@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { getFirestore, addDoc, collection } from "firebase/firestore";
+import { auth } from "../../../firebase/firebase-config";
+import { doSignInWithEmailAndPassword,doSendEmailVerification } from "../../../firebase/firebase-auth";
 
 export function useFormSubmit() {
   const [errors, setErrors] = useState([]);
@@ -53,6 +55,9 @@ export function useFormSubmit() {
             document: imageData,
           });
           setFormSuccess("Account created successfully");
+
+          await doSignInWithEmailAndPassword(inputEmail, inputPass);
+          await doSendEmailVerification();
         };  
       } catch (error) {
         console.error("Error adding document: ", error);

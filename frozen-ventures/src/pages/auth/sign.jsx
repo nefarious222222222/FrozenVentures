@@ -6,8 +6,12 @@ import { Link } from "react-router-dom";
 import { SignIn } from "./signin";
 import { SignUp } from "./signup";
 import { easeInOut, motion as m } from "framer-motion";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/auth-context";
 
 export const Sign = () => {
+  const { userSignedIn } = useAuth();
+
   const [showSignIn, setShowSignIn] = useState(true);
   const [activeButton, setActiveButton] = useState("signIn");
 
@@ -28,6 +32,7 @@ export const Sign = () => {
       transition={{ duration: 0.5, ease:easeInOut }}
       className="container sign"
     >
+      {userSignedIn ? <Navigate to={"/"} replace={true} /> : null}
       <div className="sign-container">
         <header>
           <Link to="/">
