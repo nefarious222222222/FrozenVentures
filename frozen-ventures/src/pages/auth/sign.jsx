@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../../assets/styles/sign.css";
+import "../../firebase/firebase-config";
 import Logo from "../../assets/images/logo.jpg";
 import { Link } from "react-router-dom";
 import { SignIn } from "./signin";

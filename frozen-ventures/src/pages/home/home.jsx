@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../../assets/styles/home.css";
 import { PRODUCTS } from "../../Products";
 import { Product } from "../shop/product";
@@ -11,6 +11,14 @@ import five from "../../assets/images/5.png";
 import { easeInOut, motion as m } from "framer-motion";
 
 export const Home = () => {
+
+  useEffect(() => {
+    const userId = sessionStorage.getItem("userId");
+    const userRole = sessionStorage.getItem("userRole");
+  }, []);
+
+
+
   return (
     <m.div
       initial={{ opacity: 0 }}

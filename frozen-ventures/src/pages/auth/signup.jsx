@@ -1,33 +1,23 @@
-import React, { useState } from "react";
-import { easeInOut, motion as m } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import "../../firebase/firebase-config";
-import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
-
-const db = getFirestore();
-
-async function emailExists(email) {
-  try {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    for (const doc of querySnapshot.docs) {
-      const userData = doc.data();
-      if (userData.emailAdd === email) {
-        return true;
-      }
-    }
-    return false;
-  } catch (error) {
-    console.error("Error checking email existence:", error);
-    return false;
-  }
-}
+import { getFirestore, addDoc, collection } from "firebase/firestore";
+import { emailExists } from "../../firebase/firebase-operations";
 
 function validateContactNumber(contact) {
-  return !isNaN(contact) && contact.length === 11;
+  const startsWith09 = /^09/.test(contact);
+  return startsWith09 && !isNaN(contact) && contact.length === 11;
 }
 
 function validateEmail(email) {
   const re = /\S+@\S+\.\S+/;
   return re.test(String(email).toLowerCase());
+}
+
+function validatePassword(password) {
+  const containsUppercase = /[A-Z]/.test(password);
+  const containsSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  return containsUppercase && containsSymbol;
 }
 
 export const SignUp = () => {
@@ -42,6 +32,14 @@ export const SignUp = () => {
   const [inputBirthdate, setInputBirthdate] = useState("");
   const [errors, setErrors] = useState([]);
   const [formSuccess, setFormSuccess] = useState("");
+
+  useEffect(() => {
+    const errorTimeout = setTimeout(() => {
+      setErrors("");
+    }, 3000);
+
+    return () => clearTimeout(errorTimeout);
+  }, [errors]);
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
@@ -91,6 +89,12 @@ export const SignUp = () => {
       formErrors.push("Email Already Exists");
     }
 
+    if (!validatePassword(inputPass)) {
+      formErrors.push("Password requires 1 uppercase and 1 symbol");
+    }
+
+    const db = getFirestore();
+
     if (formErrors.length === 0) {
       try {
         await addDoc(collection(db, "users"), {
@@ -125,28 +129,30 @@ export const SignUp = () => {
       className="sign-up"
     >
       <form method="POST">
-        {errors.length > 0 && (
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: easeInOut }}
-            className="error-container"
-          >
-            {errors.map((error, index) => (
-              <m.div
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: easeInOut }}
-                key={index}
-                className="alert-error"
-              >
-                <p>{error}</p>
-              </m.div>
-            ))}
-          </m.div>
-        )}
+        <AnimatePresence>
+          {errors.length > 0 && (
+            <m.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5, ease: easeInOut }}
+              className="error-container"
+            >
+              {errors.map((error, index) => (
+                <m.div
+                  initial={{ x: 100 }}
+                  animate={{ x: 0 }}
+                  transition={{ duration: 0.5, ease: easeInOut }}
+                  key={index}
+                  className="alert-error"
+                >
+                  <p>{error}</p>
+                </m.div>
+              ))}
+            </m.div>
+          )}
+        </AnimatePresence>
+
         {formSuccess && (
           <m.div
             initial={{ opacity: 0 }}

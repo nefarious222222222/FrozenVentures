@@ -60,6 +60,40 @@
       }
     }
   }
+
+  .error-container {
+    position: absolute;
+    top: 10%;
+    border-radius: 10px;
+    grid-column: 1 / 3;
+    width: 40vw;
+    padding: 10px;
+    border: solid 2px rgb(114, 17, 17);
+    background-color: rgb(255, 181, 181);
+
+    p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: rgb(114, 17, 17);
+      text-align: center;
+    }
+  }
+
+  .success-container {
+    border-radius: 10px;
+    grid-column: 1 / 3;
+    width: 95%;
+    padding: 10px;
+    border: solid 2px rgb(33, 114, 17);
+    background-color: rgb(190, 255, 181);
+
+    p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: rgb(33, 114, 17);
+      text-align: center;
+    }
+  }
 }
 
 /* SIGN IN CSS */
@@ -279,38 +313,6 @@
         background-color: var(--color-violet);
         color: var(--color-pale-stone);
       }
-    }
-  }
-
-  .error-container {
-    border-radius: 10px;
-    grid-column: 1 / 3;
-    width: 95%;
-    padding: 10px;
-    border: solid 2px rgb(114, 17, 17);
-    background-color: rgb(255, 181, 181);
-    
-    p {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: rgb(114, 17, 17);
-      text-align: center;
-    }
-  }
-
-  .success-container {
-    border-radius: 10px;
-    grid-column: 1 / 3;
-    width: 95%;
-    padding: 10px;
-    border: solid 2px rgb(33, 114, 17);
-    background-color: rgb(190, 255, 181);
-
-    p {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: rgb(33, 114, 17);
-      text-align: center;
     }
   }
 }
