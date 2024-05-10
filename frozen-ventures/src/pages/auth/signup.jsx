@@ -41,6 +41,7 @@ export const SignUp = () => {
   const [inputEmail, setInputEmail] = useState("");
   const [inputBirthdate, setInputBirthdate] = useState("");
   const [errors, setErrors] = useState([]);
+  const [formSuccess, setFormSuccess] = useState("");
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
@@ -49,8 +50,6 @@ export const SignUp = () => {
   const handleGenderChange = (e) => {
     setSelectedGender(e.target.value);
   };
-
-  const db = getFirestore();
 
   const signUpUser = async (e) => {
     e.preventDefault();
@@ -68,48 +67,54 @@ export const SignUp = () => {
       !selectedRole ||
       !selectedGender
     ) {
-      formErrors.push("All fields are required.");
-      return;
+      formErrors.push("All fields are required");
+    }
+
+    if (inputPass.length < 8) {
+      formErrors.push("Password must be at least 8 characters long");
     }
 
     if (inputPass !== inputCPass) {
-      formErrors.push("Passwords do not match.");
-      return;
+      formErrors.push("Passwords do not match");
     }
 
     if (!validateContactNumber(inputPhone)) {
-      formErrors.push("Contact number is not valid.");
-      return;
+      formErrors.push("Contact number is not valid");
     }
 
     if (!validateEmail(inputEmail)) {
-      formErrors.push("Email is not valid.");
-      return;
+      formErrors.push("Email is not valid");
     }
 
     const emailExistsResult = await emailExists(inputEmail);
     if (emailExistsResult) {
-      formErrors.push("Email Already Exists.");
-      return;
+      formErrors.push("Email Already Exists");
     }
 
-    try {
-      const docRef = await addDoc(collection(db, "users"), {
-        firstName: inputFName,
-        lastName: inputLName,
-        phoneNum: inputPhone,
-        emailAdd: inputEmail,
-        birthdate: inputBirthdate,
-        password: inputPass,
-        role: selectedRole,
-        gender: selectedGender,
-      });
-      alert("Success");
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      formErrors.push("An error occurred. Please try again later.");
-      return;
+    if (formErrors.length === 0) {
+      try {
+        await addDoc(collection(db, "users"), {
+          firstName: inputFName,
+          lastName: inputLName,
+          phoneNum: inputPhone,
+          emailAdd: inputEmail,
+          birthdate: inputBirthdate,
+          password: inputPass,
+          role: selectedRole,
+          gender: selectedGender,
+        });
+        setFormSuccess("Account created successfully");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        formErrors.push("An error occurred. Please try again later");
+      }
     }
+
+    setErrors([...formErrors]);
   };
 
   return (
@@ -121,13 +126,45 @@ export const SignUp = () => {
     >
       <form method="POST">
         {errors.length > 0 && (
-          <div>
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: easeInOut }}
+            className="error-container"
+          >
             {errors.map((error, index) => (
-              <div key={index} className="alertError">
+              <m.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: easeInOut }}
+                key={index}
+                className="alert-error"
+              >
                 <p>{error}</p>
-              </div>
+              </m.div>
             ))}
-          </div>
+          </m.div>
+        )}
+        {formSuccess && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: easeInOut }}
+            className="success-container"
+          >
+            <m.div
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5, ease: easeInOut }}
+              className="alert-success"
+            >
+              <p>{formSuccess}</p>
+            </m.div>
+          </m.div>
         )}
 
         <div className="input-field grid1">
