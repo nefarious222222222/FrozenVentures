@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { getFirestore, addDoc, collection } from "firebase/firestore";
-import { auth } from "../../../firebase/firebase-config";
-import { doSignInWithEmailAndPassword,doSendEmailVerification } from "../../../firebase/firebase-auth";
+import {
+  doSignInWithEmailAndPassword,
+  doSendEmailVerification,
+} from "../../../firebase/firebase-auth";
+import { getUserByEmailAndPassword } from "../../../firebase/firebase-operations";
 
 export function useFormSubmit() {
   const [errors, setErrors] = useState([]);
-  const [formSuccess, setFormSuccess] = useState("");
 
   const submitForm = async (formData) => {
     const {
@@ -54,11 +56,30 @@ export function useFormSubmit() {
             gender: selectedGender,
             document: imageData,
           });
-          setFormSuccess("Account created successfully");
 
-          await doSignInWithEmailAndPassword(inputEmail, inputPass);
-          await doSendEmailVerification();
-        };  
+          try {
+            await doSignInWithEmailAndPassword(inputEmail, inputPass);
+            try {
+              await doSendEmailVerification();
+              try {
+                const userId = await getUserByEmailAndPassword(
+                  inputEmail,
+                  inputPass
+                );
+                console.log("User ID:", userId);
+              } catch (error) {
+                console.error(
+                  "Error getting user by email and password:",
+                  error
+                );
+              }
+            } catch (error) {
+              console.error("Error sending email verification:", error);
+            }
+          } catch (error) {
+            console.error("Error signing in with email and password:", error);
+          }
+        };
       } catch (error) {
         console.error("Error adding document: ", error);
         formErrors.push("An error occurred. Please try again later");
@@ -68,5 +89,5 @@ export function useFormSubmit() {
     setErrors(formErrors);
   };
 
-  return { errors, setErrors, formSuccess, submitForm };
+  return { errors, setErrors, submitForm };
 }

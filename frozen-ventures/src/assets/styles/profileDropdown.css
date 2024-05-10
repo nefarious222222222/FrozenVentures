@@ -1,0 +1,56 @@
+.profile-dropdown {
+  position: relative;
+
+  button {
+    position: inherit;
+    background: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  button:hover {
+    color: var(--color-violet);
+    background-color: white;
+  }
+
+  ul {
+    position: absolute;
+    right: -30px;
+    list-style: none;
+    background-color: white;
+    width: 15vw;
+    padding: 10px;
+    border-radius: 5px;
+
+    li {
+      cursor: pointer;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+      width: 100%;
+      border-bottom: solid 2px gray;
+      transition: all 0.3s ease;
+
+      p {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+    }
+
+    li:hover {
+      color: var(--color-violet);
+      background-color: var(--color-pale-violet);
+    }
+
+    li:nth-child(4) {
+      border-bottom: none;
+    }
+
+    .signout {
+      border-bottom: none;
+      margin: 10vh 0 0 0;
+    }
+  }
+}

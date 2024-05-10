@@ -22,9 +22,10 @@ export const SignUp = () => {
   const [selectedGender, setSelectedGender] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
+  const [formSuccess, setFormSuccess] = useState("");
   const [errors, setErrors] = useState([]);
   const [isSigningUp, setIsSigningUp] = useState(false);
-  const { formSuccess, submitForm } = useFormSubmit();
+  const { submitForm } = useFormSubmit();
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
@@ -111,8 +112,12 @@ export const SignUp = () => {
     };
 
     try {
-      await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
-      submitForm(formData);
+      setFormSuccess("Account created. Verification email sent");
+
+      setTimeout(async () => {
+        await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
+        await submitForm(formData);
+      }, 2000);
     } catch (error) {
       console.log(error.message);
       setIsSigningUp(false);
