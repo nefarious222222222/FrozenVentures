@@ -39,6 +39,19 @@ export function useFormSubmit() {
       selectedImage,
     } = formData;
 
+    let imageValue;
+    if (selectedImage) {
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedImage);
+      reader.onload = () => {
+        imageValue = reader.result;
+      };
+    } else if (selectedImage === null || selectedImage === "") {
+      imageValue = "Not Applicable";
+    } else {
+      console.log("ERROR on image load");
+    }
+
     const formErrors = [];
 
     if (
@@ -49,8 +62,7 @@ export function useFormSubmit() {
       !inputBirthdate ||
       !inputPass ||
       !selectedRole ||
-      !selectedGender ||
-      !selectedImage
+      !selectedGender
     ) {
       formErrors.push("All fields are required");
     }
@@ -70,6 +82,7 @@ export function useFormSubmit() {
           phoneNum: inputPhone,
           birthdate: inputBirthdate,
           gender: selectedGender,
+          image: imageValue,
           user: userRef.id,
         });
 

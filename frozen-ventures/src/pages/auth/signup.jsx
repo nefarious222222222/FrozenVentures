@@ -69,8 +69,6 @@ export const SignUp = () => {
       formErrors.push("Birthdate is required");
     } else if (!inputEmail) {
       formErrors.push("Email is required");
-    } else if (!selectedImage) {
-      formErrors.push("Image is required");
     } else if (!selectedRole) {
       formErrors.push("Role is required");
     } else if (!selectedGender) {
@@ -89,14 +87,22 @@ export const SignUp = () => {
       formErrors.push("Invalid email address");
     } else if (await emailExists(inputEmail)) {
       formErrors.push("Email address already exists");
-    } else if (!validateImage(selectedImage)) {
-      formErrors.push(
-        "Invalid image must only be 10mb and has an extension of jpg, jpeg, png"
-      );
     } else if (!validatePassword(inputPass) || !validatePassword(inputCPass)) {
       formErrors.push(
         "Password must include an uppercase letter, symbol, and be at least 6 characters."
       );
+    } else if (
+      selectedRole === "Retailer" ||
+      selectedRole === "Distributor" ||
+      selectedRole === "Manufacturer"
+    ) {
+      if (!selectedImage) {
+        formErrors.push("Image is required");
+      } else if (!validateImage(selectedImage)) {
+        formErrors.push(
+          "Invalid image must only be 10mb and has an extension of jpg, jpeg, png"
+        );
+      }
     }
 
     if (formErrors.length > 0) {
@@ -120,7 +126,7 @@ export const SignUp = () => {
 
     try {
       setFormSuccess("Account created. Verification email sent");
-      
+
       setTimeout(async () => {
         try {
           await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
@@ -186,8 +192,27 @@ export const SignUp = () => {
             </m.div>
           </m.div>
         )}
-
         <div className="input-container grid1">
+          <div className="input-field">
+            <label htmlFor="role">Role:</label>
+            <select
+              id="role"
+              name="Role"
+              value={selectedRole}
+              onChange={handleRoleChange}
+            >
+              <option value="" disabled>
+                Select Role
+              </option>
+              <option value="Customer">Customer</option>
+              <option value="Retailer">Retailer</option>
+              <option value="Distributor">Distributor</option>
+              <option value="Manufacturer">Manufacturer</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="input-container grid2">
           <div className="input-field">
             <label htmlFor="firstName">First Name:</label>
             <input
@@ -222,24 +247,6 @@ export const SignUp = () => {
           </div>
 
           <div className="input-field">
-            <label htmlFor="role">Role:</label>
-            <select
-              id="role"
-              name="Role"
-              value={selectedRole}
-              onChange={handleRoleChange}
-            >
-              <option value="" disabled>
-                Select Role
-              </option>
-              <option value="Customer">Customer</option>
-              <option value="Retailer">Retailer</option>
-              <option value="Distributor">Distributor</option>
-              <option value="Manufacturer">Manufacturer</option>
-            </select>
-          </div>
-
-          <div className="input-field">
             <label htmlFor="password">Password:</label>
             <input
               type="password"
@@ -251,7 +258,7 @@ export const SignUp = () => {
           </div>
         </div>
 
-        <div className="input-container grid2">
+        <div className="input-container grid3">
           <div className="input-field">
             <label htmlFor="lastName">Last Name:</label>
             <input
@@ -272,17 +279,6 @@ export const SignUp = () => {
               value={inputBirthdate}
               onChange={(e) => setInputBirthdate(e.target.value)}
               max={today}
-            />
-          </div>
-
-          <div className="input-field image-upload">
-            <label htmlFor="imageUpload">Choose Image:</label>
-            <input
-              type="file"
-              id="imageUpload"
-              name="imageUpload"
-              accept=".jpg, .jpeg, .png"
-              onChange={handleImageChange}
             />
           </div>
 
@@ -315,7 +311,30 @@ export const SignUp = () => {
           </div>
         </div>
 
-        <div className="button-container grid3">
+        <div className="db-container grid4">
+          <AnimatePresence>
+            {(selectedRole === "Retailer" ||
+              selectedRole === "Distributor" ||
+              selectedRole === "Manufacturer") && (
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: easeInOut }}
+                className="input-field image-upload"
+              >
+                <label htmlFor="imageUpload">Choose Image:</label>
+                <input
+                  type="file"
+                  id="imageUpload"
+                  name="imageUpload"
+                  accept=".jpg, .jpeg, .png"
+                  onChange={handleImageChange}
+                />
+              </m.div>
+            )}
+          </AnimatePresence>
+
           <button type="submit" disabled={isSigningUp}>
             {isSigningUp ? "Signing Up..." : "Sign Up"}
           </button>
