@@ -153,15 +153,15 @@
         width: fit-content;
         font-size: 1.25rem;
         font-weight: 800;
-        background-color: var(--color-pale-stone);
         color: var(--color-violet);
+        background-color: white;
         cursor: pointer;
         transition: all 0.3s ease;
       }
 
       button:hover {
+        color: white;
         background-color: var(--color-violet);
-        color: var(--color-pale-stone);
       }
 
       a {
@@ -199,18 +199,36 @@
       }
     }
 
-    svg {
-      color: var(--color-violet);
-      padding: 5px;
+    button {
+      border: none;
+      display: flex;
+      align-items: center;
       border-radius: 5px;
-      background-color: var(--color-pale-stone);
+      gap: 10px;
+      padding: 10px 20px;
       cursor: pointer;
       transition: all 0.3s ease;
+
+      svg {
+        color: red;
+        transition: all 0.3s ease;
+      }
+
+      p {
+        color: red;
+        font-size: 1.25rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
     }
 
-    svg:hover {
-      color: var(--color-pale-stone);
-      background-color: var(--color-violet);
+    button:hover {
+      background-color: red;
+    }
+
+    button:hover svg,
+    button:hover p {
+      color: white;
     }
   }
 }
@@ -322,15 +340,15 @@
         width: fit-content;
         font-size: 1.25rem;
         font-weight: 800;
-        background-color: var(--color-pale-stone);
         color: var(--color-violet);
+        background-color: white;
         cursor: pointer;
         transition: all 0.3s ease;
       }
 
       button:hover {
+        color: white;
         background-color: var(--color-violet);
-        color: var(--color-pale-stone);
       }
     }
   }

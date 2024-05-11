@@ -5,8 +5,6 @@ import {
   doSignInWithEmailAndPassword,
   doSignInWithGoogle,
 } from "../../firebase/firebase-auth";
-import { useAuth } from "../../context/auth-context";
-import { Navigate } from "react-router-dom";
 
 export const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -44,14 +42,8 @@ export const SignIn = () => {
     }
   };
 
-  const onGoogleSignIn = (e) => {
+  const onGoogleSignIn = async (e) => {
     e.preventDefault();
-    if (!isSigningIn) {
-      setIsSigningIn(true);
-      doSignInWithGoogle().catch((err) => {
-        setIsSigningIn(false);
-      });
-    }
   };
 
   return (
@@ -105,7 +97,9 @@ export const SignIn = () => {
         </div>
 
         <div className="button-container">
-          <button type="submit">Sign In</button>
+          <button type="submit" disabled={isSigningIn}>
+            {isSigningIn ? "Signing In..." : "Sign In"}
+          </button>
           <a href="">Forgot password?</a>
         </div>
       </form>
@@ -117,7 +111,10 @@ export const SignIn = () => {
           <div></div>
         </div>
 
-        <GoogleLogo size={32} weight="bold" />
+        <button onClick={onGoogleSignIn}>
+          <GoogleLogo size={32} weight="bold" />
+          <p>Google</p>
+        </button>
       </div>
     </m.div>
   );

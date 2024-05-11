@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/firebase-auth";
 import { useFormSubmit } from "./utilities/sign-submit";
-import { emailExists } from "../../firebase/firebase-operations";
+import { emailExists, phoneNumberExists } from "../../firebase/firebase-operations";
 import {
   validateContactNumber,
   validateEmail,
@@ -26,6 +26,8 @@ export const SignUp = () => {
   const [errors, setErrors] = useState([]);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const { submitForm } = useFormSubmit();
+
+  const today = new Date().toISOString().split("T")[0];
 
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
@@ -78,6 +80,8 @@ export const SignUp = () => {
       formErrors.push("Passwords do not match");
     } else if (!validateContactNumber(inputPhone)) {
       formErrors.push("Invalid phone number");
+    } else if (await phoneNumberExists(inputPhone)) {
+      formErrors.push("Phone number already exists");
     } else if (!validateEmail(inputEmail)) {
       formErrors.push("Invalid email address");
     } else if (await emailExists(inputEmail)) {
@@ -113,11 +117,15 @@ export const SignUp = () => {
 
     try {
       setFormSuccess("Account created. Verification email sent");
-
+      
       setTimeout(async () => {
-        await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
-        await submitForm(formData);
-      }, 2000);
+        try {
+          await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
+          await submitForm(formData);
+        } catch (error) {
+          console.log("ERROR submit form:", error);
+        }
+      }, 1000);
     } catch (error) {
       console.log(error.message);
       setIsSigningUp(false);
@@ -260,6 +268,7 @@ export const SignUp = () => {
               name="birthdate"
               value={inputBirthdate}
               onChange={(e) => setInputBirthdate(e.target.value)}
+              max={today}
             />
           </div>
 

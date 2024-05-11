@@ -35,9 +35,9 @@ export const ProfileDropdown = () => {
       <AnimatePresence>
         {isOpen && (
           <m.ul
-            initial={{ opacity: 0, x: 60 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 60 }}
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -60 }}
             transition={{ duration: 0.5 }}
           >
             <li>
