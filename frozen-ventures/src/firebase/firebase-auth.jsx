@@ -28,6 +28,7 @@ export const doSignInWithEmailAndPassword = async (email, password) => {
     const userId = await getUserByEmailAndPassword(email, password);
     if (userId) {
       setCurrentUser(userId);
+      console.log("User Signed In:", userId);
     }
     return userCredential;
   } catch (error) {

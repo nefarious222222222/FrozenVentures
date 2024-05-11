@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../assets/styles/profileDropdown.css";
 import {
   UserCircle,
+  UserSquare,
   GearSix,
   ChatCenteredDots,
   Warning,
@@ -13,11 +14,13 @@ import { doSignOut } from "../firebase/firebase-auth";
 
 export const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  
-  const navigate = useNavigate();
+
   const handleSignOut = async () => {
     try {
       await doSignOut();
@@ -27,10 +30,23 @@ export const ProfileDropdown = () => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="profile-dropdown">
+    <div className="profile-dropdown" ref={dropdownRef}>
       <button onClick={toggleDropdown}>
-        <img src="" alt="asd" />
+        <UserCircle size={40} />
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -41,7 +57,7 @@ export const ProfileDropdown = () => {
             transition={{ duration: 0.5 }}
           >
             <li>
-              <UserCircle size={30} />
+              <UserSquare size={30} />
               <p>Profile</p>
             </li>
             <li>
