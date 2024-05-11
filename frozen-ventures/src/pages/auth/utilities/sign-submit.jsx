@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  getFirestore,
-  addDoc,
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
 import {
   doSignInWithEmailAndPassword,
   doSendEmailVerification,
@@ -86,9 +81,13 @@ export function useFormSubmit() {
           } else {
             try {
               await doSignInWithEmailAndPassword(inputEmail, inputPass);
-              await doSendEmailVerification();
+              try {
+                await doSendEmailVerification();
+              } catch (error) {
+                console.error("ERROR sending email verification:", error);
+              }
             } catch (error) {
-              console.error("ERROR Signing In:", error);
+              console.error("ERROR singing in:", error);
             }
           }
         }, 3000);

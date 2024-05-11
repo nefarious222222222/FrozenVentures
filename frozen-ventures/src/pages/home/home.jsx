@@ -9,10 +9,8 @@ import three from "../../assets/images/3.jpg";
 import four from "../../assets/images/4.jpg";
 import five from "../../assets/images/5.png";
 import { easeInOut, motion as m } from "framer-motion";
-import { useAuth } from "../../context/auth-context";
 
 export const Home = () => {
-  const currentUser = useAuth();
 
   return (
     <m.div

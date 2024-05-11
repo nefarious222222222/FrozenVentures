@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/firebase-auth";
 import { useFormSubmit } from "./utilities/sign-submit";
-import { emailExists, phoneNumberExists } from "../../firebase/firebase-operations";
+import {
+  emailExists,
+  phoneNumberExists,
+} from "../../firebase/firebase-operations";
 import {
   validateContactNumber,
   validateEmail,

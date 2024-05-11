@@ -10,7 +10,10 @@ import {
   deleteUser,
 } from "firebase/auth";
 import { getUserByEmailAndPassword } from "./firebase-operations";
-import { setCurrentUser,clearCurrentUser } from "../pages/auth/utilities/session";
+import {
+  setCurrentUser,
+  clearCurrentUser,
+} from "../pages/auth/utilities/session";
 
 // Create an account to firebase authentication
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
@@ -32,7 +35,7 @@ export const doSignInWithEmailAndPassword = async (email, password) => {
     }
     return userCredential;
   } catch (error) {
-    console.error("Error signing in: ", error);
+    console.error("ERROR signing in: ", error);
     throw error;
   }
 };
@@ -51,7 +54,6 @@ export const doSignOut = () => {
   return auth.signOut();
 };
 
-
 // export const doPasswordReset = (email) => {
 //   return sendPasswordResetEmail(auth, email);
 // };
@@ -61,12 +63,21 @@ export const doSignOut = () => {
 // };
 
 // Send an email verification to user's email
-export const doSendEmailVerification = () => {
+export const doSendEmailVerification = async () => {
   const currentUser = auth.currentUser;
   if (currentUser) {
-    return sendEmailVerification(currentUser, {
-      url: `${window.location.origin}/`,
-    });
+    if (!currentUser.emailVerified) {
+      try {
+        await sendEmailVerification(currentUser);
+        console.log("Verification email sent successfully.");
+      } catch (error) {
+        console.error("ERROR sending verification email:", error);
+        throw error;
+      }
+    } else {
+      console.warn("Email is already verified.");
+      return Promise.resolve();
+    }
   } else {
     console.error("No user is currently signed in.");
     return Promise.reject("No user is currently signed in.");
@@ -85,7 +96,7 @@ export const doDeleteUserWithEmailAndPassword = async (email, password) => {
     await deleteUser(user);
     console.log("User account deleted successfully", email);
   } catch (error) {
-    console.error("Error deleting user account: ", error);
+    console.error("ERROR deleting user account: ", error);
     throw error;
   }
 };
