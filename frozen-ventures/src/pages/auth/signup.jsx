@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
-import { doCreateUserWithEmailAndPassword } from "../../firebase/firebase-auth";
 import { useFormSubmit } from "./utilities/sign-submit";
 import {
   emailExists,
@@ -45,21 +44,15 @@ export const SignUp = () => {
     setSelectedImage(file);
   };
 
-  useEffect(() => {
-    const errorTimeout = setTimeout(() => {
-      setErrors([]);
-    }, 1500);
-
-    return () => clearTimeout(errorTimeout);
-  }, [errors]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSigningUp(true);
 
     const formErrors = [];
 
-    if (!inputFName) {
+    if (!selectedRole) {
+      formErrors.push("Role is required");
+    } else if (!inputFName) {
       formErrors.push("First name is required");
     } else if (!inputLName) {
       formErrors.push("Last name is required");
@@ -69,8 +62,6 @@ export const SignUp = () => {
       formErrors.push("Birthdate is required");
     } else if (!inputEmail) {
       formErrors.push("Email is required");
-    } else if (!selectedRole) {
-      formErrors.push("Role is required");
     } else if (!selectedGender) {
       formErrors.push("Gender is required");
     } else if (!inputPass) {
@@ -127,14 +118,11 @@ export const SignUp = () => {
     try {
       setFormSuccess("Account created. Verification email sent");
 
-      setTimeout(async () => {
-        try {
-          await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
-          await submitForm(formData);
-        } catch (error) {
-          console.log("ERROR submit form:", error);
-        }
-      }, 1000);
+      try {
+        await submitForm(formData);
+      } catch (error) {
+        console.log("ERROR:", error);
+      }
     } catch (error) {
       console.log(error.message);
       setIsSigningUp(false);

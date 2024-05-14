@@ -2,13 +2,17 @@ import {
   getFirestore,
   collection,
   getDocs,
-  deleteDoc,
-  doc
+  addDoc,
+  doc,
+  updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 
 const db = getFirestore();
 
-// Checks if value exists
+// VALIDATION FUNCTIONS
+// Checks if email exists
 export async function emailExists(email) {
   try {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -25,7 +29,7 @@ export async function emailExists(email) {
   }
 }
 
-// Checks if value exists
+// Checks if phone exists
 export async function phoneNumberExists(phoneNumber) {
   try {
     const querySnapshot = await getDocs(collection(db, "personalInfo"));
@@ -42,6 +46,27 @@ export async function phoneNumberExists(phoneNumber) {
   }
 }
 
+// Checks if email and password already exists
+export async function validateUser(email, password) {
+  try {
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    for (const doc of usersSnapshot.docs) {
+      const userData = doc.data();
+      if (userData.email === email && userData.password === password) {
+        return doc.id;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error("ERROR Validating User:", error);
+    return false;
+  }
+}
+
+
+
+
+// FETCHING FUNCTIONS
 // Fetch user id from firestore
 export async function getUserByEmailAndPassword(email, password) {
   try {
@@ -59,56 +84,72 @@ export async function getUserByEmailAndPassword(email, password) {
     return null;
   }
 }
-
-// Checks if email and password are in firestore
-export async function validateUser(email, password) {
+//Fetch any field by email
+export async function getFieldsByEmail(email) {
   try {
-    const usersSnapshot = await getDocs(collection(db, "users"));
-    for (const doc of usersSnapshot.docs) {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    for (const doc of querySnapshot.docs) {
       const userData = doc.data();
-      if (userData.email === email && userData.password === password) {
-        return doc.id;
+      if (userData.email === email) {
+        return userData;
       }
     }
-    return false;
+    return null;
   } catch (error) {
-    console.error("ERROR Validating User:", error);
-    return false;
+    console.error(`ERROR Fetching ${fieldName} by Email:`, error);
+    return null;
   }
 }
-
-// Deletes user firestore collection by id
-export async function deleteUserDocByEmailAndPassword(email, password) {
-  const db = getFirestore();
+//Fetch any field by user id
+export async function getRoleByUserId(userId) {
   try {
-    const userQuerySnapshot = await getDocs(collection(db, "users"));
-    userQuerySnapshot.forEach(async (userDoc) => {
-      const userData = userDoc.data();
-      if (userData.email === email && userData.password === password) {
-        await deleteDoc(doc(db, "users", userDoc.id));
-        console.log("User Deleted:", userDoc.id);
-
-        await deletePersonalInfoSubcollection(db, userDoc.id);
-        console.log("User Personal Info Deleted:", userDoc.id);
+    const querySnapshot = await getDocs(collection(db, "users"));
+    for (const doc of querySnapshot.docs) {
+      const userData = doc.data();
+      if (userData.userId === userId) {
+        return userData.role;
       }
-    });
+    }
+    return null;
   } catch (error) {
-    console.error("ERROR Deleting User Document:", error);
+    console.error(`ERROR Fetching ${fieldName} by Email:`, error);
+    return null;
   }
 }
 
-// Deletes user sub firestore collection by id
-async function deletePersonalInfoSubcollection(db, userId) {
+
+
+
+
+// CREATE OR INSERT FUNCTION
+// Create user with personal info to firebase
+export const createUserWithPersonalInfo = async (userData, personalInfo) => {
   try {
-    const personalInfoCollectionRef = collection(db, "users", userId, "personalInfo");
-    const personalInfoQuerySnapshot = await getDocs(personalInfoCollectionRef);
-    personalInfoQuerySnapshot.forEach(async (doc) => {
-      await deleteDoc(doc.ref);
-      console.log("PersonalInfo Document Deleted:", doc.id);
-    });
+    const userRef = await addDoc(collection(db, "users"), userData);
+    await addDoc(collection(doc(db, "users", userRef.id), "personalInfo"), personalInfo);
+    console.log("Account created successfully");
+    return userRef.id;
   } catch (error) {
-    console.error("ERROR Deleting PersonalInfo Subcollection:", error);
+    console.error("Error creating user with personal info: ", error);
+    throw error;
   }
-}
+};
+// Update any field by username and password
+export const updateUserField = async (email, fieldName, fieldValue) => {
+  try {
+    const userQuerySnapshot = await getDocs(query(collection(db, "users"), where("email", "==", email)));
 
-export default db;
+    if (!userQuerySnapshot.empty) {
+      const userDocRef = userQuerySnapshot.docs[0].ref;
+      await updateDoc(userDocRef, {
+        [fieldName]: fieldValue
+      });
+      console.log(`Field "${fieldName}" updated successfully for user with email: ${email}`);
+    } else {
+      console.log(`No user found with email: ${email}`);
+    }
+  } catch (error) {
+    console.error(`Error updating field "${fieldName}" for user with email: ${email}:`, error);
+    throw error;
+  }
+};

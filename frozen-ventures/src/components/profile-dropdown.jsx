@@ -9,25 +9,19 @@ import {
   SignOut,
 } from "phosphor-react";
 import { motion as m, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { doSignOut } from "../firebase/firebase-auth";
+import { Feedback } from "./feedback";
+import { ReportProblem } from "./report-problem";
+import { ConfirmSignOut } from "./sign-out";
 
 export const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [showReportProblem, setShowReportProblem] = useState(false);
+  const [showSignOut, setShowSignOut] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await doSignOut();
-      navigate("/sign");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
   };
 
   useEffect(() => {
@@ -42,6 +36,34 @@ export const ProfileDropdown = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleFeedbackClick = () => {
+    setShowFeedback(true);
+    setIsOpen(false);
+  };
+
+  const handleCloseFeedback = () => {
+    setShowFeedback(false);
+  };
+
+  const handleReportProblemClick = () => {
+    setShowReportProblem(true);
+    setIsOpen(false);
+  };
+
+  const handleCloseReportProblem = () => {
+    setShowReportProblem(false);
+  };
+
+  const handleSignOutClick = () => {
+    setShowSignOut(true);
+    setIsOpen(false);
+  };
+
+  const handleCloseSignOut = () => {
+    setShowSignOut(false);
+  };
+
 
   return (
     <div className="profile-dropdown" ref={dropdownRef}>
@@ -64,20 +86,32 @@ export const ProfileDropdown = () => {
               <GearSix size={30} />
               <p>Settings</p>
             </li>
-            <li>
+            <li onClick={handleFeedbackClick}>
               <ChatCenteredDots size={30} />
               <p>Feedback</p>
             </li>
-            <li>
+            <li onClick={handleReportProblemClick}>
               <Warning size={30} />
               <p>Report A Problem</p>
             </li>
-            <li onClick={handleSignOut} className="signout">
+            <li onClick={handleSignOutClick} className="signout">
               <SignOut size={30} />
               <p>Sign Out</p>
             </li>
           </m.ul>
         )}
+      </AnimatePresence>
+      
+      <AnimatePresence>
+        {showFeedback && <Feedback onClose={handleCloseFeedback} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showReportProblem && <ReportProblem onClose={handleCloseReportProblem} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showSignOut && <ConfirmSignOut onClose={handleCloseSignOut} />}
       </AnimatePresence>
     </div>
   );

@@ -19,12 +19,14 @@ export const Order = () => {
   let newShippingCost;
   let totalCost;
 
-  if (shippingCost === "0.00") {
+  console.log(shippingCost);
+
+  if (shippingCost.toString() === "0" ) {
     newShippingCost = "Free";
     totalCost = totalAmount;
   } else {
     newShippingCost = parseFloat(shippingCost).toFixed(2);
-    totalCost = totalAmount + parseFloat(shippingCost);
+    totalCost = parseFloat(totalAmount) + parseFloat(shippingCost);
   }
 
   return (

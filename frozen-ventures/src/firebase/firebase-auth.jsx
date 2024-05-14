@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { auth } from "./firebase-config";
 import {
   createUserWithEmailAndPassword,
@@ -7,13 +8,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   updatePassword,
-  deleteUser,
 } from "firebase/auth";
-import { getUserByEmailAndPassword } from "./firebase-operations";
-import {
-  setCurrentUser,
-  clearCurrentUser,
-} from "../pages/auth/utilities/session";
 
 // Create an account to firebase authentication
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
@@ -28,11 +23,6 @@ export const doSignInWithEmailAndPassword = async (email, password) => {
       email,
       password
     );
-    const userId = await getUserByEmailAndPassword(email, password);
-    if (userId) {
-      setCurrentUser(userId);
-      console.log("User Signed In:", userId);
-    }
     return userCredential;
   } catch (error) {
     console.error("ERROR signing in: ", error);
@@ -49,7 +39,6 @@ export const doSignInWithGoogle = async () => {
 
 // Sign out
 export const doSignOut = () => {
-  clearCurrentUser();
   console.log("User has signed out");
   return auth.signOut();
 };
@@ -84,19 +73,40 @@ export const doSendEmailVerification = async () => {
   }
 };
 
-// Deletes the user account by email and password
-export const doDeleteUserWithEmailAndPassword = async (email, password) => {
+
+
+
+// FETCH FUNCTION
+// Fetch user id from authentication
+export const getUserIdFromAuth = () => {
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+
+      } else {
+        setUserId(null);
+      }
+    });
+    return unsubscribe;
+  }, []);
+  return userId;
+};
+
+// Fetch email from auth
+export const getEmailByUid = async (uid) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-    await deleteUser(user);
-    console.log("User account deleted successfully", email);
+    const user = auth.currentUser;
+    if (user) {
+      const email = user.email;
+      return email;
+    } else {
+      throw new Error("No user is currently signed in");
+    }
   } catch (error) {
-    console.error("ERROR deleting user account: ", error);
+    console.error("Error fetching email:", error);
     throw error;
   }
 };

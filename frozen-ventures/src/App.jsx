@@ -15,8 +15,10 @@ import { Sign } from "./pages/auth/sign";
 import { ShopContextProvider } from "./context/shop-context";
 import { AuthProvider } from "./context/auth-context";
 import { Order } from "./pages/order/order";
+import { HomeSeller } from "./pages/seller/home/home";
 
 function App() {
+
   return (
     <div className="App">
       <AuthProvider>
@@ -25,6 +27,7 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/seller" element={<HomeSeller />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/order" element={<Order />} />

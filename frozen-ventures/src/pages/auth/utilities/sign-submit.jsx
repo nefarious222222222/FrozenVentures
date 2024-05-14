@@ -1,27 +1,10 @@
 import { useState } from "react";
-import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
 import {
+  doCreateUserWithEmailAndPassword,
   doSignInWithEmailAndPassword,
   doSendEmailVerification,
-  doDeleteUserWithEmailAndPassword,
 } from "../../../firebase/firebase-auth";
-
-async function getUserByEmailAndPassword(email, password) {
-  const db = getFirestore();
-  try {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    for (const doc of querySnapshot.docs) {
-      const userData = doc.data();
-      if (userData.email === email && userData.password === password) {
-        return doc.id;
-      }
-    }
-    return null;
-  } catch (error) {
-    console.error("ERROR Fetching UserID:", error);
-    return null;
-  }
-}
+import { createUserWithPersonalInfo } from "../../../firebase/firebase-operations";
 
 export function useFormSubmit() {
   const [errors, setErrors] = useState([]);
@@ -39,79 +22,71 @@ export function useFormSubmit() {
       selectedImage,
     } = formData;
 
-    let imageValue;
+    let imageValue = "Not Applicable";
+
     if (selectedImage) {
-      const reader = new FileReader();
-      reader.readAsDataURL(selectedImage);
-      reader.onload = () => {
-        imageValue = reader.result;
-      };
-    } else if (selectedImage === null || selectedImage === "") {
-      imageValue = "Not Applicable";
-    } else {
-      console.log("ERROR on image load");
+      try {
+        imageValue = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(selectedImage);
+        });
+      } catch (error) {
+        console.error("Error reading image:", error);
+        formErrors.push("Error reading image");
+      }
     }
 
     const formErrors = [];
 
-    if (
-      !inputFName ||
-      !inputLName ||
-      !inputPhone ||
-      !inputEmail ||
-      !inputBirthdate ||
-      !inputPass ||
-      !selectedRole ||
-      !selectedGender
-    ) {
-      formErrors.push("All fields are required");
-    }
+    try {
+      await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
 
-    if (formErrors.length === 0) {
-      const db = getFirestore();
       try {
-        const userRef = await addDoc(collection(db, "users"), {
-          email: inputEmail,
-          password: inputPass,
-          role: selectedRole,
-        });
+        await doSignInWithEmailAndPassword(inputEmail, inputPass);
 
-        await addDoc(collection(db, "personalInfo"), {
-          firstName: inputFName,
-          lastName: inputLName,
-          phoneNum: inputPhone,
-          birthdate: inputBirthdate,
-          gender: selectedGender,
-          image: imageValue,
-          user: userRef.id,
-        });
+        try {
+          const userData = {
+            email: inputEmail,
+            password: inputPass,
+            role: selectedRole,
+            userId: "1",
+          };
+          const personalInfo = {
+            firstName: inputFName,
+            lastName: inputLName,
+            birthdate: inputBirthdate,
+            gender: selectedGender,
+            phone: inputPhone,
+            document: imageValue,
+          };
+          try {
+            await createUserWithPersonalInfo(userData, personalInfo);
 
-        setTimeout(async () => {
-          const userId = await getUserByEmailAndPassword(inputEmail, inputPass);
-          if (userId === null) {
-            await doDeleteUserWithEmailAndPassword(inputEmail, inputPass);
-            await userRef.delete();
-          } else {
             try {
-              await doSignInWithEmailAndPassword(inputEmail, inputPass);
-              try {
-                await doSendEmailVerification();
-              } catch (error) {
-                console.error("ERROR sending email verification:", error);
-              }
+              await doSendEmailVerification();
             } catch (error) {
-              console.error("ERROR singing in:", error);
+              formErrors.push("Failed to send email verification");
+              console.error("ERROR:", error);
             }
+          } catch (error) {
+            formErrors.push("Failed to create account");
+            console.log("ERROR:", error);
           }
-        }, 3000);
+        } catch (error) {
+          formErrors.push("Failed to create account");
+          console.log("ERROR:", error);
+        }
       } catch (error) {
-        console.error("ERROR adding document: ", error);
-        formErrors.push("An error occurred. Please try again later");
+        formErrors.push("Failed to sign in new account");
+        console.error("ERROR:", error);
       }
+    } catch (error) {
+      formErrors.push("Failed to create account");
+      console.log("ERROR:", error);
     }
-
     setErrors(formErrors);
   };
-
   return { errors, setErrors, submitForm };
 }

@@ -21,6 +21,10 @@
     width: 15vw;
     padding: 10px;
     border-radius: 5px;
+    border: solid 2px var(--color-violet);
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 
     li {
       cursor: pointer;
