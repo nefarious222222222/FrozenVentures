@@ -1,11 +1,9 @@
 import React from "react";
 import "../assets/styles/navbar.css";
 import logo from "../assets/images/logo.jpg";
-import { Link, useLocation  } from "react-router-dom";
-import { Storefront } from "phosphor-react";
-import { ShoppingCart } from "phosphor-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Storefront, ShoppingCart, UserCircle, User } from "phosphor-react";
 import { useAuth } from "../context/auth-context";
-import { ProfileDropdown } from "./profile-dropdown";
 
 export const Navbar = () => {
   const { userSignedIn } = useAuth();
@@ -44,7 +42,13 @@ export const Navbar = () => {
           />
         </Link>
         {userSignedIn ? (
-          <ProfileDropdown/>
+          <Link to="/user-menu">
+            <UserCircle
+              className="link fake-button"
+              size={40}
+              color={"#533d70"}
+            />
+          </Link>
         ) : (
           <Link to="/sign">
             <button>Sign In</button>

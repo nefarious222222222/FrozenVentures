@@ -16,6 +16,9 @@ import { ShopContextProvider } from "./context/shop-context";
 import { AuthProvider } from "./context/auth-context";
 import { Order } from "./pages/order/order";
 import { HomeSeller } from "./pages/seller/home/home";
+import { Profile } from "./pages/user-menu/profile/profile";
+import { Settings } from "./pages/user-menu/settings/settings";
+import { UserMenu } from "./pages/user-menu/user-menu";
 
 function App() {
 
@@ -32,6 +35,9 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/order" element={<Order />} />
               <Route path="/sign" element={<Sign />} />
+              <Route path="/user-menu" element={<UserMenu />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
             <FooterWithLocation />
           </Router>
