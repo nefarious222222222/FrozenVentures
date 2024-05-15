@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/order.css";
 import { motion as m, AnimatePresence, easeInOut } from "framer-motion";
 import { PRODUCTS } from "../../Products";
@@ -10,23 +10,51 @@ import { Storefront } from "phosphor-react";
 
 export const Order = () => {
   const { cartItems, getTotalCartAmount } = useContext(ShopContext);
-  const totalAmount = getTotalCartAmount().toFixed(2);
+  const [productBuy, setProductBuy] = useState(null);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const shippingCost = searchParams.get("shippingCost");
+  const idBuy = searchParams.get("idBuy");
+  const quantityBuy = searchParams.get("quantityBuy");
 
-  let newShippingCost;
-  let totalCost;
+  let totalAmount, newShippingCost, totalCost;
+  let priceBuy, imageBuy, nameBuy, retailerBuy, totalPrice;
 
-  console.log(shippingCost);
+  if (idBuy == null) {
+    totalAmount = getTotalCartAmount().toFixed(2);
 
-  if (shippingCost.toString() === "0" ) {
-    newShippingCost = "Free";
-    totalCost = totalAmount;
+    if (shippingCost.toString() === "0") {
+      newShippingCost = "Free";
+      totalCost = totalAmount;
+    } else {
+      newShippingCost = parseFloat(shippingCost).toFixed(2);
+      totalCost = parseFloat(totalAmount) + parseFloat(shippingCost);
+    }
   } else {
-    newShippingCost = parseFloat(shippingCost).toFixed(2);
-    totalCost = parseFloat(totalAmount) + parseFloat(shippingCost);
+    useEffect(() => {
+      const selectedProduct = PRODUCTS.find(
+        (item) => item.id === parseInt(idBuy)
+      );
+      setProductBuy(selectedProduct);
+    }, [idBuy]);
+
+    if (productBuy) {
+      priceBuy = productBuy.price;
+      imageBuy = productBuy.productImage;
+      nameBuy = productBuy.productName;
+      retailerBuy = productBuy.retailerName;
+      totalAmount = parseFloat(priceBuy) * parseFloat(quantityBuy);
+      totalPrice = priceBuy * quantityBuy;
+    }
+
+    if (shippingCost.toString() === "0") {
+      newShippingCost = "Free";
+      totalCost = totalAmount;
+    } else {
+      newShippingCost = parseFloat(shippingCost).toFixed(2);
+      totalCost = parseFloat(totalAmount) + parseFloat(shippingCost);
+    }
   }
 
   return (
@@ -40,10 +68,14 @@ export const Order = () => {
         <h2>Order Confirmation</h2>
 
         <div className="tb-container">
-          <p>
-            Order Total: <span>Php {totalAmount}</span>
-          </p>
-          <button>Place Order</button>
+          {totalAmount > 0 ? (
+            <>
+              <p>
+                Order Total: <span>Php {totalCost}</span>
+              </p>
+              <button>Place Order</button>
+            </>
+          ) : null}
         </div>
       </header>
 
@@ -107,12 +139,44 @@ export const Order = () => {
         </div>
 
         <div className="item-checkout">
-          {PRODUCTS.map((product) => {
-            if (cartItems[product.id] !== 0) {
-              return <OrderItem data={product} key={product.id} />;
-            }
-            return null;
-          })}
+          {idBuy ? (
+            <div className="order-item">
+              <table>
+                <tbody>
+                  <tr>
+                    <td className="information">
+                      <img src={imageBuy} alt={nameBuy} />
+                      <div className="description">
+                        <p>
+                          <b>{nameBuy}</b>
+                        </p>
+                        <p>Php {priceBuy}</p>
+                        <button>Remove</button>
+                      </div>
+                    </td>
+                    <td>
+                      <p>{retailerBuy}</p>
+                    </td>
+                    <td>
+                      <p>{quantityBuy}</p>
+                    </td>
+                    <td>
+                      <p>Php {totalPrice}</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="item-checkout">
+              {PRODUCTS.map((product) => {
+                if (cartItems[product.id] !== 0) {
+                  return <OrderItem data={product} key={product.id} />;
+                }
+                return null;
+              })}
+            </div>
+          )}
         </div>
       </div>
 

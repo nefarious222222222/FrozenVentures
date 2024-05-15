@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import "../../assets/styles/product.css";
 import { ShopContext } from "../../context/shop-context";
 import { WarningCircle } from "phosphor-react";

@@ -186,4 +186,31 @@
       }
     }
   }
+
+  .notify {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    gap: 10px;
+    padding: 20px;
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+
+    span,
+    p {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    span {
+      font-weight: 700;
+      color: var(--color-violet);
+    }
+  }
 }
