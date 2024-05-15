@@ -3,7 +3,7 @@
 
 :root {
   --color-violet: #533d70;
-  --color-stone:#7ea6bd;
+  --color-stone: #7ea6bd;
   --color-pale-stone: #becdd6;
   --color-pale-violet: #bfb6d3;
   --color-light-gray: #e7e7e7;
@@ -30,7 +30,12 @@
 
 body {
   padding-top: 6vh;
-  min-height: 100vh;
+  min-height: 90vh;
   display: grid;
   grid-template-rows: 1fr auto;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
 }

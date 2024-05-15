@@ -34,10 +34,8 @@ export const Product = (props) => {
         <button className="addToCartBtn" onClick={handleAddToCart}>
           Add to cart
         </button>
-        <Link to="/cart">
-          <button className="buyNowBtn" onClick={() => addToCart(id)}>
-            Buy Now
-          </button>
+        <Link to={`/buy-item/${id}`}>
+          <button className="buyNowBtn">Buy Now</button>
         </Link>
       </div>
 

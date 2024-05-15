@@ -1,8 +1,8 @@
 import React from "react";
 import "../assets/styles/navbar.css";
 import logo from "../assets/images/logo.jpg";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Storefront, ShoppingCart, UserCircle, User } from "phosphor-react";
+import { Link, useLocation } from "react-router-dom";
+import { Storefront, ShoppingCart, UserCircle, Cube } from "phosphor-react";
 import { useAuth } from "../context/auth-context";
 
 export const Navbar = () => {
@@ -41,11 +41,18 @@ export const Navbar = () => {
             color={"#533d70"}
           />
         </Link>
+        <Link to="/items">
+          <Cube
+            className="link fake-button"
+            size={30}
+            color={"#533d70"}
+          />
+        </Link>
         {userSignedIn ? (
           <Link to="/user-menu">
             <UserCircle
               className="link fake-button"
-              size={40}
+              size={35}
               color={"#533d70"}
             />
           </Link>

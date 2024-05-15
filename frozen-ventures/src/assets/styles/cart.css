@@ -147,7 +147,7 @@
     gap: 20px;
     padding: 30px;
     border-radius: 10px;
-    background-color: var(--color-pale-violet);
+    background-color: white;
     box-shadow: 0 7px 30px rgba(0, 0, 0, 0.2);
 
     .text {
@@ -155,13 +155,8 @@
       flex-direction: column;
       gap: 10px;
 
-      h2,
-      span {
+      h2 {
         font-size: 2rem;
-      }
-
-      h2 span {
-        color: rgb(172, 1, 1);
       }
 
       p {
@@ -335,7 +330,6 @@
     }
 
     input[type="radio"]:checked + label {
-      padding-left: 10px;
       background-color: var(--color-violet);
       color: white;
     }

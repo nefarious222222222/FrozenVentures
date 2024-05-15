@@ -101,9 +101,7 @@ export const CartItem = (props) => {
             ref={confirmDeleteRef}
           >
             <div className="text">
-              <h2>
-                <span>Remove {productName}</span> from cart
-              </h2>
+              <h2>Remove {productName} from cart</h2>
               <p>
                 Are you sure you want to remove <span>{productName}</span> from
                 your cart?
