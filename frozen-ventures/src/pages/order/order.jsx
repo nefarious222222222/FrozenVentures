@@ -3,6 +3,7 @@ import "../../assets/styles/order.css";
 import { motion as m, AnimatePresence, easeInOut } from "framer-motion";
 import { PRODUCTS } from "../../Products";
 import { ShopContext } from "../../context/shop-context";
+import { OrderContext } from "../../context/order-context";
 import { OrderItem } from "./order-item";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart } from "phosphor-react";
@@ -10,6 +11,7 @@ import { Storefront } from "phosphor-react";
 
 export const Order = () => {
   const { cartItems, getTotalCartAmount } = useContext(ShopContext);
+  const { addOrder } = useContext(OrderContext);
   const [productBuy, setProductBuy] = useState(null);
 
   const location = useLocation();
@@ -57,6 +59,46 @@ export const Order = () => {
     }
   }
 
+  const handlePlaceOrder = () => {
+    if (idBuy) {
+      const order = {
+        id: idBuy,
+        quantity: quantityBuy,
+        price: priceBuy,
+        totalPrice: totalPrice,
+        shippingCost: shippingCost,
+        totalCost: totalCost,
+        image: imageBuy,
+        name: nameBuy,
+        retailer: retailerBuy,
+      };
+      addOrder(order);
+    } else {
+      const orders = Object.keys(cartItems)
+        .filter((itemId) => cartItems[itemId] > 0)
+        .map((itemId) => {
+          const product = PRODUCTS.find(
+            (product) => product.id === Number(itemId)
+          );
+          return {
+            id: itemId,
+            quantity: cartItems[itemId],
+            price: product.price,
+            totalPrice: product.price * cartItems[itemId],
+            name: product.productName,
+            image: product.productImage,
+            retailer: product.retailerName,
+          };
+        });
+
+      addOrder({
+        orders,
+        shippingCost: shippingCost,
+        totalCost: totalCost,
+      });
+    }
+  };
+
   return (
     <m.div
       initial={{ opacity: 0 }}
@@ -73,7 +115,7 @@ export const Order = () => {
               <p>
                 Order Total: <span>Php {totalCost}</span>
               </p>
-              <button>Place Order</button>
+              <button onClick={handlePlaceOrder}>Place Order</button>
             </>
           ) : null}
         </div>
@@ -188,7 +230,6 @@ export const Order = () => {
               <p className="label">Sub Total</p>
               <p className="price">Php {totalAmount}</p>
             </div>
-
             <div className="shipping">
               <p className="label">Shipping</p>
               <p className="price">
@@ -197,15 +238,12 @@ export const Order = () => {
                   : `Php ${newShippingCost}`}
               </p>
             </div>
-
             <div className="line"></div>
-
             <div className="total">
               <p className="label">Total</p>
               <p className="price">Php {totalCost}</p>
             </div>
-
-            <button>Place Order</button>
+            <button onClick={handlePlaceOrder}>Place Order</button>{" "}
           </div>
         </div>
       ) : (
