@@ -9,32 +9,9 @@ import three from "../../assets/images/3.jpg";
 import four from "../../assets/images/4.jpg";
 import five from "../../assets/images/5.png";
 import { easeInOut, motion as m } from "framer-motion";
-import { useAuth } from "../../context/auth-context";
-import { getUserIdFromAuth } from "../../firebase/firebase-auth";
-import { InsertUserId, CheckRoleById } from "../auth/utilities/account-verify";
-import { useNavigation } from "react-router-dom";
-
-async function RoleCheck(userId) {
-  const roleCheck = await CheckRoleById(userId);
-
-  if (roleCheck) {
-    console.log("Is not a customer");
-  } else {
-    console.log("Is a customer");
-  }
-}
 
 export const Home = () => {
-  const { userSignedIn } = useAuth();
 
-  if (userSignedIn) {
-    const userId = getUserIdFromAuth();
-    InsertUserId(userId);
-
-    (RoleCheck(userId));
-  } else {
-    console.log("User is not signed in.");
-  }
   return (
     <m.div
       initial={{ opacity: 0 }}

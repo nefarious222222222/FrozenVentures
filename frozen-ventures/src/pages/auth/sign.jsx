@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../assets/styles/sign.css";
 import "../../firebase/firebase-config";
 import Logo from "../../assets/images/logo.jpg";
@@ -29,7 +29,7 @@ export const Sign = () => {
     <m.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, ease:easeInOut }}
+      transition={{ duration: 0.5, ease: easeInOut }}
       className="container sign"
     >
       {userSignedIn ? <Navigate to={"/"} replace={true} /> : null}

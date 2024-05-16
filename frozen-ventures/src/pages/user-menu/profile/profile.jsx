@@ -1,24 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../../../assets/styles/profile.css";
+import { UserContext } from "../../../context/user-context";
 import UserImg from "../../../assets/images/1.jpg";
 import { NotePencil } from "phosphor-react";
 import { easeInOut, motion as m } from "framer-motion";
+import { getUserDataById } from "../../../firebase/firebase-operations";
 
 export const Profile = () => {
+  const { userId } = useContext(UserContext);
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState({
-    fname: "Vince Jeremy",
-    lName: "Canaria",
-    birthdate: "1973-04-04",
-    gender: "Male",
-    email: "asdfnkl@gmail.com",
-    phoneNum: "09123123123",
-    street: "#420 Radiant Street",
-    barangay: "Dota",
-    municipality: "Valve City",
-    province: "Steam",
-    zip: "9110",
+    email: "",
+    phoneNum: "",
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userId) {
+        const userData = await getUserDataById(userId);
+        if (userData) {
+          setFormData({
+            email: userData.email,
+            phoneNum: userData.phone,
+          })
+        }
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
   const handleEditClick = () => {
     setEditable(!editable);
@@ -27,7 +37,7 @@ export const Profile = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Form data saved:", formData);
-    setEditable(false); // After saving, switch back to non-editable mode
+    setEditable(false);
   };
 
   const handleChange = (event) => {
@@ -49,7 +59,11 @@ export const Profile = () => {
       <form className="user">
         <div className="user-profile">
           <img src={UserImg} alt="User" />
-          <button type="button" onClick={editable ? handleSubmit : handleEditClick}>
+          <p>Role: </p>
+          <button
+            type="button"
+            onClick={editable ? handleSubmit : handleEditClick}
+          >
             <NotePencil size={30} /> <p>{editable ? "Save" : "Edit"}</p>
           </button>
         </div>
@@ -65,7 +79,6 @@ export const Profile = () => {
                   name="fname"
                   id="fName"
                   type="text"
-                  placeholder="Vince Jeremy"
                   readOnly={!editable}
                   value={formData.fname}
                   onChange={handleChange}
@@ -78,7 +91,6 @@ export const Profile = () => {
                   name="lName"
                   id="lName"
                   type="text"
-                  placeholder="Canaria"
                   readOnly={!editable}
                   value={formData.lName}
                   onChange={handleChange}
@@ -88,9 +100,7 @@ export const Profile = () => {
 
             <div className="field-container">
               <div className="field">
-                <label htmlFor="birthdate">
-                  Birthdate:
-                </label>
+                <label htmlFor="birthdate">Birthdate:</label>
                 <input
                   name="birthdate"
                   id="birthdate"
@@ -107,7 +117,6 @@ export const Profile = () => {
                   name="gender"
                   id="gender"
                   type="text"
-                  placeholder="Male"
                   readOnly={!editable}
                   value={formData.gender}
                   onChange={handleChange}
@@ -122,7 +131,6 @@ export const Profile = () => {
                   name="email"
                   id="email"
                   type="text"
-                  placeholder="asdfnkl@gmail.com"
                   readOnly={!editable}
                   value={formData.email}
                   onChange={handleChange}
@@ -135,7 +143,6 @@ export const Profile = () => {
                   name="phoneNum"
                   id="phoneNum"
                   type="number"
-                  placeholder="09123123123"
                   readOnly={!editable}
                   value={formData.phoneNum}
                   onChange={handleChange}
@@ -154,7 +161,6 @@ export const Profile = () => {
                   name="street"
                   id="street"
                   type="text"
-                  placeholder="#420 Radiant Street"
                   readOnly={!editable}
                   value={formData.street}
                   onChange={handleChange}
@@ -167,7 +173,6 @@ export const Profile = () => {
                   name="barangay"
                   id="barangay"
                   type="text"
-                  placeholder="Dota"
                   readOnly={!editable}
                   value={formData.barangay}
                   onChange={handleChange}
@@ -182,7 +187,6 @@ export const Profile = () => {
                   name="municipality"
                   id="municipality"
                   type="text"
-                  placeholder="Valve City"
                   readOnly={!editable}
                   value={formData.municipality}
                   onChange={handleChange}
@@ -195,7 +199,6 @@ export const Profile = () => {
                   name="province"
                   id="province"
                   type="text"
-                  placeholder="Steam"
                   readOnly={!editable}
                   value={formData.province}
                   onChange={handleChange}
@@ -210,7 +213,6 @@ export const Profile = () => {
                   name="zip"
                   id="zip"
                   type="text"
-                  placeholder="9110"
                   readOnly={!editable}
                   value={formData.zip}
                   onChange={handleChange}

@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../assets/styles/sign-out.css"
+import { UserContext } from "../context/user-context";
 import { X } from "phosphor-react";
 import { doSignOut } from "../firebase/firebase-auth";
 import { motion as m } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 export const ConfirmSignOut = ({ onClose }) => {
+  const { clearUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
       await doSignOut();
+      clearUser();
       navigate("/sign");
+      window.location.reload();
     } catch (error) {
       console.error("Error signing out:", error);
     }

@@ -4,7 +4,23 @@ import {
   doSignInWithEmailAndPassword,
   doSendEmailVerification,
 } from "../../../firebase/firebase-auth";
-import { createUserWithPersonalInfo } from "../../../firebase/firebase-operations";
+import {
+  createUserWithPersonalInfo,
+  fetchLatestUserId,
+} from "../../../firebase/firebase-operations";
+import { IdGenerator } from "./id-generator";
+
+async function userID(newUserID) {
+  try {
+    const latestUserId = await fetchLatestUserId();
+    newUserID = IdGenerator(latestUserId);
+  } catch (error) {
+    console.log(error);
+  }
+  return newUserID;
+}
+
+const newUserId = await userID();
 
 export function useFormSubmit() {
   const [errors, setErrors] = useState([]);
@@ -50,15 +66,15 @@ export function useFormSubmit() {
           const userData = {
             email: inputEmail,
             password: inputPass,
+            phone: inputPhone,
             role: selectedRole,
-            userId: "1",
+            userId: newUserId,
           };
           const personalInfo = {
             firstName: inputFName,
             lastName: inputLName,
             birthdate: inputBirthdate,
             gender: selectedGender,
-            phone: inputPhone,
             document: imageValue,
           };
           try {

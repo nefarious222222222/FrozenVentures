@@ -25,11 +25,10 @@
 .container {
   margin-right: auto;
   margin-left: auto;
-  padding: 1.5rem;
+  padding: 8vh 2vw 3vh 2vw;
 }
 
 body {
-  padding-top: 6vh;
   min-height: 90vh;
   display: grid;
   grid-template-rows: 1fr auto;

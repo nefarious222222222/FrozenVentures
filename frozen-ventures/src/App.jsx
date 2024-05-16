@@ -15,6 +15,7 @@ import { OrderedItems } from "./pages/items/ordered-items";
 import { Sign } from "./pages/auth/sign";
 import { ShopContextProvider } from "./context/shop-context";
 import { OrderContextProvider } from "./context/order-context";
+import { UserContextProvider } from "./context/user-context";
 import { AuthProvider } from "./context/auth-context";
 import { Order } from "./pages/order/order";
 import { HomeSeller } from "./pages/seller/home/home";
@@ -27,27 +28,29 @@ function App() {
   return (
     <div className="App">
       <AuthProvider>
-        <ShopContextProvider>
-          <OrderContextProvider>
-            <Router>
-              <Navbar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/seller" element={<HomeSeller />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/buy-item/:id" element={<BuyProduct />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/order" element={<Order />} />
-                <Route path="/ordered-items" element={<OrderedItems />} />
-                <Route path="/sign" element={<Sign />} />
-                <Route path="/user-menu" element={<UserMenu />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/settings" element={<Settings />} />
-              </Routes>
-              <FooterWithLocation />
-            </Router>
-          </OrderContextProvider>
-        </ShopContextProvider>
+        <UserContextProvider>
+          <ShopContextProvider>
+            <OrderContextProvider>
+              <Router>
+                <Navbar />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/seller" element={<HomeSeller />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/buy-item/:id" element={<BuyProduct />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/order" element={<Order />} />
+                  <Route path="/ordered-items" element={<OrderedItems />} />
+                  <Route path="/sign" element={<Sign />} />
+                  <Route path="/user-menu" element={<UserMenu />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+                <FooterWithLocation />
+              </Router>
+            </OrderContextProvider>
+          </ShopContextProvider>
+        </UserContextProvider>
       </AuthProvider>
     </div>
   );

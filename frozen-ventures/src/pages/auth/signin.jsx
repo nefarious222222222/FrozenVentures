@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../../context/user-context";
 import { easeInOut, motion as m, AnimatePresence } from "framer-motion";
 import { GoogleLogo } from "phosphor-react";
 import {
   doSignInWithEmailAndPassword,
   doSignInWithGoogle,
 } from "../../firebase/firebase-auth";
+import { getUserIdByEmailAndPassword } from "../../firebase/firebase-operations";
 
 export const SignIn = () => {
+  const { addUserId } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,7 +29,13 @@ export const SignIn = () => {
     if (!isSigningIn) {
       setIsSigningIn(true);
       try {
-        await doSignInWithEmailAndPassword(email, password);
+        const userId = await getUserIdByEmailAndPassword(email, password);
+        addUserId(userId);
+        try {
+          await doSignInWithEmailAndPassword(email, password);
+        } catch (error) {
+          console.log(error);
+        }
       } catch (error) {
         console.log(error.message);
         setIsSigningIn(false);
