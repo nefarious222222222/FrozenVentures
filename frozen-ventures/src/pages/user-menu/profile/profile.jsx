@@ -89,7 +89,7 @@ export const Profile = () => {
             <div className="field-container">
               <div className="field">
                 <label htmlFor="birthdate">
-                  Birthdate: <span className="birthdate-text">04/04/1973</span>
+                  Birthdate:
                 </label>
                 <input
                   name="birthdate"

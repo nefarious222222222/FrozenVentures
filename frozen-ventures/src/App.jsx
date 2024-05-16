@@ -11,7 +11,7 @@ import { Footer } from "./components/footer";
 import { Home } from "./pages/home/home";
 import { Cart } from "./pages/cart/cart";
 import { Shop } from "./pages/shop/shop";
-import { Items } from "./pages/items/items";
+import { OrderedItems } from "./pages/items/ordered-items";
 import { Sign } from "./pages/auth/sign";
 import { ShopContextProvider } from "./context/shop-context";
 import { OrderContextProvider } from "./context/order-context";
@@ -38,7 +38,7 @@ function App() {
                 <Route path="/buy-item/:id" element={<BuyProduct />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/order" element={<Order />} />
-                <Route path="/items" element={<Items />} />
+                <Route path="/ordered-items" element={<OrderedItems />} />
                 <Route path="/sign" element={<Sign />} />
                 <Route path="/user-menu" element={<UserMenu />} />
                 <Route path="/profile" element={<Profile />} />
