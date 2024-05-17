@@ -124,7 +124,7 @@ export async function getUserIdByEmailAndPassword(email, password) {
     return null;
   }
 }
-//Fetch user info via userId
+// Fetch user account by userId
 export async function getUserDataById(userId) {
   try {
     const querySnapshot = await getDocs(collection(db, "users"));
@@ -135,6 +135,30 @@ export async function getUserDataById(userId) {
       }
     }
     console.log("wew");
+    return null;
+  } catch (error) {
+    console.error("Error fetching user data by ID:", error);
+    return null;
+  }
+}
+// Fetch user personal info by userId
+export async function getUserPersonalInfoById(userId) {
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    for (const doc of querySnapshot.docs) {
+      const userData = doc.data();
+      if (userData.userId === userId) {
+        const personalInfoSnapshot = await getDocs(
+          collection(doc.ref, "personalInfo")
+        );
+        const personalInfoData = personalInfoSnapshot.docs.map((doc) => {
+          const { firstName, lastName, gender, birthdate } = doc.data();
+          return { firstName, lastName, gender, birthdate };
+        });
+        return personalInfoData[0]; // Assuming there's only one personal info document per user
+      }
+    }
+    console.log("User not found");
     return null;
   } catch (error) {
     console.error("Error fetching user data by ID:", error);

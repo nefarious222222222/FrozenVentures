@@ -2,27 +2,67 @@ import React, { useState, useEffect, useContext } from "react";
 import "../../../assets/styles/profile.css";
 import { UserContext } from "../../../context/user-context";
 import UserImg from "../../../assets/images/1.jpg";
-import { NotePencil } from "phosphor-react";
-import { easeInOut, motion as m } from "framer-motion";
-import { getUserDataById } from "../../../firebase/firebase-operations";
+import { NotePencil, X } from "phosphor-react";
+import { easeInOut, motion as m, AnimatePresence } from "framer-motion";
+import {
+  getUserDataById,
+  getUserPersonalInfoById,
+} from "../../../firebase/firebase-operations";
 
 export const Profile = () => {
   const { userId } = useContext(UserContext);
+  const [userEmail, setUserEmail] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [showConfirmEdit, setShowConfirmEdit] = useState(false);
   const [editable, setEditable] = useState(false);
-  const [formData, setFormData] = useState({
+
+  const [formUserData, setFormUserData] = useState({
     email: "",
     phoneNum: "",
   });
+
+  const [formUserPersonal, setFormUserPersonal] = useState({
+    email: "",
+    phoneNum: "",
+    fName: "",
+    lName: "",
+    birthdate: "",
+    gender: "",
+    street: "",
+    barangay: "",
+    municipality: "",
+    province: "",
+    zip: "",
+  });
+
+  const handleConfirmEditShow = () => {
+    setShowConfirmEdit(true);
+  };
+
+  const handleConfirmEditClose = () => {
+    setShowConfirmEdit(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
         const userData = await getUserDataById(userId);
-        if (userData) {
-          setFormData({
+        const userPersonal = await getUserPersonalInfoById(userId);
+        if (userData && userPersonal) {
+          const userEmail = userData.email;
+          const userRole = userData.role;
+          setFormUserData({
             email: userData.email,
             phoneNum: userData.phone,
-          })
+          });
+          setFormUserPersonal({
+            fName: userPersonal.firstName,
+            lName: userPersonal.lastName,
+            birthdate: userPersonal.birthdate,
+            gender: userPersonal.gender,
+          });
+          setUserEmail(userEmail);
+          setUserRole(userRole);
         }
       }
     };
@@ -38,6 +78,7 @@ export const Profile = () => {
     event.preventDefault();
     console.log("Form data saved:", formData);
     setEditable(false);
+    setShowConfirmEdit(false);
   };
 
   const handleChange = (event) => {
@@ -59,10 +100,11 @@ export const Profile = () => {
       <form className="user">
         <div className="user-profile">
           <img src={UserImg} alt="User" />
-          <p>Role: </p>
+          <p>{userEmail}</p>
+          <p>{userRole}</p>
           <button
             type="button"
-            onClick={editable ? handleSubmit : handleEditClick}
+            onClick={editable ? handleConfirmEditShow : handleEditClick}
           >
             <NotePencil size={30} /> <p>{editable ? "Save" : "Edit"}</p>
           </button>
@@ -76,11 +118,11 @@ export const Profile = () => {
               <div className="field">
                 <label htmlFor="fName">First Name:</label>
                 <input
-                  name="fname"
+                  name="fName"
                   id="fName"
                   type="text"
                   readOnly={!editable}
-                  value={formData.fname}
+                  value={formUserPersonal.fName}
                   onChange={handleChange}
                 />
               </div>
@@ -92,7 +134,7 @@ export const Profile = () => {
                   id="lName"
                   type="text"
                   readOnly={!editable}
-                  value={formData.lName}
+                  value={formUserPersonal.lName}
                   onChange={handleChange}
                 />
               </div>
@@ -106,7 +148,7 @@ export const Profile = () => {
                   id="birthdate"
                   type="date"
                   readOnly={!editable}
-                  value={formData.birthdate}
+                  value={formUserPersonal.birthdate}
                   onChange={handleChange}
                 />
               </div>
@@ -118,7 +160,7 @@ export const Profile = () => {
                   id="gender"
                   type="text"
                   readOnly={!editable}
-                  value={formData.gender}
+                  value={formUserPersonal.gender}
                   onChange={handleChange}
                 />
               </div>
@@ -126,25 +168,13 @@ export const Profile = () => {
 
             <div className="field-container">
               <div className="field">
-                <label htmlFor="email">Email:</label>
-                <input
-                  name="email"
-                  id="email"
-                  type="text"
-                  readOnly={!editable}
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="field">
                 <label htmlFor="phoneNum">Phone Number:</label>
                 <input
                   name="phoneNum"
                   id="phoneNum"
                   type="number"
                   readOnly={!editable}
-                  value={formData.phoneNum}
+                  value={formUserData.phoneNum}
                   onChange={handleChange}
                 />
               </div>
@@ -162,7 +192,7 @@ export const Profile = () => {
                   id="street"
                   type="text"
                   readOnly={!editable}
-                  value={formData.street}
+                  value={formUserPersonal.street}
                   onChange={handleChange}
                 />
               </div>
@@ -174,7 +204,7 @@ export const Profile = () => {
                   id="barangay"
                   type="text"
                   readOnly={!editable}
-                  value={formData.barangay}
+                  value={formUserPersonal.barangay}
                   onChange={handleChange}
                 />
               </div>
@@ -188,7 +218,7 @@ export const Profile = () => {
                   id="municipality"
                   type="text"
                   readOnly={!editable}
-                  value={formData.municipality}
+                  value={formUserPersonal.municipality}
                   onChange={handleChange}
                 />
               </div>
@@ -200,7 +230,7 @@ export const Profile = () => {
                   id="province"
                   type="text"
                   readOnly={!editable}
-                  value={formData.province}
+                  value={formUserPersonal.province}
                   onChange={handleChange}
                 />
               </div>
@@ -214,7 +244,7 @@ export const Profile = () => {
                   id="zip"
                   type="text"
                   readOnly={!editable}
-                  value={formData.zip}
+                  value={formUserPersonal.zip}
                   onChange={handleChange}
                 />
               </div>
@@ -222,6 +252,33 @@ export const Profile = () => {
           </div>
         </div>
       </form>
+
+      <AnimatePresence>
+        {showConfirmEdit && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="confirm-edit"
+          >
+            <X
+              className="x-button"
+              size={32}
+              onClick={handleConfirmEditClose}
+            />
+            <div className="header">
+              <h2>Save Edit</h2>
+              <p>Are you certain you wish to save your changes?</p>
+            </div>
+
+            <div className="buttons">
+              <button onClick={handleSubmit}>Yes</button>
+              <button onClick={handleConfirmEditClose}>Cancel</button>
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </m.div>
   );
 };

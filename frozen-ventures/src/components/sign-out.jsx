@@ -13,6 +13,8 @@ export const ConfirmSignOut = ({ onClose }) => {
   const handleSignOut = async () => {
     try {
       await doSignOut();
+      localStorage.removeItem('orderedItems');
+      localStorage.removeItem('cartItems');
       clearUser();
       navigate("/sign");
       window.location.reload();

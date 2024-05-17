@@ -1,10 +1,22 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const UserContext = createContext(null);
 
 export const UserContextProvider = (props) => {
-  const [userId, setUserId] = useState(null);
-  const [isUserIdSet, setIsUserIdSet] = useState(false);
+  const [userId, setUserId] = useState(() => {
+    return localStorage.getItem('userId');
+  });
+  const [isUserIdSet, setIsUserIdSet] = useState(() => {
+    return !!localStorage.getItem('userId');
+  });
+
+  useEffect(() => {
+    if (userId) {
+      localStorage.setItem('userId', userId);
+    } else {
+      localStorage.removeItem('userId');
+    }
+  }, [userId]);
 
   const addUserId = (newUserId) => {
     if (!isUserIdSet) {

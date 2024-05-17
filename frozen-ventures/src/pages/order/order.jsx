@@ -6,13 +6,13 @@ import { ShopContext } from "../../context/shop-context";
 import { OrderContext } from "../../context/order-context";
 import { OrderItem } from "./order-item";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart } from "phosphor-react";
-import { Storefront } from "phosphor-react";
+import { ShoppingCart, Storefront, X } from "phosphor-react";
 
 export const Order = () => {
   const { cartItems, getTotalCartAmount } = useContext(ShopContext);
   const { addOrder } = useContext(OrderContext);
   const [productBuy, setProductBuy] = useState(null);
+  const [showConfirmOrder, setShowConfirmOrder] = useState(false);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -58,6 +58,14 @@ export const Order = () => {
       totalCost = parseFloat(totalAmount) + parseFloat(shippingCost);
     }
   }
+
+  const handleConfirmOrderShow = () => {
+    setShowConfirmOrder(true);
+  }
+
+  const handleConfirmOrderClose = () => {
+    setShowConfirmOrder(false);
+  };
 
   const handlePlaceOrder = () => {
     if (idBuy) {
@@ -115,7 +123,7 @@ export const Order = () => {
               <p>
                 Order Total: <span>Php {totalCost}</span>
               </p>
-              <button onClick={handlePlaceOrder}>Place Order</button>
+              <button onClick={handleConfirmOrderShow}>Place Order</button>
             </>
           ) : null}
         </div>
@@ -243,7 +251,7 @@ export const Order = () => {
               <p className="label">Total</p>
               <p className="price">Php {totalCost}</p>
             </div>
-            <button onClick={handlePlaceOrder}>Place Order</button>{" "}
+            <button onClick={handleConfirmOrderShow}>Place Order</button>{" "}
           </div>
         </div>
       ) : (
@@ -282,6 +290,33 @@ export const Order = () => {
           )}
         </AnimatePresence>
       )}
+
+      <AnimatePresence>
+        {showConfirmOrder && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="confirm-order"
+          >
+            <X
+              className="x-button"
+              size={32}
+              onClick={handleConfirmOrderClose}
+            />
+            <div className="header">
+              <h2>Confirm Order</h2>
+              <p>Are you certain you wish to place order?</p>
+            </div>
+
+            <div className="buttons">
+              <button onClick={handlePlaceOrder}>Yes</button>
+              <button onClick={handleConfirmOrderClose}>Cancel</button>
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </m.div>
   );
 };
