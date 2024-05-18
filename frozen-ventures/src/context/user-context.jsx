@@ -3,38 +3,33 @@ import React, { createContext, useState, useEffect } from "react";
 export const UserContext = createContext(null);
 
 export const UserContextProvider = (props) => {
-  const [userId, setUserId] = useState(() => {
-    return localStorage.getItem('userId');
-  });
-  const [isUserIdSet, setIsUserIdSet] = useState(() => {
-    return !!localStorage.getItem('userId');
+  const [user, setUser] = useState(() => {
+    const userId = localStorage.getItem('userId');
+    const userRole = localStorage.getItem('userRole');
+    return userId ? { userId, userRole } : null;
   });
 
   useEffect(() => {
-    if (userId) {
-      localStorage.setItem('userId', userId);
+    if (user) {
+      localStorage.setItem('userId', user.userId);
+      localStorage.setItem('userRole', user.userRole);
     } else {
       localStorage.removeItem('userId');
+      localStorage.removeItem('userRole');
     }
-  }, [userId]);
+  }, [user]);
 
-  const addUserId = (newUserId) => {
-    if (!isUserIdSet) {
-      setUserId(newUserId);
-      setIsUserIdSet(true);
-    } else {
-      console.warn("User ID has already been set and cannot be changed.");
-    }
+  const addUser = (newUserId, newUserRole) => {
+    setUser({ userId: newUserId, userRole: newUserRole });
   };
 
   const clearUser = () => {
-    setUserId(null);
-    setIsUserIdSet(false);
+    setUser(null);
   };
 
   const contextValue = {
-    userId,
-    addUserId,
+    user,
+    addUser,
     clearUser,
   };
 

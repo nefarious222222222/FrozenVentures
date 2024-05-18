@@ -11,7 +11,6 @@ import five from "../../assets/images/5.png";
 import { easeInOut, motion as m } from "framer-motion";
 
 export const Home = () => {
-
   return (
     <m.div
       initial={{ opacity: 0 }}

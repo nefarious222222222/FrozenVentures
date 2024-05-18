@@ -1,24 +1,16 @@
-import { useState, useEffect } from "react";
 import { auth } from "./firebase-config";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   sendEmailVerification,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
-  updatePassword,
 } from "firebase/auth";
 
 // Create an account to firebase authentication
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    await sendEmailVerification(auth.currentUser);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await auth.signOut();
     return userCredential;
   } catch (error) {
@@ -54,14 +46,6 @@ export const doSignOut = () => {
   console.log("User has signed out");
   return auth.signOut();
 };
-
-// export const doPasswordReset = (email) => {
-//   return sendPasswordResetEmail(auth, email);
-// };
-
-// export const doPasswordChange = (password) => {
-//   return updatePassword(auth.currentUser, password);
-// };
 
 // Send an email verification to user's email
 export const doSendEmailVerification = async () => {

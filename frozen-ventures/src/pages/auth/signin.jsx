@@ -6,10 +6,10 @@ import {
   doSignInWithEmailAndPassword,
   doSignInWithGoogle,
 } from "../../firebase/firebase-auth";
-import { getUserIdByEmailAndPassword } from "../../firebase/firebase-users";
+import { getUserIdByEmailAndPassword, getUserRoleByEmailAndPassword  } from "../../firebase/firebase-users";
 
 export const SignIn = () => {
-  const { addUserId } = useContext(UserContext);
+  const { addUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -38,7 +38,9 @@ export const SignIn = () => {
       setIsSigningIn(true);
       try {
         const userId = await getUserIdByEmailAndPassword(email, password);
-        addUserId(userId);
+        const userRole = await getUserRoleByEmailAndPassword(email, password);
+        console.log(userRole);
+        addUser(userId, userRole);
         try {
           await doSignInWithEmailAndPassword(email, password);
         } catch (error) {

@@ -1,22 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { fetchAllUsers } from "../../firebase/firebase-operations";
-import { Link } from "react-router-dom";
+import { getAllUsers, getCustomers, getRetailers, getDistributors, getManufacturers } from "../../firebase/firebase-admin"; // Ensure this path is correct
 
 export const Admin = () => {
   const [userList, setUserList] = useState([]);
+  const [selectedRole , setSelectedRole] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
+   useEffect(() => {
+    const fetchUsers = async () => {
       try {
-        const users = await fetchAllUsers();
+        let users;
+        switch (selectedRole) {
+          case "Customer":
+            users = await getCustomers();
+            break;
+          case "Retailer":
+            users = await getRetailers();
+            break;
+          case "Distributor":
+            users = await getDistributors();
+            break;
+          case "Manufacturer":
+            users = await getManufacturers();
+            break;
+          default:
+            users = await getAllUsers();
+        }
         setUserList(users);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-    fetchData();
-    return () => {};
-  }, []);
+
+    fetchUsers();
+  }, [selectedRole]);
+
 
   return (
     <div className="container admin">
@@ -36,8 +53,8 @@ export const Admin = () => {
         </thead>
         <tbody>
           {userList.map((user) => (
-            <tr key={user.userId}>
-              <td>{user.userId}</td>
+            <tr key={user.id}>
+              <td>{user.id}</td>
               <td>{user.firstName}</td>
               <td>{user.lastName}</td>
               <td>{user.gender}</td>
@@ -49,6 +66,13 @@ export const Admin = () => {
           ))}
         </tbody>
       </table>
+      <div>
+        <button onClick={() => setSelectedRole("All")}>All</button>
+        <button onClick={() => setSelectedRole("Customer")}>Customers</button>
+        <button onClick={() => setSelectedRole("Retailer")}>Retailers</button>
+        <button onClick={() => setSelectedRole("Distributor")}>Distributors</button>
+        <button onClick={() => setSelectedRole("Manufacturer")}>Manufacturers</button>
+      </div>
     </div>
   );
 };

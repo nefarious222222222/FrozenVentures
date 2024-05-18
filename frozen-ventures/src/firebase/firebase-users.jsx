@@ -80,6 +80,34 @@ export async function getUserPersonalInfoById(userId) {
     throw error;
   }
 }
+// Fetch and checks the user role by email and password
+export async function getUserRoleByEmailAndPassword(email, password) {
+  const usersRef = ref(realtimeDb, "users");
+  try {
+    const snapshot = await get(usersRef);
+    if (!snapshot.exists()) {
+      throw new Error("No users found");
+    }
+    let userRole = null;
+    snapshot.forEach((childSnapshot) => {
+      const userData = childSnapshot.val();
+      if (
+        userData.accountInfo &&
+        userData.accountInfo.email === email &&
+        userData.accountInfo.password === password
+      ) {
+        userRole = userData.accountInfo.role;
+      }
+    });
+    if (userRole === null) {
+      throw new Error("Invalid email or password");
+    }
+    return userRole;
+  } catch (error) {
+    console.error("Error fetching user role:", error);
+    throw error;
+  }
+}
 
 // CREATE IN REALTIME DATABASE
 // Add user in realtime database
