@@ -17,7 +17,6 @@ export const ConfirmSignOut = ({ onClose }) => {
       localStorage.removeItem('cartItems');
       clearUser();
       navigate("/sign");
-      window.location.reload();
     } catch (error) {
       console.error("Error signing out:", error);
     }

@@ -6,7 +6,7 @@ import {
   doSignInWithEmailAndPassword,
   doSignInWithGoogle,
 } from "../../firebase/firebase-auth";
-import { getUserIdByEmailAndPassword } from "../../firebase/firebase-operations";
+import { getUserIdByEmailAndPassword } from "../../firebase/firebase-users";
 
 export const SignIn = () => {
   const { addUserId } = useContext(UserContext);
@@ -27,6 +27,14 @@ export const SignIn = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!isSigningIn) {
+      if (!email) {
+        setError("Email are required");
+        return;
+      } else if (!password) {
+        setError("Password are required");
+        return;
+      }
+
       setIsSigningIn(true);
       try {
         const userId = await getUserIdByEmailAndPassword(email, password);
@@ -39,20 +47,22 @@ export const SignIn = () => {
       } catch (error) {
         console.log(error.message);
         setIsSigningIn(false);
-
-        if (!email) {
-          setError("Email is required");
-        } else if (!password) {
-          setError("Password is required");
-        } else {
-          setError("Incorrect Credentials");
-        }
+        setError("Incorrect Credentials");
       }
     }
   };
 
   const onGoogleSignIn = async (e) => {
     e.preventDefault();
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      try {
+        await doSignInWithGoogle();
+      } catch (error) {
+        console.log(error);
+        setIsSigningIn(false);
+      }
+    }
   };
 
   return (
@@ -120,7 +130,7 @@ export const SignIn = () => {
           <div></div>
         </div>
 
-        <button onClick={onGoogleSignIn}>
+        <button onClick={onGoogleSignIn} disabled={isSigningIn}>
           <GoogleLogo size={32} weight="bold" />
           <p>Google</p>
         </button>

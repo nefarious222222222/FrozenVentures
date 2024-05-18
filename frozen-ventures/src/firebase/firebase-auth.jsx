@@ -12,7 +12,19 @@ import {
 
 // Create an account to firebase authentication
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
-  return createUserWithEmailAndPassword(auth, email, password);
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    await sendEmailVerification(auth.currentUser);
+    await auth.signOut();
+    return userCredential;
+  } catch (error) {
+    console.error("ERROR creating user: ", error);
+    throw error;
+  }
 };
 
 // Sign in account using firebase authentiation and create session

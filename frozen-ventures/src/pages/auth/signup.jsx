@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import { useFormSubmit } from "./utilities/sign-submit";
 import {
-  emailExists,
-  phoneNumberExists,
-} from "../../firebase/firebase-operations";
-import {
   validateContactNumber,
   validateEmail,
   validatePassword,
   validateImage,
 } from "./utilities/sign-validation";
+import { emailExists, phoneExists } from "../../firebase/firebase-users";
 
 export const SignUp = () => {
   const [inputFName, setInputFName] = useState("");
@@ -72,7 +69,7 @@ export const SignUp = () => {
       formErrors.push("Passwords do not match");
     } else if (!validateContactNumber(inputPhone)) {
       formErrors.push("Invalid phone number");
-    } else if (await phoneNumberExists(inputPhone)) {
+    } else if (await phoneExists(inputPhone)) {
       formErrors.push("Phone number already exists");
     } else if (!validateEmail(inputEmail)) {
       formErrors.push("Invalid email address");
@@ -120,6 +117,7 @@ export const SignUp = () => {
 
       try {
         await submitForm(formData);
+        
       } catch (error) {
         console.log("ERROR:", error);
       }

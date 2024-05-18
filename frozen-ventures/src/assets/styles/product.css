@@ -1,56 +1,64 @@
 /* Product Css */
 .product-container {
-  background-color: var(--color-pale-violet);
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 400px;
+  gap: 5vh;
   border-radius: 20px;
 
-  img {
-    width: 100%;
-    border-radius: 20px;
-  }
-
-  .description {
-    padding: 0 0 0 20px;
-
-    p b {
-      font-size: 1.5rem;
-    }
-
-    p {
-      font-size: 1.25rem;
-      font-weight: 500;
-    }
-
-    .price {
-      font-weight: 700;
-      margin: 20px 0;
-    }
-  }
-
-  .button-container {
+  .product-card {
+    max-width: 300px;
+    min-width: 200px;
+    border-radius: 10px;
+    padding: 40px;
+    background-color: var(--color-pale-violet);
     display: flex;
-    justify-content: flex-end;
-    padding: 0 20px 20px 0;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
 
-    button {
-      border: none;
-      border-radius: 5px;
-      padding: 10px 20px;
-      font-weight: 900;
-      font-size: 1.25rem;
-      color: var(--color-violet);
-      background-color: var(--color-pale-stone);
-      transition: all 0.3s ease;
+    img {
+      width: 100%;
+      border-radius: 10px;
     }
 
-    button:hover {
-      color: var(--color-pale-stone);
-      background-color: var(--color-violet);
-      cursor: pointer;
+    .product-box {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 0 0;
+
+      .product-info {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+  
+        p:first-child {
+          font-size: 1.5rem;
+          font-weight: 600;
+        }
+  
+        p {
+          text-align: start;
+          font-size: 1.25rem;
+          font-weight: 500;
+        }
+      }
+
+      svg {
+        width: 50px;
+        height: 40px;
+        padding: 10px;
+        border-radius: 50%;
+        color: var(--color-violet);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      svg:hover {
+        width: 60px;
+        height: 50px;
+        box-shadow: 0 7px 25px rgba(0, 0, 0, 0.3);
+      }
     }
   }
 

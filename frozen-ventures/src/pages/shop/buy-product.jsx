@@ -1,13 +1,11 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, {  useState, useEffect } from "react";
 import "../../assets/styles/buy-product.css";
-import { ShopContext } from "../../context/shop-context";
 import { Link, useParams } from "react-router-dom";
 import { PRODUCTS } from "../../Products";
 import { Minus, Plus, X, WarningCircle } from "phosphor-react";
 import { motion as m, AnimatePresence } from "framer-motion";
 
 export const BuyProduct = () => {
-  const { addToCart } = useContext(ShopContext);
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);

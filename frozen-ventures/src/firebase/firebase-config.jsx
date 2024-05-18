@@ -1,9 +1,12 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2otnKe1rsHr1m5u3WuGzye4T5Q374gSs",
-  authDomain:"frozen-ventures.firebaseapp.com",
+  authDomain: "frozen-ventures.firebaseapp.com",
+  databaseURL: "https://frozen-ventures-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "frozen-ventures",
   storageBucket: "frozen-ventures.appspot.com",
   messagingSenderId: "320572026204",
@@ -11,6 +14,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app)
 
-export { app, auth };
+const auth = getAuth(app)
+const db = getFirestore(app);
+const realtimeDb = getDatabase(app);
+
+export { app, auth, db, realtimeDb };

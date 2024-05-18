@@ -2,15 +2,11 @@ import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/order.css";
 import { motion as m, AnimatePresence, easeInOut } from "framer-motion";
 import { PRODUCTS } from "../../Products";
-import { ShopContext } from "../../context/shop-context";
-import { OrderContext } from "../../context/order-context";
 import { OrderItem } from "./order-item";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart, Storefront, X } from "phosphor-react";
 
 export const Order = () => {
-  const { cartItems, getTotalCartAmount } = useContext(ShopContext);
-  const { addOrder } = useContext(OrderContext);
   const [productBuy, setProductBuy] = useState(null);
   const [showConfirmOrder, setShowConfirmOrder] = useState(false);
 

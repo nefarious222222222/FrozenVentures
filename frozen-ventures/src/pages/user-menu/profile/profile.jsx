@@ -5,27 +5,30 @@ import UserImg from "../../../assets/images/1.jpg";
 import { NotePencil, X } from "phosphor-react";
 import { easeInOut, motion as m, AnimatePresence } from "framer-motion";
 import {
-  getUserDataById,
+  getUserInfoById,
   getUserPersonalInfoById,
-} from "../../../firebase/firebase-operations";
+  updateUserAccountInfo,
+  updateUserPersonalInfo,
+} from "../../../firebase/firebase-users";
 
 export const Profile = () => {
   const { userId } = useContext(UserContext);
   const [userEmail, setUserEmail] = useState("");
+  const [userPhone, setUserPhone] = useState("");
   const [userRole, setUserRole] = useState("");
   const [showConfirmEdit, setShowConfirmEdit] = useState(false);
   const [editable, setEditable] = useState(false);
 
+  console.log(userId);
   const [formUserData, setFormUserData] = useState({
     email: "",
-    phoneNum: "",
+    phone: "",
   });
 
   const [formUserPersonal, setFormUserPersonal] = useState({
     email: "",
-    phoneNum: "",
-    fName: "",
-    lName: "",
+    firstName: "",
+    lastName: "",
     birthdate: "",
     gender: "",
     street: "",
@@ -40,28 +43,36 @@ export const Profile = () => {
   };
 
   const handleConfirmEditClose = () => {
+    setEditable(false);
     setShowConfirmEdit(false);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
-        const userData = await getUserDataById(userId);
+        const userData = await getUserInfoById(userId);
         const userPersonal = await getUserPersonalInfoById(userId);
+
+        console.log(userData);
         if (userData && userPersonal) {
           const userEmail = userData.email;
+          const userPhone = userData.phone;
           const userRole = userData.role;
-          setFormUserData({
-            email: userData.email,
-            phoneNum: userData.phone,
-          });
+
           setFormUserPersonal({
-            fName: userPersonal.firstName,
-            lName: userPersonal.lastName,
+            firstName: userPersonal.firstName,
+            lastName: userPersonal.lastName,
             birthdate: userPersonal.birthdate,
             gender: userPersonal.gender,
+            street: userPersonal.street,
+            barangay: userPersonal.barangay,
+            municipality: userPersonal.municipality,
+            province: userPersonal.province,
+            zip: userPersonal.zip,
           });
+
           setUserEmail(userEmail);
+          setUserPhone(userPhone);
           setUserRole(userRole);
         }
       }
@@ -74,19 +85,42 @@ export const Profile = () => {
     setEditable(!editable);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Form data saved:", formData);
     setEditable(false);
     setShowConfirmEdit(false);
+
+    try {
+      await updateUserPersonalInfo(userId, formUserPersonal);
+    } catch (error) {
+      console.error("Error updating user data and personal info:", error);
+    }
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData({
-      ...formData,
+    setFormUserPersonal({
+      ...formUserPersonal,
       [name]: value,
     });
+    setFormUserData({
+      ...formUserData,
+      [name]: value,
+    });
+  };
+
+  const handleDateChange = (event) => {
+    const selectedDate = new Date(event.target.value);
+    const currentDate = new Date();
+    if (selectedDate > currentDate) {
+      const formattedDate = currentDate
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .reverse()
+        .join("-");
+      event.target.value = formattedDate;
+    }
+    handleChange(event);
   };
 
   return (
@@ -100,8 +134,13 @@ export const Profile = () => {
       <form className="user">
         <div className="user-profile">
           <img src={UserImg} alt="User" />
-          <p>{userEmail}</p>
-          <p>{userRole}</p>
+
+          <div className="account-info">
+            <p>{userEmail}</p>
+            <p>{userPhone}</p>
+            <p>{userRole}</p>
+          </div>
+          
           <button
             type="button"
             onClick={editable ? handleConfirmEditShow : handleEditClick}
@@ -116,25 +155,25 @@ export const Profile = () => {
           <div className="info">
             <div className="field-container">
               <div className="field">
-                <label htmlFor="fName">First Name:</label>
+                <label htmlFor="firstName">First Name:</label>
                 <input
-                  name="fName"
-                  id="fName"
+                  name="firstName"
+                  id="firstName"
                   type="text"
                   readOnly={!editable}
-                  value={formUserPersonal.fName}
+                  value={formUserPersonal.firstName}
                   onChange={handleChange}
                 />
               </div>
 
               <div className="field">
-                <label htmlFor="lName">Last Name:</label>
+                <label htmlFor="lastName">Last Name:</label>
                 <input
-                  name="lName"
-                  id="lName"
+                  name="lastName"
+                  id="lastName"
                   type="text"
                   readOnly={!editable}
-                  value={formUserPersonal.lName}
+                  value={formUserPersonal.lastName}
                   onChange={handleChange}
                 />
               </div>
@@ -149,34 +188,30 @@ export const Profile = () => {
                   type="date"
                   readOnly={!editable}
                   value={formUserPersonal.birthdate}
-                  onChange={handleChange}
+                  onChange={handleDateChange}
                 />
               </div>
 
               <div className="field">
                 <label htmlFor="gender">Gender:</label>
-                <input
+                <select
                   name="gender"
                   id="gender"
-                  type="text"
-                  readOnly={!editable}
+                  disabled={!editable}
                   value={formUserPersonal.gender}
                   onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="field-container">
-              <div className="field">
-                <label htmlFor="phoneNum">Phone Number:</label>
-                <input
-                  name="phoneNum"
-                  id="phoneNum"
-                  type="number"
-                  readOnly={!editable}
-                  value={formUserData.phoneNum}
-                  onChange={handleChange}
-                />
+                  style={{ opacity: editable ? 1 : 1 }}
+                >
+                  <option className="option" value="Male">
+                    Male
+                  </option>
+                  <option className="option" value="Female">
+                    Female
+                  </option>
+                  <option className="option" value="Other">
+                    Other
+                  </option>
+                </select>
               </div>
             </div>
           </div>

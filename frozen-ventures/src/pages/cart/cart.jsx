@@ -1,17 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import "../../assets/styles/cart.css";
-import { PRODUCTS } from "../../Products";
-import { ShopContext } from "../../context/shop-context";
 import { CartItem } from "./cart-item";
-import { ShoppingCart } from "phosphor-react";
-import { Storefront } from "phosphor-react";
+import { ShoppingCart, Storefront } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import { Link } from "react-router-dom";
 import { CartCheckout } from "./cart-checkout";
 
 export const Cart = () => {
-  const { cartItems, getTotalCartAmount } = useContext(ShopContext);
-  const totalAmount = getTotalCartAmount();
+  const [totalPrice, setTotalPrice] = useState(0);
 
   return (
     <m.div
@@ -37,20 +33,15 @@ export const Cart = () => {
         </div>
 
         <div className="cart-items">
-          {PRODUCTS.map((product) => {
-            if (cartItems[product.id] !== 0) {
-              return <CartItem data={product} key={product.id} />;
-            }
-            return null;
-          })}
+          <CartItem setTotalPrice={setTotalPrice} />
         </div>
       </div>
 
-      {totalAmount > 0 ? (
-        <CartCheckout />
+      {totalPrice > 0 ? (
+        <CartCheckout totalAmount={totalPrice} />
       ) : (
         <AnimatePresence>
-          {Object.values(cartItems).every((quantity) => quantity === 0) && (
+          {totalPrice === 0 && (
             <m.div
               key="empty-cart"
               initial={{ opacity: 0 }}

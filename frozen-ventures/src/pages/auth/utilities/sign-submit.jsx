@@ -1,26 +1,14 @@
 import { useState } from "react";
 import {
   doCreateUserWithEmailAndPassword,
-  doSignInWithEmailAndPassword,
   doSendEmailVerification,
 } from "../../../firebase/firebase-auth";
 import {
-  createUserWithPersonalInfo,
-  fetchLatestUserId,
-} from "../../../firebase/firebase-operations";
+  addUserAccountInfo,
+  addUserPersonalInfo,
+  getLatestUserId,
+} from "../../../firebase/firebase-users";
 import { IdGenerator } from "./id-generator";
-
-async function userID(newUserID) {
-  try {
-    const latestUserId = await fetchLatestUserId();
-    newUserID = IdGenerator(latestUserId);
-  } catch (error) {
-    console.log(error);
-  }
-  return newUserID;
-}
-
-const newUserId = await userID();
 
 export function useFormSubmit() {
   const [errors, setErrors] = useState([]);
@@ -38,71 +26,67 @@ export function useFormSubmit() {
       selectedImage,
     } = formData;
 
-    let imageValue = "Not Applicable";
-
-    if (selectedImage) {
-      try {
-        imageValue = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(selectedImage);
-        });
-      } catch (error) {
-        console.error("Error reading image:", error);
-        formErrors.push("Error reading image");
-      }
-    }
-
     const formErrors = [];
 
     try {
+      // Create user with email and password
       await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
 
-      try {
-        await doSignInWithEmailAndPassword(inputEmail, inputPass);
+      // Get latest userId and generate new userId
+      const latestUserId = await getLatestUserId();
+      const userId = IdGenerator(latestUserId);
 
+      // Initialize imageValue with a default value
+      let imageValue = "Not Applicable";
+
+      // Check if selectedImage is available
+      if (selectedImage) {
         try {
-          const userData = {
-            email: inputEmail,
-            password: inputPass,
-            phone: inputPhone,
-            role: selectedRole,
-            userId: newUserId,
-          };
-          const personalInfo = {
-            firstName: inputFName,
-            lastName: inputLName,
-            birthdate: inputBirthdate,
-            gender: selectedGender,
-            document: imageValue,
-          };
-          try {
-            await createUserWithPersonalInfo(userData, personalInfo);
-
-            try {
-              await doSendEmailVerification();
-            } catch (error) {
-              formErrors.push("Failed to send email verification");
-              console.error("ERROR:", error);
-            }
-          } catch (error) {
-            formErrors.push("Failed to create account");
-            console.log("ERROR:", error);
-          }
+          // Read and convert selectedImage to base64
+          imageValue = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(selectedImage);
+          });
         } catch (error) {
-          formErrors.push("Failed to create account");
-          console.log("ERROR:", error);
+          console.error("Error reading image:", error);
+          formErrors.push("Error reading image");
         }
-      } catch (error) {
-        formErrors.push("Failed to sign in new account");
-        console.error("ERROR:", error);
       }
+
+      // Add user account info
+      await addUserAccountInfo(
+        {
+          inputPass,
+          inputPhone,
+          inputEmail,
+          selectedRole,
+        },
+        userId
+      );
+
+      // Add user personal info
+      await addUserPersonalInfo(
+        {
+          inputFName,
+          inputLName,
+          inputPass,
+          inputBirthdate,
+          selectedGender,
+          selectedImage: imageValue,
+        },
+        userId
+      );
     } catch (error) {
-      formErrors.push("Failed to create account");
-      console.log("ERROR:", error);
+      formErrors.push("Failed to create account or store data");
+      console.error("ERROR:", error);
     }
+
+    // Update errors state with formErrors
     setErrors(formErrors);
   };
-  return { errors, setErrors, submitForm };
+
+  // Return errors and submitForm function
+  return { errors, submitForm };
 }

@@ -1,11 +1,6 @@
-import React, { useContext } from "react";
-import { ShopContext } from "../../context/shop-context";
+import React from "react";
 
-export const OrderItem = (props) => {
-  const { id, productName, price, retailerName, productImage } = props.data;
-  const { cartItems } = useContext(ShopContext);
-
-  const totalPrice = (cartItems[id] * price).toFixed(2);
+export const OrderItem = () => {
 
   return (
     <div className="order-item">
