@@ -71,3 +71,8 @@ export async function getUsersByRole(role) {
   export async function getManufacturers() {
     return await getUsersByRole("Manufacturer");
   }
+
+  export const updateUserIsVerifiedStatus = async (userId, status) => {
+    const userRef = ref(realtimeDb, `users/${userId}/accountInfo`);
+    await update(userRef, { isVerified: status });
+  };

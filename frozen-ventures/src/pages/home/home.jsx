@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../../assets/styles/home.css";
-import { PRODUCTS } from "../../Products";
+import { UserContext } from "../../context/user-context";
+import { useAuth } from "../../context/auth-context";
+import { Navigate } from "react-router-dom";
 import { Product } from "../shop/product";
+import { easeInOut, motion as m } from "framer-motion";
+
+
 import carrousel from "../../assets/images/0.jpg";
 import one from "../../assets/images/1.jpg";
 import two from "../../assets/images/2.jpg";
 import three from "../../assets/images/3.jpg";
 import four from "../../assets/images/4.jpg";
 import five from "../../assets/images/5.png";
-import { easeInOut, motion as m } from "framer-motion";
 
 export const Home = () => {
+  const { user } = useContext(UserContext);
+  const { userSignedIn } = useAuth();
+
   return (
     <m.div
       initial={{ opacity: 0 }}
@@ -18,6 +25,8 @@ export const Home = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="home"
     >
+      {userSignedIn && user.userRole !== "Customer" ? <Navigate to={"/"} replace={true} /> : null}
+
       <section class="container hero">
         <div class="first-container">
           <img src={carrousel} alt="Sheesh" />
@@ -48,9 +57,7 @@ export const Home = () => {
         </div>
 
         <div className="products">
-          {PRODUCTS.map((product) => (
-            <Product key={product.id} data={product} />
-          ))}
+          <Product />
         </div>
       </section>
 

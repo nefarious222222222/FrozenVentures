@@ -1,0 +1,101 @@
+.admin {
+  min-height: 89vh;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-violet);
+  }
+
+  .button-container {
+    display: flex;
+    gap: 1vw;
+
+    button {
+      padding: 5px 20px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      border-radius: 5px;
+      cursor: pointer;
+      border: solid 2px var(--color-violet);
+      color: var(--color-violet);
+      transition: all 0.3s ease;
+    }
+
+    button.active,
+    button:hover {
+      background-color: var(--color-violet);
+      color: white;
+    }
+  }
+
+  table {
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+
+    thead tr {
+      border-bottom: solid 2px gray;
+    }
+
+    tr {
+      display: flex;
+      width: inherit;
+      justify-content: space-between;
+
+      th {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 10vw;
+        font-size: 1.5rem;
+        padding: 20px 0;
+        color: gray;
+      }
+
+      td {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 10vw;
+        padding: 20px 0;
+
+        p {
+          text-align: center;
+          font-size: 1.25rem;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+  }
+
+  .verify-docs {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+
+    td {
+      button {
+        padding: 5px 20px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        border-radius: 5px;
+        cursor: pointer;
+        border: solid 2px var(--color-violet);
+        color: var(--color-violet);
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--color-violet);
+        color: white;
+      }
+    }
+  }
+}

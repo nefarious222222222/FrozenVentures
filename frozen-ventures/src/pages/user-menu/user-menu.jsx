@@ -6,13 +6,16 @@ import {
   Warning,
   SignOut,
 } from "phosphor-react";
+import { Navigate } from "react-router-dom";
 import { motion as m, AnimatePresence, easeInOut } from "framer-motion";
 import { Profile } from "./profile/profile";
 import { Settings } from "./settings/settings";
 import { ReportProblem } from "../../components/report-problem";
 import { ConfirmSignOut } from "../../components/sign-out";
+import { useAuth } from "../../context/auth-context";
 
 export const UserMenu = () => {
+  const { userSignedIn } = useAuth();
   const [activeItem, setActiveItem] = useState("profile");
   const [showReportProblem, setShowReportProblem] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
@@ -79,6 +82,7 @@ export const UserMenu = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="container user-menu"
     >
+      {!userSignedIn ? <Navigate to={"/home"} replace={true} /> : null}
       <div className="menu">
         <div className="list-container">
           <ul>

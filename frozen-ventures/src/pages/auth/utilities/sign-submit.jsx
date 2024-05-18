@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  doCreateUserWithEmailAndPassword,
-  doSendEmailVerification,
-} from "../../../firebase/firebase-auth";
+import { doCreateUserWithEmailAndPassword } from "../../../firebase/firebase-auth";
 import {
   addUserAccountInfo,
   addUserPersonalInfo,
@@ -29,20 +26,12 @@ export function useFormSubmit() {
     const formErrors = [];
 
     try {
-      // Create user with email and password
       await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
-
-      // Get latest userId and generate new userId
       const latestUserId = await getLatestUserId();
       const userId = IdGenerator(latestUserId);
-
-      // Initialize imageValue with a default value
       let imageValue = "Not Applicable";
-
-      // Check if selectedImage is available
       if (selectedImage) {
         try {
-          // Read and convert selectedImage to base64
           imageValue = await new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result);
@@ -54,8 +43,6 @@ export function useFormSubmit() {
           formErrors.push("Error reading image");
         }
       }
-
-      // Add user account info
       await addUserAccountInfo(
         {
           inputPass,
@@ -65,8 +52,6 @@ export function useFormSubmit() {
         },
         userId
       );
-
-      // Add user personal info
       await addUserPersonalInfo(
         {
           inputFName,
@@ -82,11 +67,7 @@ export function useFormSubmit() {
       formErrors.push("Failed to create account or store data");
       console.error("ERROR:", error);
     }
-
-    // Update errors state with formErrors
     setErrors(formErrors);
   };
-
-  // Return errors and submitForm function
   return { errors, submitForm };
 }

@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "../../assets/styles/cart.css";
+import { UserContext } from "../../context/user-context";
+import { useAuth } from "../../context/auth-context";
+import { Navigate } from "react-router-dom";
 import { CartItem } from "./cart-item";
 import { ShoppingCart, Storefront } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
@@ -7,6 +10,8 @@ import { Link } from "react-router-dom";
 import { CartCheckout } from "./cart-checkout";
 
 export const Cart = () => {
+  const { user } = useContext(UserContext);
+  const { userSignedIn } = useAuth();
   const [totalPrice, setTotalPrice] = useState(0);
 
   return (
@@ -16,6 +21,9 @@ export const Cart = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="container cart"
     >
+      {!userSignedIn || (userSignedIn && user.userRole !== "Customer") ? (
+        <Navigate to={"/home"} replace={true} />
+      ) : null}
       <div className="cart-container">
         <h1>Your Cart Items</h1>
 

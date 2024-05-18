@@ -1,8 +1,9 @@
 import React from "react";
 import "../../assets/styles/shop.css";
-import carrousel from "../../assets/images/0.jpg";
 import { Product } from "./product";
 import { easeInOut, motion as m } from "framer-motion";
+
+import carrousel from "../../assets/images/0.jpg";
 
 export const Shop = () => {
   return (

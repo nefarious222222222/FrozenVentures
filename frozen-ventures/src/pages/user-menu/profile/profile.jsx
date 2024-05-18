@@ -7,19 +7,17 @@ import { easeInOut, motion as m, AnimatePresence } from "framer-motion";
 import {
   getUserInfoById,
   getUserPersonalInfoById,
-  updateUserAccountInfo,
   updateUserPersonalInfo,
 } from "../../../firebase/firebase-users";
 
 export const Profile = () => {
-  const { userId } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [userEmail, setUserEmail] = useState("");
   const [userPhone, setUserPhone] = useState("");
   const [userRole, setUserRole] = useState("");
   const [showConfirmEdit, setShowConfirmEdit] = useState(false);
   const [editable, setEditable] = useState(false);
 
-  console.log(userId);
   const [formUserData, setFormUserData] = useState({
     email: "",
     phone: "",
@@ -49,11 +47,10 @@ export const Profile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (userId) {
-        const userData = await getUserInfoById(userId);
-        const userPersonal = await getUserPersonalInfoById(userId);
+      if (user?.userId) {
+        const userData = await getUserInfoById(user?.userId);
+        const userPersonal = await getUserPersonalInfoById(user?.userId);
 
-        console.log(userData);
         if (userData && userPersonal) {
           const userEmail = userData.email;
           const userPhone = userData.phone;
@@ -79,7 +76,7 @@ export const Profile = () => {
     };
 
     fetchData();
-  }, [userId]);
+  }, [user?.userId]);
 
   const handleEditClick = () => {
     setEditable(!editable);
@@ -91,7 +88,7 @@ export const Profile = () => {
     setShowConfirmEdit(false);
 
     try {
-      await updateUserPersonalInfo(userId, formUserPersonal);
+      await updateUserPersonalInfo(user?.userId, formUserPersonal);
     } catch (error) {
       console.error("Error updating user data and personal info:", error);
     }
@@ -208,8 +205,8 @@ export const Profile = () => {
                   <option className="option" value="Female">
                     Female
                   </option>
-                  <option className="option" value="Other">
-                    Other
+                  <option className="option" value="Rather not say">
+                    Rather not say
                   </option>
                 </select>
               </div>

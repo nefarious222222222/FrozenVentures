@@ -113,7 +113,7 @@ export const SignUp = () => {
     };
 
     try {
-      setFormSuccess("Account created. Verification email sent");
+      setFormSuccess("Account successfully created");
 
       try {
         await submitForm(formData);
@@ -286,7 +286,7 @@ export const SignUp = () => {
           </div>
 
           <div className="input-field">
-            <label htmlFor="confirmPass">Password:</label>
+            <label htmlFor="confirmPass">Confirm Password:</label>
             <input
               type="password"
               id="confirmPass"
@@ -309,7 +309,7 @@ export const SignUp = () => {
                 transition={{ duration: 0.5, ease: easeInOut }}
                 className="input-field image-upload"
               >
-                <label htmlFor="imageUpload">Choose Image:</label>
+                <label htmlFor="imageUpload">Upload Document:</label>
                 <input
                   type="file"
                   id="imageUpload"

@@ -35,7 +35,7 @@ export const Sign = () => {
       {userSignedIn ? <Navigate to={"/"} replace={true} /> : null}
       <div className="sign-container">
         <header>
-          <Link to="/">
+          <Link to="/home">
             <div className="title">
               <img src={Logo} alt="Logo" />
               <h1>FrozenVentures</h1>

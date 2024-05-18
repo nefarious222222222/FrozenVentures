@@ -39,7 +39,6 @@ export const SignIn = () => {
       try {
         const userId = await getUserIdByEmailAndPassword(email, password);
         const userRole = await getUserRoleByEmailAndPassword(email, password);
-        console.log(userRole);
         addUser(userId, userRole);
         try {
           await doSignInWithEmailAndPassword(email, password);
