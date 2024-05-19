@@ -7,6 +7,12 @@
     color: var(--color-violet);
   }
 
+  label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1vh;
+  }
+
   .button-container {
     display: flex;
     gap: 1vw;
@@ -31,7 +37,7 @@
 
   table {
     padding: 30px;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
 
     thead tr {
@@ -73,6 +79,109 @@
     display: flex;
     flex-direction: column;
     gap: 3vh;
+
+    .edit-user {
+      padding: 30px;
+      box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+
+      button {
+        padding: 10px 30px;
+        border-radius: 5px;
+        font-size: 1.25rem;
+        font-weight: 800;
+        cursor: pointer;
+        border: solid 2px var(--color-violet);
+        color: var(--color-violet);
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        color: white;
+        background-color: var(--color-violet);
+      }
+
+      .header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 2vw;
+        margin-bottom: 5vh;
+
+        label {
+          width: 10vw;
+          margin: 0;
+        }
+
+        .input-field {
+          width: 20vw;
+          display: flex;
+          align-items: center;
+
+          input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border: none;
+            outline: none;
+            background-color: rgb(230, 230, 230);
+            border-radius: 5px;
+          }
+        }
+      }
+
+      .edit-form {
+        .input-container {
+          display: flex;
+          justify-content: space-between;
+          padding: 30px 0;
+
+          input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border: none;
+            outline: none;
+            background-color: rgb(230, 230, 230);
+            border-radius: 5px;
+          }
+
+          .input-field {
+            display: flex;
+            flex-direction: column;
+            min-width: 25vw;
+
+            select {
+              padding: 10px 10px;
+              font-size: 1.25rem;
+              font-weight: 500;
+              border: none;
+              outline: none;
+              background-color: rgb(230, 230, 230);
+              border-radius: 5px;
+            }
+          }
+        }
+
+        .image-upload {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          input {
+            width: 20vw;
+          }
+        }
+
+        .submit-btn {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+    }
   }
 
   .verify-docs {
@@ -96,6 +205,113 @@
         background-color: var(--color-violet);
         color: white;
       }
+    }
+  }
+
+  .add-user {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      font-size: 1.25rem;
+      font-weight: 500;
+      border: none;
+      outline: none;
+      background-color: rgb(230, 230, 230);
+      border-radius: 5px;
+    }
+
+    form {
+      padding: 30px 60px 60px 60px;
+      box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+
+      .input-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 30px 0;
+
+        .input-field {
+          display: flex;
+          flex-direction: column;
+          min-width: 25vw;
+
+          select {
+            padding: 10px 10px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border: none;
+            outline: none;
+            background-color: rgb(230, 230, 230);
+            border-radius: 5px;
+          }
+        }
+      }
+
+      .image-upload {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        input {
+          width: 20vw;
+        }
+      }
+
+      .submit-btn {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+
+        button {
+          padding: 10px 30px;
+          border-radius: 5px;
+          font-size: 1.25rem;
+          font-weight: 800;
+          cursor: pointer;
+          border: solid 2px var(--color-violet);
+          color: var(--color-violet);
+          transition: all 0.3s ease;
+        }
+
+        button:hover {
+          color: white;
+          background-color: var(--color-violet);
+        }
+      }
+    }
+  }
+
+  .error-container {
+    width: calc(100% - 20px);
+    border-radius: 10px;
+    padding: 10px;
+    border: solid 2px rgb(114, 17, 17);
+    background-color: rgb(255, 181, 181);
+
+    p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: rgb(114, 17, 17);
+      text-align: center;
+    }
+  }
+
+  .success-container {
+    border-radius: 10px;
+    width: 100%;
+    padding: 10px;
+    border: solid 2px rgb(33, 114, 17);
+    background-color: rgb(190, 255, 181);
+
+    p {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: rgb(33, 114, 17);
+      text-align: center;
     }
   }
 }
