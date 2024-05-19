@@ -4,8 +4,9 @@ import {
   getRetailers,
   getDistributors,
   getManufacturers,
-  updateUserIsVerifiedStatus
+  updateUserIsVerifiedStatus,
 } from "../../../firebase/firebase-admin";
+import { motion as m, easeInOut } from "framer-motion";
 
 export const VerifyDocs = () => {
   const [userList, setUserList] = useState([]);
@@ -72,7 +73,13 @@ export const VerifyDocs = () => {
   };
 
   return (
-    <div className="verify-docs">
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: easeInOut }}
+      className="verify-docs"
+    >
       <h1>Pending Users</h1>
 
       <div className="button-container">
@@ -151,6 +158,6 @@ export const VerifyDocs = () => {
           ))}
         </tbody>
       </table>
-    </div>
+    </m.div>
   );
 };

@@ -12,6 +12,7 @@ import {
 } from "../../auth/utilities/sign-validation";
 import { emailExists, phoneExists } from "../../../firebase/firebase-users";
 import { IdGenerator } from "../../auth/utilities/id-generator";
+import { motion as m, easeInOut } from "framer-motion";
 
 export const AddUser = () => {
   const [inputFName, setInputFName] = useState("");
@@ -130,7 +131,13 @@ export const AddUser = () => {
   };
 
   return (
-    <div className="add-user">
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: easeInOut }}
+      className="add-user"
+    >
       <h1>Add New User</h1>
 
       <form onSubmit={handleSubmit}>
@@ -286,6 +293,6 @@ export const AddUser = () => {
           <button type="submit">Submit</button>
         </div>
       </form>
-    </div>
+    </m.div>
   );
 };
