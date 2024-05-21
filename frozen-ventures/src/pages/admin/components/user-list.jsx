@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   getAllUsers,
+  getAdmins,
   getCustomers,
   getRetailers,
   getDistributors,
@@ -51,6 +52,9 @@ export const UserList = () => {
       try {
         let users;
         switch (selectRole) {
+          case "Admin":
+            users = await getAdmins();
+            break;
           case "Customer":
             users = await getCustomers();
             break;
@@ -220,6 +224,12 @@ export const UserList = () => {
           onClick={() => setSelectRole("All")}
         >
           All
+        </button>
+        <button
+          className={selectRole === "Admin" ? "active" : ""}
+          onClick={() => setSelectRole("Admin")}
+        >
+          Admin
         </button>
         <button
           className={selectRole === "Customer" ? "active" : ""}
@@ -396,6 +406,7 @@ export const UserList = () => {
                     <option value="" disabled>
                       Select Role
                     </option>
+                    <option value="Admin">Admin</option>
                     <option value="Customer">Customer</option>
                     <option value="Retailer">Retailer</option>
                     <option value="Distributor">Distributor</option>

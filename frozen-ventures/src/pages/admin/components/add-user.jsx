@@ -167,6 +167,7 @@ export const AddUser = () => {
               <option value="" disabled>
                 Select Role
               </option>
+              <option value="Admin">Admin</option>
               <option value="Customer">Customer</option>
               <option value="Retailer">Retailer</option>
               <option value="Distributor">Distributor</option>

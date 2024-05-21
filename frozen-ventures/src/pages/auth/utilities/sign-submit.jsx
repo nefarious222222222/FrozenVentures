@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { doCreateUserWithEmailAndPassword } from "../../../firebase/firebase-auth";
+import { doCreateUserWithEmailAndPassword, doSignOut } from "../../../firebase/firebase-auth";
 import {
   addUserAccountInfo,
   addUserPersonalInfo,
@@ -63,6 +63,7 @@ export function useFormSubmit() {
         },
         userId
       );
+      doSignOut();
     } catch (error) {
       formErrors.push("Failed to create account or store data");
       console.error("ERROR:", error);

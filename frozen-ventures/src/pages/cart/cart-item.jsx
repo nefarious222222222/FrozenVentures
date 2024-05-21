@@ -5,11 +5,13 @@ import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import { fetchCartItemsForUser, removeItemFromCart, addItemToCart } from "../../firebase/firebase-products";
 
 export const CartItem = ({ setTotalPrice }) => {
-  const { userId } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const confirmDeleteRef = useRef(null);
+
+  const userId = user.userId;
 
   useEffect(() => {
     const fetchCartItems = () => {

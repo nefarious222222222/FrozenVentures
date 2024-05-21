@@ -10,8 +10,7 @@ export async function getAllUsers() {
       const userData = childSnapshot.val();
       if (
         userData &&
-        userData.accountInfo &&
-        userData.accountInfo.role !== "Admin"
+        userData.accountInfo
       ) {
         const { accountInfo, personalInfo } = userData;
         users.push({
@@ -54,6 +53,10 @@ export async function getUsersByRole(role) {
     console.error(`Error fetching ${role} users:`, error);
     throw error;
   }
+}
+
+export async function getAdmins() {
+  return await getUsersByRole("Admin");
 }
 
 export async function getCustomers() {

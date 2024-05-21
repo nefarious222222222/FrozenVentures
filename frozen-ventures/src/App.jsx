@@ -49,7 +49,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
 
-                <Route path="/home-retailer" element={<HomeRetailer />} />
+                <Route path="/home-retailer/*" element={<HomeRetailer />} />
               </Routes>
               <FooterWithLocation />
             </Router>

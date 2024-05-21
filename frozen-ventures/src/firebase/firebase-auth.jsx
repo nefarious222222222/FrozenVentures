@@ -11,7 +11,6 @@ import {
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await auth.signOut();
     return userCredential;
   } catch (error) {
     console.error("ERROR creating user: ", error);
@@ -20,16 +19,13 @@ export const doCreateUserWithEmailAndPassword = async (email, password) => {
 };
 
 // Sign in account using firebase authentiation and create session
-export const doSignInWithEmailAndPassword = async (email, password) => {
+export const doSignInWithEmailAndPassword = async (email, password, setError) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential;
   } catch (error) {
     console.error("ERROR signing in: ", error);
+    setError("Incorrect Credentials");
     throw error;
   }
 };

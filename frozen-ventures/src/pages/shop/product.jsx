@@ -25,10 +25,12 @@ export async function getProductsFromFirestore() {
 }
 
 export const Product = () => {
-  const { userId } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [products, setProducts] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
   const [addedProduct, setAddedProduct] = useState(null);
+
+  const userId = user?.userId;
 
   useEffect(() => {
     const fetchProducts = async () => {

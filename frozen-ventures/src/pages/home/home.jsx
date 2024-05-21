@@ -6,7 +6,6 @@ import { Navigate } from "react-router-dom";
 import { Product } from "../shop/product";
 import { easeInOut, motion as m } from "framer-motion";
 
-
 import carrousel from "../../assets/images/0.jpg";
 import one from "../../assets/images/1.jpg";
 import two from "../../assets/images/2.jpg";
@@ -25,7 +24,7 @@ export const Home = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="home"
     >
-      {userSignedIn && user.userRole !== "Customer" ? <Navigate to={"/"} replace={true} /> : null}
+      {!userSignedIn || userSignedIn && user.userRole !== "Customer" ? <Navigate to={"/"} replace={true} /> : null}
 
       <section class="container hero">
         <div class="first-container">

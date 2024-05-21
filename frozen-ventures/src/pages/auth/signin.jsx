@@ -6,13 +6,15 @@ import {
   doSignInWithEmailAndPassword,
   doSignInWithGoogle,
 } from "../../firebase/firebase-auth";
-import { getUserIdByEmailAndPassword, getUserRoleByEmailAndPassword  } from "../../firebase/firebase-users";
+import {
+  getUserIdByEmailAndPassword,
+  getUserRoleByEmailAndPassword,
+} from "../../firebase/firebase-users";
 
 export const SignIn = () => {
   const { addUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,10 +30,10 @@ export const SignIn = () => {
     e.preventDefault();
     if (!isSigningIn) {
       if (!email) {
-        setError("Email are required");
+        setError("Email is required");
         return;
       } else if (!password) {
-        setError("Password are required");
+        setError("Password is required");
         return;
       }
 
@@ -41,14 +43,16 @@ export const SignIn = () => {
         const userRole = await getUserRoleByEmailAndPassword(email, password);
         addUser(userId, userRole);
         try {
-          await doSignInWithEmailAndPassword(email, password);
+          await doSignInWithEmailAndPassword(email, password, setError);
         } catch (error) {
           console.log(error);
+          setIsSigningIn(false);
+          setError("Cannot find account");
         }
       } catch (error) {
         console.log(error.message);
         setIsSigningIn(false);
-        setError("Incorrect Credentials");
+        setError("Incorrect credentials");
       }
     }
   };
