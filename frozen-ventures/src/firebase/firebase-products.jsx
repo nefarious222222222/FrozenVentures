@@ -72,3 +72,37 @@ export const removeItemFromCart = async (userId, productId) => {
     console.error("Error removing item from cart:", error);
   }
 };
+
+// Function to generate a new product ID
+const generateNewProductId = async (userId) => {
+  const productsRef = ref(realtimeDb, `retailers/${userId}/products`);
+  const snapshot = await get(productsRef);
+  const products = snapshot.val();
+  const productIds = Object.keys(products || {});
+  if (productIds.length === 0) return 'pid-0001';
+
+  const lastProductId = productIds[productIds.length - 1];
+  const lastNumber = parseInt(lastProductId.split('-')[1], 10);
+  const newNumber = lastNumber + 1;
+  return `pid-${String(newNumber).padStart(4, '0')}`;
+};
+
+export const addProduct = async (userId, productName, productPrice, productStock, productDescription, productImage) => {
+  const newProductId = await generateNewProductId(userId);
+  const newProductRef = ref(realtimeDb, `retailers/${userId}/products/${newProductId}`);
+  try {
+    await set(newProductRef, {
+      productId: newProductId,
+      productName,
+      productPrice,
+      productStock,
+      productDescription,
+      productImage
+    });
+  } catch (error) {
+    console.error("Error adding product:", error);
+  }
+};
+
+
+

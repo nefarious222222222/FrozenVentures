@@ -1,0 +1,26 @@
+.drop-file {
+  padding: 30px;
+  border-radius: 10px;
+  border: solid 2px var(--color-violet);
+  cursor: pointer;
+
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1vh;
+  }
+
+  p {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-violet);
+  }
+
+  img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+}

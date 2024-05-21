@@ -1,0 +1,288 @@
+.home-retailer {
+  .side-bar {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+    padding: 40px;
+    gap: 3vh;
+    border-radius: 20px;
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--color-violet);
+      padding-bottom: 30px;
+      border-bottom: solid 2px gray;
+    }
+
+    .informations {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 70vh;
+
+      p {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      span {
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .product-list {
+    .products {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 2vh;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+
+      .success-message {
+        border-radius: 10px;
+        padding: 10px;
+        border: solid 2px rgb(17, 114, 49);
+        background-color: rgb(172, 253, 151);
+
+        p {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: rgb(17, 114, 49);
+          text-align: center;
+        }
+      }
+
+      .alert-message {
+        border-radius: 10px;
+        padding: 10px;
+        border: solid 2px rgb(114, 17, 17);
+        background-color: rgb(255, 181, 181);
+
+        p {
+          text-align: center;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: rgb(114, 17, 17);
+        }
+
+        p {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: rgb(114, 17, 17);
+          text-align: center;
+        }
+      }
+
+      .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 30px;
+        margin-bottom: 15px;
+        border-bottom: solid 2px gray;
+
+        h1 {
+          font-size: 2rem;
+          font-weight: 800;
+          color: var(--color-violet);
+        }
+
+        button {
+          padding: 10px;
+          border-radius: 5px;
+          font-weight: 800;
+          font-size: 1.25rem;
+          cursor: pointer;
+          color: var(--color-violet);
+          border: solid 2px var(--color-violet);
+          transition: all 0.3s ease;
+        }
+
+        button:hover {
+          color: white;
+          border: solid 2px var(--color-violet);
+          background-color: var(--color-violet);
+        }
+      }
+
+      .list-items {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+        .product {
+          display: flex;
+          flex-direction: column;
+          max-width: 350px;
+          padding: 20px 30px 45px 30px;
+          gap: 2vh;
+          border-radius: 20px;
+          background-color: var(--color-pale-violet);
+
+          h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+          }
+
+          .product-info {
+            display: flex;
+            gap: 2vw;
+
+            img {
+              width: 7.5vw;
+              border-radius: 20px;
+            }
+
+            .product-description {
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+
+              h3 {
+                font-size: 1.5rem;
+                font-weight: 700;
+              }
+
+              p {
+                font-size: 1.25rem;
+                font-weight: 600;
+              }
+            }
+          }
+
+          button {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--color-violet);
+            border: solid 2px var(--color-violet);
+            background-color: var(--color-pale-violet);
+            transition: all 0.3s ease;
+          }
+
+          button:hover {
+            color: var(--color-pale-violet);
+            border: solid 2px var(--color-violet);
+            background-color: var(--color-violet);
+          }
+        }
+      }
+    }
+
+    .add-product {
+      min-width: 40vw;
+      display: flex;
+      flex-direction: column;
+      gap: 2vh;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      padding: 40px;
+      border-radius: 20px;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        text-align: center;
+        color: var(--color-violet);
+      }
+
+      svg {
+        position: absolute;
+        top: 30px;
+        right: 40px;
+        cursor: pointer;
+      }
+
+      .error-message {
+        border-radius: 10px;
+        padding: 10px;
+        border: solid 2px rgb(114, 17, 17);
+        background-color: rgb(255, 181, 181);
+
+        p {
+          text-align: center;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: rgb(114, 17, 17);
+        }
+      }
+
+      .group-field {
+        display: flex;
+        justify-content: space-between;
+
+        .input-field {
+          width: 19vw;
+        }
+      }
+
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1vh;
+
+        .input-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5vh;
+
+          label {
+            font-size: 1.25rem;
+            font-weight: 600;
+          }
+
+          input,
+          textarea {
+            border: none;
+            outline: none;
+            background-color: rgb(236, 236, 236);
+            padding: 10px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border-radius: 5px;
+            resize: none;
+            box-sizing: border-box;
+            width: 100%;
+          }
+
+          textarea {
+            min-height: 100px;
+          }
+        }
+      }
+
+      button {
+        padding: 10px;
+        font-size: 1.25rem;
+        font-weight: 800;
+        border-radius: 10px;
+        cursor: pointer;
+        color: var(--color-violet);
+        background-color: white;
+        border: solid 2px var(--color-violet);
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        color: white;
+        background-color: var(--color-violet);
+        border: solid 2px var(--color-violet);
+      }
+    }
+  }
+}
