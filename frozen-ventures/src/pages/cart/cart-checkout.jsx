@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { generateNewOrderId, createOrder } from "../../firebase/firebase-order";
 
-export const CartCheckout = ({ totalAmount, productIds, userId }) => {
+export const CartCheckout = ({ totalAmount, products, userId }) => {
   const [shippingMode, setShippingMode] = useState("pickup");
 
   const shippingCost = shippingMode === "delivery" ? 10.0 : 0.0;
@@ -17,9 +17,10 @@ export const CartCheckout = ({ totalAmount, productIds, userId }) => {
       const orderDetails = {
         shippingFee: shippingCost,
         subTotal: totalAmount.toFixed(2),
-        products: productIds,
+        products: products,
       };
-      await createOrder(userId, orderId, orderDetails);
+
+      await createOrder(userId, orderId, orderDetails );
       console.log("Checkout successful!");
     } catch (error) {
       console.error("Error during checkout:", error.message);

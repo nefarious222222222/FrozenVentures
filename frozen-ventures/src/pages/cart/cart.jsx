@@ -13,7 +13,7 @@ export const Cart = () => {
   const { user } = useContext(UserContext);
   const { userSignedIn } = useAuth();
   const [totalPrice, setTotalPrice] = useState(0);
-  const [productIds, setProductIds] = useState([]);
+  const [products, setProducts] = useState([]);
 
   return (
     <m.div
@@ -42,12 +42,12 @@ export const Cart = () => {
         </div>
 
         <div className="cart-items">
-          <CartItem setTotalPrice={setTotalPrice} setProductIds={setProductIds} />
+          <CartItem setTotalPrice={setTotalPrice} setProducts={setProducts} />
         </div>
       </div>
 
       {totalPrice > 0 ? (
-        <CartCheckout totalAmount={totalPrice} productIds={productIds} userId={user.userId}/>
+        <CartCheckout totalAmount={totalPrice} products={products} userId={user.userId}/>
       ) : (
         <AnimatePresence>
           {totalPrice === 0 && (

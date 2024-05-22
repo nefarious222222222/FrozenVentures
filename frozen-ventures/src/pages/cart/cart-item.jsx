@@ -8,7 +8,7 @@ import {
   addItemToCart,
 } from "../../firebase/firebase-products";
 
-export const CartItem = ({ setTotalPrice, setProductIds  }) => {
+export const CartItem = ({ setTotalPrice, setProducts  }) => {
   const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -49,10 +49,9 @@ export const CartItem = ({ setTotalPrice, setProductIds  }) => {
       (sum, item) => sum + item.quantity * item.productPrice,
       0
     );
-    const productIds = cartItems.map((item) => item.productId);
-    setProductIds(productIds);
+    setProducts(cartItems);
     setTotalPrice(total);
-  }, [cartItems, setTotalPrice, setProductIds]);
+  }, [cartItems, setTotalPrice, setProducts]);
 
   const handleDelete = (productId) => {
     setItemToDelete(productId);
