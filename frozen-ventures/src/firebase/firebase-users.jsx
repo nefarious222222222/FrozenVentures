@@ -1,5 +1,6 @@
 import { ref, get, set, update } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
+import bcrypt from "bcryptjs";
 
 // FETCH IN REALTIME DATABASE
 // Fetch the latest userId that has been created
@@ -30,16 +31,20 @@ export async function getUserIdByEmailAndPassword(email, password) {
   try {
     const snapshot = await get(usersRef);
     let userId = null;
-    snapshot.forEach((childSnapshot) => {
+    snapshot.forEach(async (childSnapshot) => {
       const userData = childSnapshot.val();
       if (
         userData &&
         userData.accountInfo &&
-        userData.accountInfo.email === email &&
-        userData.accountInfo.password === password
+        userData.accountInfo.email === email
       ) {
-        userId = childSnapshot.key;
-        return;
+        const hashedPassword = userData.accountInfo.password;
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+        console.log(isMatch);
+        if (isMatch) {
+          userId = childSnapshot.key;
+          return;
+        }
       }
     });
     return userId;
@@ -85,20 +90,22 @@ export async function getUserRoleByEmailAndPassword(email, password) {
   const usersRef = ref(realtimeDb, "users");
   try {
     const snapshot = await get(usersRef);
+    console.log("Snapshot:", snapshot);
     if (!snapshot.exists()) {
       throw new Error("No users found");
     }
     let userRole = null;
-    snapshot.forEach((childSnapshot) => {
-      const userData = childSnapshot.val();
-      if (
-        userData.accountInfo &&
-        userData.accountInfo.email === email &&
-        userData.accountInfo.password === password
-      ) {
-        userRole = userData.accountInfo.role;
+    for (const childSnapshot of Object.values(snapshot.val())) {
+      const userData = childSnapshot.accountInfo;
+      if (userData && userData.email === email) {
+        const hashedPassword = userData.password;
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+        if (isMatch) {
+          userRole = userData.role;
+          break;
+        }
       }
-    });
+    }
     if (userRole === null) {
       throw new Error("Invalid email or password");
     }
@@ -247,5 +254,3 @@ export async function phoneExists(phone) {
     throw error;
   }
 }
-
-

@@ -2,7 +2,11 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { UserContext } from "../../context/user-context";
 import { Minus, Plus, Trash } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
-import { fetchCartItemsForUser, removeItemFromCart, addItemToCart } from "../../firebase/firebase-products";
+import {
+  fetchCartItemsForUser,
+  removeItemFromCart,
+  addItemToCart,
+} from "../../firebase/firebase-products";
 
 export const CartItem = ({ setTotalPrice }) => {
   const { user } = useContext(UserContext);
@@ -41,7 +45,10 @@ export const CartItem = ({ setTotalPrice }) => {
   }, [userId]);
 
   useEffect(() => {
-    const total = cartItems.reduce((sum, item) => sum + item.quantity * item.productPrice, 0);
+    const total = cartItems.reduce(
+      (sum, item) => sum + item.quantity * item.productPrice,
+      0
+    );
     setTotalPrice(total);
   }, [cartItems, setTotalPrice]);
 
@@ -53,7 +60,7 @@ export const CartItem = ({ setTotalPrice }) => {
   const handleConfirmDelete = async () => {
     if (itemToDelete) {
       await removeItemFromCart(userId, itemToDelete);
-      setCartItems(cartItems.filter(item => item.productId !== itemToDelete));
+      setCartItems(cartItems.filter((item) => item.productId !== itemToDelete));
     }
     setShowConfirmDelete(false);
   };
@@ -64,7 +71,10 @@ export const CartItem = ({ setTotalPrice }) => {
   };
 
   const handleClickOutside = (event) => {
-    if (confirmDeleteRef.current && !confirmDeleteRef.current.contains(event.target)) {
+    if (
+      confirmDeleteRef.current &&
+      !confirmDeleteRef.current.contains(event.target)
+    ) {
       setShowConfirmDelete(false);
     }
   };
@@ -79,7 +89,8 @@ export const CartItem = ({ setTotalPrice }) => {
   const handleIncrement = async (productId) => {
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId) {
-        return { ...item, quantity: item.quantity + 1 };
+        const updatedQuantity = item.quantity + 1;
+        return { ...item, quantity: updatedQuantity };
       }
       return item;
     });
@@ -87,7 +98,7 @@ export const CartItem = ({ setTotalPrice }) => {
     const selectedItem = updatedCartItems.find((item) => item.productId === productId);
     await addItemToCart(
       userId,
-      selectedItem.productId,
+      productId,
       1,
       selectedItem.productPrice,
       selectedItem.productName,
@@ -95,11 +106,12 @@ export const CartItem = ({ setTotalPrice }) => {
       selectedItem.productImage
     );
   };
-
+  
   const handleDecrement = async (productId) => {
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId && item.quantity > 1) {
-        return { ...item, quantity: item.quantity - 1 };
+        const updatedQuantity = item.quantity - 1;
+        return { ...item, quantity: updatedQuantity };
       }
       return item;
     });
@@ -107,7 +119,7 @@ export const CartItem = ({ setTotalPrice }) => {
     const selectedItem = updatedCartItems.find((item) => item.productId === productId);
     await addItemToCart(
       userId,
-      selectedItem.productId,
+      productId,
       -1,
       selectedItem.productPrice,
       selectedItem.productName,
@@ -131,7 +143,10 @@ export const CartItem = ({ setTotalPrice }) => {
                 </div>
               </td>
               <td className="quantity">
-                <button onClick={() => handleDecrement(cartItem.productId)} disabled={cartItem.quantity <= 1}>
+                <button
+                  onClick={() => handleDecrement(cartItem.productId)}
+                  disabled={cartItem.quantity <= 1}
+                >
                   <Minus size={25} />
                 </button>
                 <input type="number" value={cartItem.quantity} readOnly />
@@ -140,7 +155,9 @@ export const CartItem = ({ setTotalPrice }) => {
                 </button>
               </td>
               <td>
-                <p>Php {(cartItem.quantity * cartItem.productPrice).toFixed(2)}</p>
+                <p>
+                  Php {(cartItem.quantity * cartItem.productPrice).toFixed(2)}
+                </p>
               </td>
               <td className="delete">
                 <button onClick={() => handleDelete(cartItem.productId)}>

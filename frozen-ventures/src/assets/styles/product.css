@@ -1,7 +1,7 @@
 /* Product Css */
 .product-container {
   display: flex;
-  gap: 5vh;
+  justify-content: space-between;
   border-radius: 20px;
 
   .product-card {

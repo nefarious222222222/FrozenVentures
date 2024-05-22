@@ -36,13 +36,14 @@ export const SignIn = () => {
         setError("Password is required");
         return;
       }
-
+  
       setIsSigningIn(true);
       try {
         const userId = await getUserIdByEmailAndPassword(email, password);
         const userRole = await getUserRoleByEmailAndPassword(email, password);
         addUser(userId, userRole);
         try {
+          // Ensure the salt round matches the one used during sign-up
           await doSignInWithEmailAndPassword(email, password, setError);
         } catch (error) {
           console.log(error);

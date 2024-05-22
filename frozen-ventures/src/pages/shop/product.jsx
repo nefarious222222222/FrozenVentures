@@ -3,13 +3,12 @@ import "../../assets/styles/product.css";
 import { UserContext } from "../../context/user-context";
 import { motion as m, AnimatePresence } from "framer-motion";
 import { ShoppingCart, WarningCircle } from "phosphor-react";
-import { fetchProductsFromFirestore } from "../../firebase/firebase-operations";
-import { addItemToCart } from "../../firebase/firebase-products";
+import { fetchAllProductsFromAllUsers, addItemToCart } from "../../firebase/firebase-products";
 
-export async function getProductsFromFirestore() {
+export async function getProductsFromDatabase() {
   try {
-    const firestoreProducts = await fetchProductsFromFirestore();
-    const products = firestoreProducts.map((product) => ({
+    const databaseProducts = await fetchAllProductsFromAllUsers();
+    const products = databaseProducts.map((product) => ({
       productId: product.productId,
       productName: product.productName,
       productPrice: product.productPrice,
@@ -19,7 +18,7 @@ export async function getProductsFromFirestore() {
     }));
     return products;
   } catch (error) {
-    console.error("Error converting Firestore products data:", error);
+    console.error("Error converting database products data:", error);
     return [];
   }
 }
@@ -34,8 +33,8 @@ export const Product = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const productsFromFirestore = await getProductsFromFirestore();
-      setProducts(productsFromFirestore);
+      const productsFromDatabase = await getProductsFromDatabase();
+      setProducts(productsFromDatabase);
     };
     fetchProducts();
   }, []);

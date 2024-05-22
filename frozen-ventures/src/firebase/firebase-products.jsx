@@ -1,4 +1,4 @@
-import { ref, get, set, onValue, remove } from "firebase/database";
+import { ref, get, set, onValue, remove, child } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
 
 // Add items to the realtime database to update cart
@@ -31,7 +31,6 @@ export const addItemToCart = async (
         quantity,
         productPrice,
         productName,
-        productRetailer,
         productImage,
       });
     }
@@ -79,17 +78,28 @@ const generateNewProductId = async (userId) => {
   const snapshot = await get(productsRef);
   const products = snapshot.val();
   const productIds = Object.keys(products || {});
-  if (productIds.length === 0) return 'pid-0001';
+  if (productIds.length === 0) return "pid-0001";
 
   const lastProductId = productIds[productIds.length - 1];
-  const lastNumber = parseInt(lastProductId.split('-')[1], 10);
+  const lastNumber = parseInt(lastProductId.split("-")[1], 10);
   const newNumber = lastNumber + 1;
-  return `pid-${String(newNumber).padStart(4, '0')}`;
+  return `pid-${String(newNumber).padStart(4, "0")}`;
 };
 
-export const addProduct = async (userId, productName, productPrice, productStock, productDescription, productImage) => {
+// Add product in firebase
+export const addProduct = async (
+  userId,
+  productName,
+  productPrice,
+  productStock,
+  productDescription,
+  productImage
+) => {
   const newProductId = await generateNewProductId(userId);
-  const newProductRef = ref(realtimeDb, `retailers/${userId}/products/${newProductId}`);
+  const newProductRef = ref(
+    realtimeDb,
+    `retailers/${userId}/products/${newProductId}`
+  );
   try {
     await set(newProductRef, {
       productId: newProductId,
@@ -97,12 +107,37 @@ export const addProduct = async (userId, productName, productPrice, productStock
       productPrice,
       productStock,
       productDescription,
-      productImage
+      productImage,
     });
   } catch (error) {
     console.error("Error adding product:", error);
   }
 };
 
+// Fetch all products from all users
+export const fetchAllProductsFromAllUsers = async () => {
+  try {
+    const dbRef = ref(realtimeDb);
+    const snapshot = await get(child(dbRef, "retailers"));
+    if (snapshot.exists()) {
+      const retailersData = snapshot.val();
+      const allProducts = [];
 
-
+      for (const retailerId in retailersData) {
+        const products = retailersData[retailerId].products;
+        if (products) {
+          for (const productId in products) {
+            allProducts.push({ productId, ...products[productId] });
+          }
+        }
+      }
+      return allProducts;
+    } else {
+      console.log("No data available");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching all products from all users:", error);
+    throw error;
+  }
+};

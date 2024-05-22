@@ -1,4 +1,5 @@
 import { useState } from "react";
+import bcrypt from "bcryptjs";
 import { doCreateUserWithEmailAndPassword, doSignOut } from "../../../firebase/firebase-auth";
 import {
   addUserAccountInfo,
@@ -26,6 +27,8 @@ export function useFormSubmit() {
     const formErrors = [];
 
     try {
+      const hashedPassword = await bcrypt.hash(inputPass, 10);
+
       await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
       const latestUserId = await getLatestUserId();
       const userId = IdGenerator(latestUserId);
@@ -45,7 +48,7 @@ export function useFormSubmit() {
       }
       await addUserAccountInfo(
         {
-          inputPass,
+          inputPass: hashedPassword,
           inputPhone,
           inputEmail,
           selectedRole,
@@ -56,7 +59,7 @@ export function useFormSubmit() {
         {
           inputFName,
           inputLName,
-          inputPass,
+          inputPass: hashedPassword,
           inputBirthdate,
           selectedGender,
           selectedImage: imageValue,
