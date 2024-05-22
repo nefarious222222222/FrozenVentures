@@ -30,24 +30,19 @@ export async function getUserIdByEmailAndPassword(email, password) {
   const usersRef = ref(realtimeDb, "users");
   try {
     const snapshot = await get(usersRef);
-    let userId = null;
-    snapshot.forEach(async (childSnapshot) => {
-      const userData = childSnapshot.val();
-      if (
-        userData &&
-        userData.accountInfo &&
-        userData.accountInfo.email === email
-      ) {
-        const hashedPassword = userData.accountInfo.password;
+    const users = snapshot.val();
+    for (const userId in users) {
+      const userData = users[userId].accountInfo;
+      if (userData && userData.email === email) {
+        const hashedPassword = userData.password;
         const isMatch = await bcrypt.compare(password, hashedPassword);
-        console.log(isMatch);
         if (isMatch) {
-          userId = childSnapshot.key;
-          return;
+          return userId; // Return userId if user is found
         }
       }
-    });
-    return userId;
+    }
+    // If user is not found, throw an error
+    throw new Error("Invalid email or password");
   } catch (error) {
     console.error("Error getting user ID by email and password:", error);
     throw error;
