@@ -19,6 +19,7 @@ export const SignUp = () => {
   const [inputBirthdate, setInputBirthdate] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedGender, setSelectedGender] = useState("");
+  const [inputShopName, setInputShopName] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
   const [formSuccess, setFormSuccess] = useState("");
@@ -84,11 +85,13 @@ export const SignUp = () => {
       selectedRole === "Distributor" ||
       selectedRole === "Manufacturer"
     ) {
-      if (!selectedImage) {
+      if (!inputShopName) {
+        formErrors.push("Shop name is required");
+      } else if (!selectedImage) {
         formErrors.push("Image is required");
       } else if (!validateImage(selectedImage)) {
         formErrors.push(
-          "Invalid image must only be 10mb and has an extension of jpg, jpeg, png"
+          "Invalid image. Must be less than 10MB and have an extension of jpg, jpeg, or png."
         );
       }
     }
@@ -109,22 +112,19 @@ export const SignUp = () => {
       inputBirthdate,
       selectedRole,
       selectedGender,
+      inputShopName,
       selectedImage,
     };
 
     try {
+      await submitForm(formData);
       setFormSuccess("Account successfully created");
-
-      try {
-        await submitForm(formData);
-        
-      } catch (error) {
-        console.log("ERROR:", error);
-      }
     } catch (error) {
-      console.log(error.message);
-      setIsSigningUp(false);
+      console.error("ERROR:", error);
+      setErrors(["Failed to create account"]);
     }
+
+    setIsSigningUp(false);
   };
 
   return (
@@ -242,6 +242,29 @@ export const SignUp = () => {
               onChange={(e) => setInputPass(e.target.value)}
             />
           </div>
+
+          <AnimatePresence>
+            {(selectedRole === "Retailer" ||
+              selectedRole === "Distributor" ||
+              selectedRole === "Manufacturer") && (
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: easeInOut }}
+                className="input-field"
+              >
+                <label htmlFor="shopName">Shop Name:</label>
+                <input
+                  type="text"
+                  id="shopName"
+                  name="shopName"
+                  value={inputShopName}
+                  onChange={(e) => setInputShopName(e.target.value)}
+                />
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="input-container grid3">
@@ -295,9 +318,7 @@ export const SignUp = () => {
               onChange={(e) => setInputCPass(e.target.value)}
             />
           </div>
-        </div>
 
-        <div className="db-container grid4">
           <AnimatePresence>
             {(selectedRole === "Retailer" ||
               selectedRole === "Distributor" ||
@@ -320,7 +341,9 @@ export const SignUp = () => {
               </m.div>
             )}
           </AnimatePresence>
+        </div>
 
+        <div className="db-container grid4">
           <button type="submit" disabled={isSigningUp}>
             {isSigningUp ? "Signing Up..." : "Sign Up"}
           </button>

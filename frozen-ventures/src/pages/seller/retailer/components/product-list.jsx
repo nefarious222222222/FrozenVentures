@@ -5,11 +5,13 @@ import { X } from "phosphor-react";
 import {
   addProduct,
   fetchAllProducts,
+  fetchLowStockProducts,
 } from "../../../../firebase/firebase-retailers";
 
 export const ProductList = () => {
   const { user } = useContext(UserContext);
   const userId = user.userId;
+  const shopName = user.userShopName;
 
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [productName, setProductName] = useState("");
@@ -18,6 +20,7 @@ export const ProductList = () => {
   const [productDescription, setProductDescription] = useState("");
   const [productImage, setProductImage] = useState("");
   const [products, setProducts] = useState([]);
+  const [lowStockAlert, setLowStockAlert] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -27,6 +30,14 @@ export const ProductList = () => {
         const allProducts = await fetchAllProducts(userId);
         if (allProducts) {
           setProducts(Object.values(allProducts));
+        }
+
+        const lowStockProducts = await fetchLowStockProducts(userId);
+        if (lowStockProducts.length > 0) {
+          const productNames = lowStockProducts.map(product => product.productName).join(", ");
+          setLowStockAlert(`${productNames} has below 20 stocks`);
+        } else {
+          setLowStockAlert("");
         }
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -58,6 +69,7 @@ export const ProductList = () => {
         productStock,
         productDescription,
         productImage,
+        shopName,
       });
 
       await addProduct(userId, {
@@ -66,6 +78,7 @@ export const ProductList = () => {
         productStock,
         productDescription,
         productImage,
+        shopName,
       });
 
       setProductName("");
@@ -94,9 +107,11 @@ export const ProductList = () => {
             <p>{success}</p>
           </div>
         )}
-        <div className="alert-message">
-          <p>Vanilla has below 20 stocks</p>
-        </div>
+        {lowStockAlert && (
+          <div className="alert-message">
+            <p>{lowStockAlert}</p>
+          </div>
+        )}
 
         <div className="header">
           <h1>Product List</h1>

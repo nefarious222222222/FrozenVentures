@@ -8,7 +8,7 @@ import {
   addItemToCart,
 } from "../../firebase/firebase-products";
 
-export const CartItem = ({ setTotalPrice }) => {
+export const CartItem = ({ setTotalPrice, setProductIds  }) => {
   const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -49,8 +49,10 @@ export const CartItem = ({ setTotalPrice }) => {
       (sum, item) => sum + item.quantity * item.productPrice,
       0
     );
+    const productIds = cartItems.map((item) => item.productId);
+    setProductIds(productIds);
     setTotalPrice(total);
-  }, [cartItems, setTotalPrice]);
+  }, [cartItems, setTotalPrice, setProductIds]);
 
   const handleDelete = (productId) => {
     setItemToDelete(productId);
@@ -102,7 +104,7 @@ export const CartItem = ({ setTotalPrice }) => {
       1,
       selectedItem.productPrice,
       selectedItem.productName,
-      selectedItem.productRetailer,
+      selectedItem.shopName,
       selectedItem.productImage
     );
   };
@@ -123,7 +125,7 @@ export const CartItem = ({ setTotalPrice }) => {
       -1,
       selectedItem.productPrice,
       selectedItem.productName,
-      selectedItem.productRetailer,
+      selectedItem.shopName,
       selectedItem.productImage
     );
   };
@@ -139,7 +141,7 @@ export const CartItem = ({ setTotalPrice }) => {
                 <div className="description">
                   <p>{cartItem.productName}</p>
                   <p>Php {cartItem.productPrice}</p>
-                  <p>{cartItem.productRetailer}</p>
+                  <p>{cartItem.shopName}</p>
                 </div>
               </td>
               <td className="quantity">

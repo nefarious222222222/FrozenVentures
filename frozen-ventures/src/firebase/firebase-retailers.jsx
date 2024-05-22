@@ -1,5 +1,6 @@
 import { ref, get, set } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
+import dayjs from "dayjs";
 
 // Get the latest product ID across all users
 export const getLatestProductIdAcrossAllUsers = async () => {
@@ -81,23 +82,93 @@ export async function fetchAllProducts(retailerId) {
 
 // Add a product to the database
 export const addProduct = async (userId, productData) => {
-    const newProductId = await generateNewProductId(userId);
-    const newProductRef = ref(realtimeDb, `retailers/${userId}/products/${newProductId}`);
-    
-    try {
-      console.log("Setting new product data:", {
-        productId: newProductId,
-        ...productData,
-      });
-      
-      await set(newProductRef, {
-        productId: newProductId,
-        ...productData,
-      });
-      
-      console.log("Product added successfully");
-    } catch (error) {
-      console.error("Error adding product:", error);
-      throw error;
+  const newProductId = await generateNewProductId(userId);
+  const newProductRef = ref(
+    realtimeDb,
+    `retailers/${userId}/products/${newProductId}`
+  );
+
+  try {
+    console.log("Setting new product data:", {
+      productId: newProductId,
+      ...productData,
+      dateAdded: Date.now(),
+    });
+
+    await set(newProductRef, {
+      productId: newProductId,
+      ...productData,
+      dateAdded: Date.now(),
+    });
+
+    console.log("Product added successfully");
+  } catch (error) {
+    console.error("Error adding product:", error);
+    throw error;
+  }
+};
+
+// Get invtentory info by userId
+export const getProductMetrics = async (userId) => {
+  try {
+    const products = await fetchAllProducts(userId);
+    const totalProducts = products.length;
+    const totalStocks = products.reduce(
+      (sum, product) => sum + (parseInt(product.productStock) || 0),
+      0
+    );
+    const outOfStockCount = products.filter(
+      (product) => parseInt(product.productStock) === 0
+    ).length;
+
+    return {
+      totalProducts,
+      totalStocks,
+      outOfStockCount,
+    };
+  } catch (error) {
+    console.error("Error fetching product metrics:", error);
+    throw error;
+  }
+};
+
+// Fetch products with stocks lower than 20
+export const fetchLowStockProducts = async (retailerId, threshold = 20) => {
+  try {
+    const products = await fetchAllProducts(retailerId);
+    const lowStockProducts = products.filter(
+      (product) => parseInt(product.productStock) < threshold
+    );
+    return lowStockProducts;
+  } catch (error) {
+    console.error("Error fetching low stock products:", error);
+    throw error;
+  }
+};
+
+// Get products added within the last 7 days
+export const fetchNewProductsThisWeek = async (retailerId) => {
+  try {
+    const productsRef = ref(realtimeDb, `retailers/${retailerId}/products`);
+    const snapshot = await get(productsRef);
+    if (snapshot.exists()) {
+      const products = snapshot.val();
+      const sevenDaysAgo = dayjs().subtract(7, "day").startOf("day").valueOf();
+
+      const newProductsArray = Object.keys(products)
+        .map((key) => ({
+          productId: key,
+          ...products[key],
+        }))
+        .filter((product) => product.dateAdded >= sevenDaysAgo);
+
+      return newProductsArray;
+    } else {
+      console.log("No new products available");
+      return [];
     }
-  };
+  } catch (error) {
+    console.error("Error fetching new products this week:", error);
+    throw error;
+  }
+};

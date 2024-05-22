@@ -12,7 +12,7 @@ export async function getProductsFromDatabase() {
       productId: product.productId,
       productName: product.productName,
       productPrice: product.productPrice,
-      productRetailer: product.productRetailer,
+      shopName: product.shopName,
       productImage: product.productImage,
       productDescription: product.productDescription,
     }));
@@ -39,9 +39,9 @@ export const Product = () => {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = async (productId, productPrice, productName, productRetailer, productImage) => {
+  const handleAddToCart = async (productId, productPrice, productName, shopName, productImage) => {
     if (userId) {
-      await addItemToCart(userId, productId, 1, productPrice, productName, productRetailer, productImage);
+      await addItemToCart(userId, productId, 1, productPrice, productName, shopName, productImage);
       const addedProduct = products.find((product) => product.productId === productId);
       setAddedProduct(addedProduct);
       setShowNotification(true);
@@ -60,9 +60,9 @@ export const Product = () => {
             <div className="product-info">
               <p>{product.productName}</p>
               <p>Php {product.productPrice}</p>
-              <p>{product.productRetailer}</p>
+              <p>{product.shopName}</p>
             </div>
-            <ShoppingCart onClick={() => handleAddToCart(product.productId, product.productPrice, product.productName, product.productRetailer, product.productImage)} />
+            <ShoppingCart onClick={() => handleAddToCart(product.productId, product.productPrice, product.productName, product.shopName, product.productImage)} />
           </div>
         </div>
       ))}

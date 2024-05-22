@@ -9,6 +9,7 @@ import {
 import {
   getUserIdByEmailAndPassword,
   getUserRoleByEmailAndPassword,
+  getShopNameByEmailAndPassword,
 } from "../../firebase/firebase-users";
 
 export const SignIn = () => {
@@ -41,9 +42,9 @@ export const SignIn = () => {
       try {
         const userId = await getUserIdByEmailAndPassword(email, password);
         const userRole = await getUserRoleByEmailAndPassword(email, password);
-        addUser(userId, userRole);
+        const userShopName = await getShopNameByEmailAndPassword(email, password);
+        addUser(userId, userRole, userShopName);
         try {
-          // Ensure the salt round matches the one used during sign-up
           await doSignInWithEmailAndPassword(email, password, setError);
         } catch (error) {
           console.log(error);

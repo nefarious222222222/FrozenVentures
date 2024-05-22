@@ -1,11 +1,7 @@
 import { useState } from "react";
 import bcrypt from "bcryptjs";
 import { doCreateUserWithEmailAndPassword, doSignOut } from "../../../firebase/firebase-auth";
-import {
-  addUserAccountInfo,
-  addUserPersonalInfo,
-  getLatestUserId,
-} from "../../../firebase/firebase-users";
+import { addUserAccountInfo, addUserPersonalInfo, getLatestUserId } from "../../../firebase/firebase-users";
 import { IdGenerator } from "./id-generator";
 
 export function useFormSubmit() {
@@ -21,6 +17,7 @@ export function useFormSubmit() {
       inputBirthdate,
       selectedRole,
       selectedGender,
+      inputShopName,
       selectedImage,
     } = formData;
 
@@ -28,10 +25,12 @@ export function useFormSubmit() {
 
     try {
       const hashedPassword = await bcrypt.hash(inputPass, 10);
-
+      
+      console.log("Email before creating user:", inputEmail);
       await doCreateUserWithEmailAndPassword(inputEmail, inputPass);
       const latestUserId = await getLatestUserId();
       const userId = IdGenerator(latestUserId);
+      
       let imageValue = "Not Applicable";
       if (selectedImage) {
         try {
@@ -46,27 +45,28 @@ export function useFormSubmit() {
           formErrors.push("Error reading image");
         }
       }
-      await addUserAccountInfo(
-        {
-          inputPass: hashedPassword,
-          inputPhone,
-          inputEmail,
-          selectedRole,
-        },
-        userId
-      );
-      await addUserPersonalInfo(
-        {
-          inputFName,
-          inputLName,
-          inputPass: hashedPassword,
-          inputBirthdate,
-          selectedGender,
-          selectedImage: imageValue,
-        },
-        userId
-      );
-      doSignOut();
+
+      const accountInfo = {
+        inputPass: hashedPassword,
+        inputPhone,
+        inputEmail,
+        selectedRole,
+        inputShopName: inputShopName || "Not Applicable",
+      };
+
+      await addUserAccountInfo(accountInfo, userId);
+
+      const personalInfo = {
+        inputFName,
+        inputLName,
+        inputPass: hashedPassword,
+        inputBirthdate,
+        selectedGender,
+        selectedImage: imageValue,
+      };
+
+      await addUserPersonalInfo(personalInfo, userId);
+      await doSignOut();
     } catch (error) {
       formErrors.push("Failed to create account or store data");
       console.error("ERROR:", error);

@@ -8,7 +8,7 @@ export const addItemToCart = async (
   quantity,
   productPrice,
   productName,
-  productRetailer,
+  shopName,
   productImage
 ) => {
   const cartItemRef = ref(
@@ -23,7 +23,7 @@ export const addItemToCart = async (
         quantity: existingQuantity + quantity,
         productPrice,
         productName,
-        productRetailer,
+        shopName,
         productImage,
       });
     } else {
@@ -93,7 +93,8 @@ export const addProduct = async (
   productPrice,
   productStock,
   productDescription,
-  productImage
+  productImage,
+  shopName,
 ) => {
   const newProductId = await generateNewProductId(userId);
   const newProductRef = ref(
@@ -108,6 +109,7 @@ export const addProduct = async (
       productStock,
       productDescription,
       productImage,
+      shopName,
     });
   } catch (error) {
     console.error("Error adding product:", error);
@@ -140,4 +142,14 @@ export const fetchAllProductsFromAllUsers = async () => {
     console.error("Error fetching all products from all users:", error);
     throw error;
   }
+};
+
+// Function to fetch products added within the last 7 days
+export const fetchLatestProductsFromAllUsers = async () => {
+  const allProducts = await fetchAllProductsFromAllUsers();
+  const oneWeekAgo = dayjs().subtract(7, 'day').toDate();
+  return allProducts.filter(product => {
+    const productDate = new Date(product.dateAdded);
+    return productDate >= oneWeekAgo;
+  });
 };

@@ -121,6 +121,7 @@ export async function addUserAccountInfo(formData, userId) {
       phone: formData.inputPhone,
       email: formData.inputEmail,
       role: formData.selectedRole,
+      shopName: formData.inputShopName,
     });
     console.log("User added successfully to Realtime Database");
   } catch (error) {
@@ -246,6 +247,37 @@ export async function phoneExists(phone) {
     return phoneExists;
   } catch (error) {
     console.error("Error checking if phone exists:", error);
+    throw error;
+  }
+}
+
+export async function getShopNameByEmailAndPassword(email, password) {
+  const usersRef = ref(realtimeDb, "users");
+  try {
+    const snapshot = await get(usersRef);
+    console.log("Snapshot:", snapshot);
+    if (!snapshot.exists()) {
+      throw new Error("No users found");
+    }
+
+    let shopName = null;
+    for (const childSnapshot of Object.values(snapshot.val())) {
+      const userData = childSnapshot.accountInfo;
+      if (userData && userData.email === email) {
+        const hashedPassword = userData.password;
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+        if (isMatch) {
+          shopName = userData.shopName;
+          break;
+        }
+      }
+    }
+    if (shopName === null) {
+      throw new Error("Invalid email or password");
+    }
+    return shopName;
+  } catch (error) {
+    console.error("Error fetching shop name:", error);
     throw error;
   }
 }
