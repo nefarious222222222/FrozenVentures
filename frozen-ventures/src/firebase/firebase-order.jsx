@@ -52,3 +52,23 @@ export const generateNewOrderId = async (userId) => {
   const newNumber = lastNumber + 1;
   return `oid-${String(newNumber).padStart(4, "0")}`;
 };
+
+export const fetchOrderHistory = async (userId) => {
+  try {
+    const ordersRef = ref(realtimeDb, `customers/${userId}/orders`);
+    const snapshot = await get(ordersRef);
+    const orders = snapshot.val();
+
+    if (!orders) {
+      console.log("No orders found for this user.");
+      return [];
+    }
+
+    const orderIds = Object.keys(orders);
+    console.log("Order IDs fetched successfully:", orderIds);
+    return orderIds;
+  } catch (error) {
+    console.error("Error fetching order history:", error);
+    throw error;
+  }
+};

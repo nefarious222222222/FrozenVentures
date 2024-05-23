@@ -141,6 +141,7 @@
   }
 
   .confirm-delete {
+    z-index: 1;
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -279,7 +280,6 @@
   justify-content: space-between;
   border-radius: 20px;
   padding: 40px;
-  margin: 40px 0 0 0;
   background-color: var(--color-pale-violet);
 
   h2 {

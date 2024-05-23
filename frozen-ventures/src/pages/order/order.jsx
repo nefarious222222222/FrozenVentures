@@ -1,105 +1,46 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/order.css";
+import { OrderContext } from "../../context/order-context";
+import { UserContext } from "../../context/user-context";
 import { motion as m, AnimatePresence, easeInOut } from "framer-motion";
-import { PRODUCTS } from "../../Products";
-import { OrderItem } from "./order-item";
-import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart, Storefront, X } from "phosphor-react";
+import { createOrder, generateNewOrderId } from "../../firebase/firebase-order";
 
 export const Order = () => {
-  const [productBuy, setProductBuy] = useState(null);
+  const { orderDetails, clearOrder } = useContext(OrderContext);
+  const { user } = useContext(UserContext);
   const [showConfirmOrder, setShowConfirmOrder] = useState(false);
+  const { products, shippingFee, subTotal } = orderDetails || {};
+  const userId = user.userId;
 
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const shippingCost = searchParams.get("shippingCost");
-  const idBuy = searchParams.get("idBuy");
-  const quantityBuy = searchParams.get("quantityBuy");
-
-  let totalAmount, newShippingCost, totalCost;
-  let priceBuy, imageBuy, nameBuy, retailerBuy, totalPrice;
-
-  if (idBuy == null) {
-    totalAmount = getTotalCartAmount().toFixed(2);
-
-    if (shippingCost.toString() === "0") {
-      newShippingCost = "Free";
-      totalCost = totalAmount;
-    } else {
-      newShippingCost = parseFloat(shippingCost).toFixed(2);
-      totalCost = parseFloat(totalAmount) + parseFloat(shippingCost);
-    }
-  } else {
-    useEffect(() => {
-      const selectedProduct = PRODUCTS.find(
-        (item) => item.id === parseInt(idBuy)
-      );
-      setProductBuy(selectedProduct);
-    }, [idBuy]);
-
-    if (productBuy) {
-      priceBuy = productBuy.price;
-      imageBuy = productBuy.productImage;
-      nameBuy = productBuy.productName;
-      retailerBuy = productBuy.retailerName;
-      totalAmount = parseFloat(priceBuy) * parseFloat(quantityBuy);
-      totalPrice = priceBuy * quantityBuy;
-    }
-
-    if (shippingCost.toString() === "0") {
-      newShippingCost = "Free";
-      totalCost = totalAmount;
-    } else {
-      newShippingCost = parseFloat(shippingCost).toFixed(2);
-      totalCost = parseFloat(totalAmount) + parseFloat(shippingCost);
+  let totalProductAmount = 0;
+  if (products) {
+    for (const productId in products) {
+      const product = products[productId];
+      totalProductAmount += product.productPrice * product.quantity;
     }
   }
+
+  const totalAmount = parseFloat(subTotal) + parseFloat(shippingFee);
 
   const handleConfirmOrderShow = () => {
     setShowConfirmOrder(true);
-  }
+  };
 
   const handleConfirmOrderClose = () => {
     setShowConfirmOrder(false);
   };
 
-  const handlePlaceOrder = () => {
-    if (idBuy) {
-      const order = {
-        id: idBuy,
-        quantity: quantityBuy,
-        price: priceBuy,
-        totalPrice: totalPrice,
-        shippingCost: shippingCost,
-        totalCost: totalCost,
-        image: imageBuy,
-        name: nameBuy,
-        retailer: retailerBuy,
-      };
-      addOrder(order);
-    } else {
-      const orders = Object.keys(cartItems)
-        .filter((itemId) => cartItems[itemId] > 0)
-        .map((itemId) => {
-          const product = PRODUCTS.find(
-            (product) => product.id === Number(itemId)
-          );
-          return {
-            id: itemId,
-            quantity: cartItems[itemId],
-            price: product.price,
-            totalPrice: product.price * cartItems[itemId],
-            name: product.productName,
-            image: product.productImage,
-            retailer: product.retailerName,
-          };
-        });
+  const handlePlaceOrder = async () => {
+    try {
+      const orderId = await generateNewOrderId(userId)
+      await createOrder(userId, orderId, orderDetails);
+      console.log("Order has been placed successfully");
 
-      addOrder({
-        orders,
-        shippingCost: shippingCost,
-        totalCost: totalCost,
-      });
+      clearOrder();
+      window.location.href = "/home";
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -114,10 +55,10 @@ export const Order = () => {
         <h2>Order Confirmation</h2>
 
         <div className="tb-container">
-          {totalAmount > 0 ? (
+          {totalProductAmount > 0 ? (
             <>
               <p>
-                Order Total: <span>Php {totalCost}</span>
+                Order Total: <span>Php {totalProductAmount}</span>
               </p>
               <button onClick={handleConfirmOrderShow}>Place Order</button>
             </>
@@ -181,78 +122,56 @@ export const Order = () => {
                 <th>Total Price</th>
               </tr>
             </thead>
-          </table>
-        </div>
-
-        <div className="item-checkout">
-          {idBuy ? (
-            <div className="order-item">
-              <table>
-                <tbody>
-                  <tr>
-                    <td className="information">
-                      <img src={imageBuy} alt={nameBuy} />
-                      <div className="description">
-                        <p>
-                          <b>{nameBuy}</b>
-                        </p>
-                        <p>Php {priceBuy}</p>
-                        <button>Remove</button>
-                      </div>
+            <tbody>
+              {products &&
+                Object.entries(products).map(([productId, product]) => (
+                  <tr key={productId}>
+                    <td>
+                      <img
+                        src={product.productImage}
+                        alt={product.productName}
+                      />
+                      <p>{product.productName}</p>
                     </td>
                     <td>
-                      <p>{retailerBuy}</p>
+                      <p>{product.shopName}</p>
                     </td>
                     <td>
-                      <p>{quantityBuy}</p>
+                      <p>{product.quantity}</p>
                     </td>
                     <td>
-                      <p>Php {totalPrice}</p>
+                      <p>Php {product.productPrice * product.quantity}</p>
                     </td>
                   </tr>
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="item-checkout">
-              {PRODUCTS.map((product) => {
-                if (cartItems[product.id] !== 0) {
-                  return <OrderItem data={product} key={product.id} />;
-                }
-                return null;
-              })}
-            </div>
-          )}
+                ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {totalAmount > 0 ? (
+      {totalProductAmount > 0 ? (
         <div className="t-container">
           <div className="total-container">
             <h2>Total Cost</h2>
             <div className="sub-total">
               <p className="label">Sub Total</p>
-              <p className="price">Php {totalAmount}</p>
+              <p className="price">Php {totalProductAmount}</p>
             </div>
             <div className="shipping">
               <p className="label">Shipping</p>
-              <p className="price">
-                {newShippingCost === "Free"
-                  ? newShippingCost
-                  : `Php ${newShippingCost}`}
-              </p>
+              <p className="price">Php {shippingFee.toFixed(2)}</p>
             </div>
             <div className="line"></div>
             <div className="total">
               <p className="label">Total</p>
-              <p className="price">Php {totalCost}</p>
+              <p className="price">Php {totalAmount}</p>
             </div>
             <button onClick={handleConfirmOrderShow}>Place Order</button>{" "}
           </div>
         </div>
       ) : (
         <AnimatePresence>
-          {Object.values(cartItems).every((quantity) => quantity === 0) && (
+          {totalProductAmount < 0 && (
             <m.div
               key="empty-cart"
               initial={{ opacity: 0 }}

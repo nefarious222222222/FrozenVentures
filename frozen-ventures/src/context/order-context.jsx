@@ -2,28 +2,42 @@ import React, { createContext, useState, useEffect } from "react";
 
 export const OrderContext = createContext(null);
 
-export const OrderContextProvider = (props) => {
-  const [orderedItems, setOrderedItems] = useState(() => {
-    const savedOrders = localStorage.getItem('orderedItems');
-    return savedOrders ? JSON.parse(savedOrders) : [];
+export const OrderContextProvider = ({ children }) => {
+  const [orderDetails, setOrderDetails] = useState(() => {
+    const storedOrderDetails = localStorage.getItem('orderDetails');
+    try {
+      return storedOrderDetails ? JSON.parse(storedOrderDetails) : null;
+    } catch (error) {
+      console.error("Error parsing orderDetails from localStorage:", error);
+      return null;
+    }
   });
 
-  useEffect(() => {
-    localStorage.setItem('orderedItems', JSON.stringify(orderedItems));
-  }, [orderedItems]);
+  const setOrder = (details) => {
+    setOrderDetails(details);
+  };
 
-  const addOrder = (order) => {
-    setOrderedItems((prevOrders) => [...prevOrders, order]);
+  useEffect(() => {
+    if (orderDetails) {
+      localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
+    } else {
+      localStorage.removeItem('orderDetails');
+    }
+  }, [orderDetails]);
+
+  const clearOrder = () => {
+    setOrderDetails(null);
   };
 
   const contextValue = {
-    orderedItems,
-    addOrder,
+    orderDetails,
+    setOrder,
+    clearOrder,
   };
 
   return (
     <OrderContext.Provider value={contextValue}>
-      {props.children}
+      {children}
     </OrderContext.Provider>
   );
 };

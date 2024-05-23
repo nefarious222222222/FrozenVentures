@@ -1,7 +1,10 @@
-import React, { useState } from "react";
-import { generateNewOrderId, createOrder } from "../../firebase/firebase-order";
+import React, { useContext, useState } from "react";
+import { OrderContext } from "../../context/order-context";
+import { Link } from "react-router-dom";
 
-export const CartCheckout = ({ totalAmount, products, userId }) => {
+export const CartCheckout = ({ totalAmount, products }) => {
+  const { setOrder } = useContext(OrderContext);
+  const [orderSet, setOrderSet] = useState(false);
   const [shippingMode, setShippingMode] = useState("pickup");
 
   const shippingCost = shippingMode === "delivery" ? 10.0 : 0.0;
@@ -13,7 +16,6 @@ export const CartCheckout = ({ totalAmount, products, userId }) => {
 
   const handleCheckout = async () => {
     try {
-      const orderId = await generateNewOrderId(userId);
 
       const orderDetails = {
         shippingFee: shippingCost,
@@ -30,12 +32,16 @@ export const CartCheckout = ({ totalAmount, products, userId }) => {
         }, {}),
       };
 
-      await createOrder(userId, orderId, orderDetails);
-      console.log("Checkout successful!");
+      setOrder(orderDetails);
+      setOrderSet(true);
     } catch (error) {
       console.error("Error during checkout:", error.message);
     }
   };
+
+  if (orderSet) {
+    window.location.href = "/order";
+  }
   
   return (
     <div className="cart-checkout">

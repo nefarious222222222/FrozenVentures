@@ -1,7 +1,6 @@
 import React, {  useState, useEffect } from "react";
 import "../../assets/styles/buy-product.css";
 import { Link, useParams } from "react-router-dom";
-import { PRODUCTS } from "../../Products";
 import { Minus, Plus, X, WarningCircle } from "phosphor-react";
 import { motion as m, AnimatePresence } from "framer-motion";
 

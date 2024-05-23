@@ -6,24 +6,21 @@ export const UserContextProvider = (props) => {
   const [user, setUser] = useState(() => {
     const userId = localStorage.getItem('userId');
     const userRole = localStorage.getItem('userRole');
-    const userShopName = localStorage.getItem('userShopName');
-    return userId ? { userId, userRole, userShopName } : null;
+    return userId ? { userId, userRole } : null;
   });
 
   useEffect(() => {
     if (user) {
       localStorage.setItem('userId', user.userId);
       localStorage.setItem('userRole', user.userRole);
-      localStorage.setItem('userShopName', user.userShopName);
     } else {
       localStorage.removeItem('userId');
       localStorage.removeItem('userRole');
-      localStorage.removeItem('userShopName');
     }
   }, [user]);
 
-  const addUser = (newUserId, newUserRole, newUserShopName) => {
-    setUser({ userId: newUserId, userRole: newUserRole, userShopName: newUserShopName });
+  const addUser = (newUserId, newUserRole) => {
+    setUser({ userId: newUserId, userRole: newUserRole });
   };
 
   const clearUser = () => {

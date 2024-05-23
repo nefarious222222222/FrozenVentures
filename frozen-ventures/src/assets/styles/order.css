@@ -169,6 +169,23 @@
           }
         }
       }
+
+      tbody {
+        td {
+          display: flex;
+          justify-content: flex-start;
+        }
+
+        img {
+          width: 200px;
+          border-radius: 20px;
+        }
+
+        p {
+          width: 100%;
+          text-align: center;
+        }
+      }
     }
 
     .information {
