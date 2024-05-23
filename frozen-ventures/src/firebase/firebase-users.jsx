@@ -134,7 +134,6 @@ export async function addUserPersonalInfo(formData, userId) {
     await set(userRef, {
       firstName: formData.inputFName,
       lastName: formData.inputLName,
-      password: formData.inputPass,
       birthdate: formData.inputBirthdate,
       gender: formData.selectedGender,
       image: formData.selectedImage,

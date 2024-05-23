@@ -59,7 +59,6 @@ export function useFormSubmit() {
       const personalInfo = {
         inputFName,
         inputLName,
-        inputPass: hashedPassword,
         inputBirthdate,
         selectedGender,
         selectedImage: imageValue,
