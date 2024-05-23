@@ -8,7 +8,7 @@ import {
   addItemToCart,
 } from "../../firebase/firebase-products";
 
-export const CartItem = ({ setTotalPrice, setProducts  }) => {
+export const CartItem = ({ setTotalPrice, setProducts }) => {
   const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -30,7 +30,10 @@ export const CartItem = ({ setTotalPrice, setProducts  }) => {
               }));
               setCartItems(cartItemsArray);
             } else {
-              console.error("Cart items data is not an object:", cartItemsData);
+              console.error(
+                "Cart items data is not an object:",
+                cartItemsData
+              );
             }
           });
         } catch (error) {
@@ -96,7 +99,9 @@ export const CartItem = ({ setTotalPrice, setProducts  }) => {
       return item;
     });
     setCartItems(updatedCartItems);
-    const selectedItem = updatedCartItems.find((item) => item.productId === productId);
+    const selectedItem = updatedCartItems.find(
+      (item) => item.productId === productId
+    );
     await addItemToCart(
       userId,
       productId,
@@ -107,7 +112,7 @@ export const CartItem = ({ setTotalPrice, setProducts  }) => {
       selectedItem.productImage
     );
   };
-  
+
   const handleDecrement = async (productId) => {
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId && item.quantity > 1) {
@@ -117,7 +122,9 @@ export const CartItem = ({ setTotalPrice, setProducts  }) => {
       return item;
     });
     setCartItems(updatedCartItems);
-    const selectedItem = updatedCartItems.find((item) => item.productId === productId);
+    const selectedItem = updatedCartItems.find(
+      (item) => item.productId === productId
+    );
     await addItemToCart(
       userId,
       productId,
@@ -129,6 +136,38 @@ export const CartItem = ({ setTotalPrice, setProducts  }) => {
     );
   };
 
+  const handleQuantityChange = (event, productId) => {
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.productId === productId) {
+        let updatedQuantity = parseInt(event.target.value, 10);
+        
+        if (updatedQuantity < 1 || isNaN(updatedQuantity)) {
+          updatedQuantity = 1;
+        }
+        return { ...item, quantity: updatedQuantity };
+      }
+      return item;
+    });
+    setCartItems(updatedCartItems);
+  };
+
+  const handleQuantityBlur = (productId) => {
+    const selectedItem = cartItems.find(
+      (item) => item.productId === productId
+    );
+    if (selectedItem) {
+      addItemToCart(
+        userId,
+        productId,
+        selectedItem.quantity,
+        selectedItem.productPrice,
+        selectedItem.productName,
+        selectedItem.shopName,
+        selectedItem.productImage
+      );
+    }
+  };
+
   return (
     <div className="cart-item">
       <table>
@@ -136,7 +175,10 @@ export const CartItem = ({ setTotalPrice, setProducts  }) => {
           {cartItems.map((cartItem) => (
             <tr key={cartItem.productId}>
               <td className="information">
-                <img src={cartItem.productImage} alt={cartItem.productName} />
+                <img
+                  src={cartItem.productImage}
+                  alt={cartItem.productName}
+                />
                 <div className="description">
                   <p>{cartItem.productName}</p>
                   <p>Php {cartItem.productPrice}</p>
@@ -150,7 +192,12 @@ export const CartItem = ({ setTotalPrice, setProducts  }) => {
                 >
                   <Minus size={25} />
                 </button>
-                <input type="number" value={cartItem.quantity} readOnly />
+                <input
+                  type="number"
+                  value={cartItem.quantity}
+                  onChange={(e) => handleQuantityChange(e, cartItem.productId)}
+                  onBlur={() => handleQuantityBlur(cartItem.productId)}
+                />
                 <button onClick={() => handleIncrement(cartItem.productId)}>
                   <Plus size={25} />
                 </button>

@@ -3,6 +3,7 @@ import { realtimeDb } from "./firebase-config";
 
 export const createOrder = async (userId, orderId, orderData) => {
   try {
+    console.log("Order data:", orderData);
     const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
     await set(ordersRef, orderData);
 

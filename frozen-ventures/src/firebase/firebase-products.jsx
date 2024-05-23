@@ -31,6 +31,7 @@ export const addItemToCart = async (
         quantity,
         productPrice,
         productName,
+        shopName,
         productImage,
       });
     }

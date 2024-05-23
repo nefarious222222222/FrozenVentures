@@ -15,7 +15,6 @@ export const CartCheckout = ({ totalAmount, products, userId }) => {
     try {
       const orderId = await generateNewOrderId(userId);
 
-      // Restructure products into an object with productId as keys
       const orderDetails = {
         shippingFee: shippingCost,
         subTotal: totalAmount.toFixed(2),
@@ -25,7 +24,7 @@ export const CartCheckout = ({ totalAmount, products, userId }) => {
             productName: curr.productName,
             productPrice: curr.productPrice,
             quantity: curr.quantity,
-            shopName: curr.shopName
+            shopName: curr.shopName,
           };
           return acc;
         }, {}),
