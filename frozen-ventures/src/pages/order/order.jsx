@@ -9,8 +9,10 @@ import { createOrder, generateNewOrderId } from "../../firebase/firebase-order";
 export const Order = () => {
   const { orderDetails, clearOrder } = useContext(OrderContext);
   const { user } = useContext(UserContext);
-  const [showConfirmOrder, setShowConfirmOrder] = useState(false);
   const { products, shippingFee, subTotal } = orderDetails || {};
+
+  const [showConfirmOrder, setShowConfirmOrder] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const userId = user.userId;
 
   let totalProductAmount = 0;
@@ -33,12 +35,20 @@ export const Order = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      const orderId = await generateNewOrderId(userId)
+      const orderId = await generateNewOrderId(userId);
       await createOrder(userId, orderId, orderDetails);
-      console.log("Order has been placed successfully");
 
-      clearOrder();
-      window.location.href = "/home";
+      if (createOrder) {
+        setShowConfirmOrder(false);
+        setShowSuccessMessage(true);
+
+        setTimeout(() => {
+          clearOrder();
+          window.location.href = "/home";
+        }, 2000);
+      } else {
+        console.log("Error placing order");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -58,7 +68,7 @@ export const Order = () => {
           {totalProductAmount > 0 ? (
             <>
               <p>
-                Order Total: <span>Php {totalProductAmount}</span>
+                Order Total: <span>Php {totalProductAmount.toFixed(2)}</span>
               </p>
               <button onClick={handleConfirmOrderShow}>Place Order</button>
             </>
@@ -140,7 +150,7 @@ export const Order = () => {
                       <p>{product.quantity}</p>
                     </td>
                     <td>
-                      <p>Php {product.productPrice * product.quantity}</p>
+                      <p>Php {Number((product.productPrice * product.quantity).toFixed(2))}</p>
                     </td>
                   </tr>
                 ))}
@@ -155,7 +165,7 @@ export const Order = () => {
             <h2>Total Cost</h2>
             <div className="sub-total">
               <p className="label">Sub Total</p>
-              <p className="price">Php {totalProductAmount}</p>
+              <p className="price">Php {totalProductAmount.toFixed(2)}</p>
             </div>
             <div className="shipping">
               <p className="label">Shipping</p>
@@ -228,6 +238,23 @@ export const Order = () => {
             <div className="buttons">
               <button onClick={handlePlaceOrder}>Yes</button>
               <button onClick={handleConfirmOrderClose}>Cancel</button>
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showSuccessMessage && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="success-message"
+          >
+            <div className="header">
+              <h2>Order Placed Successfully</h2>
+              <p>Your order has been successfully placed.</p>
             </div>
           </m.div>
         )}

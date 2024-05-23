@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import "../../assets/styles/order-history.css";
 import { UserContext } from "../../context/user-context";
 import { fetchOrderHistory } from "../../firebase/firebase-order";
 
@@ -24,31 +25,54 @@ export const OrderHistory = () => {
 
   return (
     <div className="container order-history">
-      <h2>Order History</h2>
-      {orders.length > 0 ? (
-        <div>
-          {orders.map((order, index) => (
-            <div key={index}>
-              <h3>Order {index + 1}</h3>
-              <p>Subtotal: {order.subTotal}</p>
-              <p>Shipping Fee: {order.shippingFee}</p>
-              <h4>Products:</h4>
-              <ul>
-                {Object.values(order.products).map((product, productIndex) => (
-                  <li key={productIndex}>
-                    <p>Product Name: {product.productName}</p>
-                    <p>Price: {product.productPrice}</p>
-                    <p>Quantity: {product.quantity}</p>
-                    {/* Render other product details as needed */}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>No orders found for this user.</p>
-      )}
+      <div className="history-container">
+        <h1>Order History</h1>
+        {orders.length > 0 ? (
+          <div className="order-container">
+            {orders.map((order, index) => (
+              <div className="user-order" key={index}>
+                <h2>Order {index + 1}</h2>
+                <div className="order-info">
+                  <p>
+                    Subtotal: <span> Php {order.subTotal}</span>
+                  </p>
+                  <p>
+                    Shipping Fee:{" "}
+                    <span> Php {order.shippingFee.toFixed(2)}</span>
+                  </p>
+                  <p>
+                    Total Amount:
+                    <span>
+                      {" "}
+                      Php {Number(order.subTotal) + Number(order.shippingFee)}
+                    </span>
+                  </p>
+                </div>
+
+                <h3>Products:</h3>
+                <div className="products-container">
+                  {Object.values(order.products).map(
+                    (product, productIndex) => (
+                      <div className="product" key={productIndex}>
+                        <img src={product.productImage} alt="" />
+
+                        <div className="product-info">
+                          <p>Product Name: <span>{product.productName}</span></p>
+                          <p>Retailer: <span>{product.shopName}</span></p>
+                          <p>Price: <span>Php {product.productPrice}</span></p>
+                          <p>Quantity: <span>{product.quantity}</span></p>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No orders found for this user.</p>
+        )}
+      </div>
     </div>
   );
 };
