@@ -15,6 +15,7 @@ export async function getProductsFromDatabase() {
       shopName: product.shopName,
       productImage: product.productImage,
       productDescription: product.productDescription,
+      productStock: product.productStock,
     }));
     return products;
   } catch (error) {
@@ -27,6 +28,7 @@ export const Product = () => {
   const { user } = useContext(UserContext);
   const [products, setProducts] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
+  const [showErrorNotification, setShowErrorNotification] = useState(false);
   const [addedProduct, setAddedProduct] = useState(null);
 
   const userId = user?.userId;
@@ -39,13 +41,21 @@ export const Product = () => {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = async (productId, productPrice, productName, shopName, productImage) => {
+  const handleAddToCart = async (productId, productPrice, productName, shopName, productImage, productStock) => {
+    console.log(productStock)
     if (userId) {
-      await addItemToCart(userId, productId, 1, productPrice, productName, shopName, productImage);
-      const addedProduct = products.find((product) => product.productId === productId);
-      setAddedProduct(addedProduct);
-      setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 3000);
+      if (productStock > 0) {
+        await addItemToCart(userId, productId, 1, productPrice, productName, shopName, productImage);
+        const addedProduct = products.find((product) => product.productId === productId);
+        setAddedProduct(addedProduct);
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000);
+      } else {
+        const addedProduct = products.find((product) => product.productId === productId);
+        setAddedProduct(addedProduct);
+        setShowErrorNotification(true);
+        setTimeout(() => setShowErrorNotification(false), 3000);
+      }
     } else {
       console.error("User not logged in");
     }
@@ -62,7 +72,7 @@ export const Product = () => {
               <p>Php {product.productPrice}</p>
               <p>{product.shopName}</p>
             </div>
-            <ShoppingCart onClick={() => handleAddToCart(product.productId, product.productPrice, product.productName, product.shopName, product.productImage)} />
+            <ShoppingCart onClick={() => handleAddToCart(product.productId, product.productPrice, product.productName, product.shopName, product.productImage, product.productStock)} />
           </div>
         </div>
       ))}
@@ -78,6 +88,22 @@ export const Product = () => {
             <WarningCircle size={50} />
             <p>
               <span>{addedProduct.productName}</span> has been added to your cart.
+            </p>
+          </m.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showErrorNotification && addedProduct && (
+          <m.div
+            className="notify"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <WarningCircle size={50} />
+            <p>
+              <span>{addedProduct.productName}</span> is out of stock.
             </p>
           </m.div>
         )}

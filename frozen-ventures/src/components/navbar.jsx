@@ -61,7 +61,7 @@ export const Navbar = () => {
               />
             </Link>
 
-            <Link to="/order">
+            <Link to="/order-history">
               <Cube className="link fake-button" size={30} color={"#533d70"} />
             </Link>
           </>
