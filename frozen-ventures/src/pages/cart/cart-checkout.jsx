@@ -14,13 +14,24 @@ export const CartCheckout = ({ totalAmount, products, userId }) => {
   const handleCheckout = async () => {
     try {
       const orderId = await generateNewOrderId(userId);
+
+      // Restructure products into an object with productId as keys
       const orderDetails = {
         shippingFee: shippingCost,
         subTotal: totalAmount.toFixed(2),
-        products: products,
+        products: products.reduce((acc, curr) => {
+          acc[curr.productId] = {
+            productImage: curr.productImage,
+            productName: curr.productName,
+            productPrice: curr.productPrice,
+            quantity: curr.quantity,
+            shopName: curr.shopName
+          };
+          return acc;
+        }, {}),
       };
 
-      await createOrder(userId, orderId, orderDetails );
+      await createOrder(userId, orderId, orderDetails);
       console.log("Checkout successful!");
     } catch (error) {
       console.error("Error during checkout:", error.message);
