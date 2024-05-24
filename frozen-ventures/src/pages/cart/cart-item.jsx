@@ -6,6 +6,7 @@ import {
   fetchCartItemsForUser,
   removeItemFromCart,
   addItemToCart,
+  fetchProductStockByProductId,
 } from "../../firebase/firebase-products";
 
 export const CartItem = ({ setTotalPrice, setProducts }) => {
@@ -21,13 +22,19 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     const fetchCartItems = () => {
       if (userId) {
         try {
-          fetchCartItemsForUser(userId, (cartItemsData) => {
+          fetchCartItemsForUser(userId, async (cartItemsData) => {
             console.log("Cart items data:", cartItemsData);
             if (typeof cartItemsData === "object") {
-              const cartItemsArray = Object.keys(cartItemsData).map((key) => ({
-                productId: key,
-                ...cartItemsData[key],
-              }));
+              const cartItemsArray = await Promise.all(
+                Object.keys(cartItemsData).map(async (key) => {
+                  const productStock = await fetchProductStockByProductId(key);
+                  return {
+                    productId: key,
+                    productStock: productStock,
+                    ...cartItemsData[key],
+                  };
+                })
+              );
               setCartItems(cartItemsArray);
             } else {
               console.error("Cart items data is not an object:", cartItemsData);
@@ -88,10 +95,16 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
   }, []);
 
   const handleIncrement = async (productId) => {
+    const productStock = await fetchProductStockByProductId(productId);
+    if (!productStock) {
+      console.error("Product stock not found for productId:", productId);
+      return;
+    }
+
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId) {
         const updatedQuantity = item.quantity + 1;
-        if (updatedQuantity <= item.productStock) {
+        if (updatedQuantity <= productStock) {
           return { ...item, quantity: updatedQuantity };
         }
       }
@@ -101,7 +114,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     const selectedItem = updatedCartItems.find(
       (item) => item.productId === productId
     );
-    if (selectedItem.quantity <= selectedItem.productStock) {
+    if (selectedItem.quantity <= productStock) {
       await addItemToCart(
         userId,
         productId,
@@ -110,7 +123,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
         selectedItem.productName,
         selectedItem.shopName,
         selectedItem.productImage,
-        selectedItem.productStock,
+        selectedItem.productStock
       );
     }
   };

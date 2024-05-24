@@ -4,18 +4,26 @@ import { OrderContext } from "../../context/order-context";
 import { UserContext } from "../../context/user-context";
 import { motion as m, AnimatePresence, easeInOut } from "framer-motion";
 import { ShoppingCart, Storefront, X } from "phosphor-react";
-import { createOrder, generateNewOrderId } from "../../firebase/firebase-order";
+import { generateNewOrderId, createOrder } from "../../firebase/firebase-order";
 
 export const Order = () => {
-  const { orderDetails, clearOrder } = useContext(OrderContext);
+  const { orderProducts, shippingModeContext, clearOrder } = useContext(OrderContext);
   const { user } = useContext(UserContext);
-  const { products, shippingFee, subTotal } = orderDetails || {};
+  const { products } = orderProducts || {};
+
+  let shippingCost;
+  if (shippingModeContext == "pickup") {
+    shippingCost = 0;
+  } else if (shippingModeContext == "delivery"){
+    shippingCost = 10;
+  }
 
   const [showConfirmOrder, setShowConfirmOrder] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const userId = user.userId;
 
   let totalProductAmount = 0;
+
   if (products) {
     for (const productId in products) {
       const product = products[productId];
@@ -23,7 +31,7 @@ export const Order = () => {
     }
   }
 
-  const totalAmount = parseFloat(subTotal) + parseFloat(shippingFee);
+  const totalOrderCost = parseFloat(totalProductAmount) + parseFloat(shippingCost);
 
   const handleConfirmOrderShow = () => {
     setShowConfirmOrder(true);
@@ -35,13 +43,24 @@ export const Order = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      const orderId = await generateNewOrderId(userId);
-      await createOrder(userId, orderId, orderDetails);
-
-      if (createOrder) {
+      let allOrdersCreated = true;
+  
+      for (const productId in products) {
+        const product = products[productId];
+        console.log(productId)
+        const orderId = await generateNewOrderId(userId);
+        try {
+          await createOrder(userId, orderId, productId, product);
+        } catch (error) {
+          allOrdersCreated = false;
+          console.error("Error placing order:", error);
+        }
+      }
+  
+      if (allOrdersCreated) {
         setShowConfirmOrder(false);
         setShowSuccessMessage(true);
-
+  
         setTimeout(() => {
           clearOrder();
           window.location.href = "/home";
@@ -68,7 +87,7 @@ export const Order = () => {
           {totalProductAmount > 0 ? (
             <>
               <p>
-                Order Total: <span>Php {totalProductAmount.toFixed(2)}</span>
+                Order Total: <span>Php {totalOrderCost}</span>
               </p>
               <button onClick={handleConfirmOrderShow}>Place Order</button>
             </>
@@ -150,7 +169,7 @@ export const Order = () => {
                       <p>{product.quantity}</p>
                     </td>
                     <td>
-                      <p>Php {Number((product.productPrice * product.quantity).toFixed(2))}</p>
+                      <p>Php {(product.productPrice * product.quantity).toFixed(2)}</p>
                     </td>
                   </tr>
                 ))}
@@ -169,12 +188,12 @@ export const Order = () => {
             </div>
             <div className="shipping">
               <p className="label">Shipping</p>
-              <p className="price">Php {shippingFee.toFixed(2)}</p>
+              <p className="price">Php {shippingCost.toFixed(2)}</p>
             </div>
             <div className="line"></div>
             <div className="total">
               <p className="label">Total</p>
-              <p className="price">Php {totalAmount}</p>
+              <p className="price">Php {totalOrderCost.toFixed(2)}</p>
             </div>
             <button onClick={handleConfirmOrderShow}>Place Order</button>{" "}
           </div>

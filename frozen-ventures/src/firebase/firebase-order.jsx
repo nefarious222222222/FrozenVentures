@@ -1,34 +1,13 @@
-import { ref, get, set, update } from "firebase/database";
+import { ref, get, set } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
 
-export const createOrder = async (userId, orderId, orderData) => {
+export const createOrder = async (userId, orderId, productId, orderData) => {
   try {
     console.log("Order data:", orderData);
-    const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
+    const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}/${productId}`);
     await set(ordersRef, orderData);
 
-    for (const productId in orderData.products) {
-      const product = orderData.products[productId];
-
-      const productRef = ref(
-        realtimeDb,
-        `retailers/2024-0003/products/${productId}`
-      );
-
-      const productSnapshot = await get(productRef);
-      const currentProduct = productSnapshot.val();
-      if (currentProduct && currentProduct.productStock >= product.quantity) {
-        const newStock = currentProduct.productStock - product.quantity;
-        await update(productRef, { productStock: newStock });
-        console.log(`Product ${productId} stock updated successfully.`);
-      } else {
-        throw new Error(
-          `Insufficient stock or product not found: ${product.productName}`
-        );
-      }
-    }
-
-    console.log("Order and stock update successful!");
+    console.log("Order creation successful!");
   } catch (error) {
     console.error("Error creating order:", error);
     if (orderData.products) {
@@ -72,7 +51,6 @@ export const fetchOrderHistory = async (userId) => {
     const orderIds = Object.keys(orders);
     console.log("Order IDs fetched successfully:", orderIds);
 
-    // Fetch details of each order
     const orderDetailsPromises = orderIds.map(async (orderId) => {
       const orderDetailsRef = ref(
         realtimeDb,

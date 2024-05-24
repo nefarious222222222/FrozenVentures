@@ -10,7 +10,6 @@ export const addItemToCart = async (
   productName,
   shopName,
   productImage,
-  productStock
 ) => {
   if (
     userId == null ||
@@ -19,8 +18,7 @@ export const addItemToCart = async (
     productPrice == null ||
     productName == null ||
     shopName == null ||
-    productImage == null ||
-    productStock == null
+    productImage == null
   ) {
     console.error("Invalid parameters provided to addItemToCart");
     return;
@@ -37,7 +35,6 @@ export const addItemToCart = async (
         productName,
         shopName,
         productImage,
-        productStock,
       });
     } else {
       await set(cartItemRef, {
@@ -46,7 +43,6 @@ export const addItemToCart = async (
         productName,
         shopName,
         productImage,
-        productStock,
       });
     }
   } catch (error) {
@@ -167,4 +163,22 @@ export const fetchLatestProductsFromAllUsers = async () => {
     const productDate = new Date(product.dateAdded);
     return productDate >= oneWeekAgo;
   });
+};
+
+// Fetch product stock in retailer by product id
+export const fetchProductStockByProductId = async (productId) => {
+  const productRef = ref(realtimeDb, `retailers/2024-0003/products/${productId}/productStock`);
+  
+  try {
+    const snapshot = await get(productRef);
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      console.log("Product stock not found for productId:", productId);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching product stock:", error);
+    return null;
+  }
 };

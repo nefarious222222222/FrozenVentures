@@ -18,21 +18,25 @@ export const CartCheckout = ({ totalAmount, products }) => {
     try {
 
       const orderDetails = {
-        shippingFee: shippingCost,
-        subTotal: totalAmount.toFixed(2),
         products: products.reduce((acc, curr) => {
+          const subTotal = parseFloat(curr.productPrice) * parseInt(curr.quantity);
           acc[curr.productId] = {
             productImage: curr.productImage,
             productName: curr.productName,
             productPrice: curr.productPrice,
             quantity: curr.quantity,
             shopName: curr.shopName,
+            subTotal: subTotal.toFixed(2),
+            shippingMode: shippingMode,
+            status: "pending",
           };
           return acc;
         }, {}),
       };
 
-      setOrder(orderDetails);
+      const shippingModeContext = shippingMode;
+
+      setOrder(orderDetails, shippingModeContext);
       setOrderSet(true);
     } catch (error) {
       console.error("Error during checkout:", error.message);
@@ -71,7 +75,7 @@ export const CartCheckout = ({ totalAmount, products }) => {
           />
           <label htmlFor="delivery">
             Delivery<span>•</span>
-            <span>Php 10.00</span>
+            <span>Php 20.00</span>
           </label>
         </form>
       </div>

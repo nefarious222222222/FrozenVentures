@@ -3,34 +3,45 @@ import React, { createContext, useState, useEffect } from "react";
 export const OrderContext = createContext(null);
 
 export const OrderContextProvider = ({ children }) => {
-  const [orderDetails, setOrderDetails] = useState(() => {
-    const storedOrderDetails = localStorage.getItem('orderDetails');
+  const [orderProducts, setOrderProducts] = useState(() => {
+    const storedOrderProducts = localStorage.getItem('orderProducts');
     try {
-      return storedOrderDetails ? JSON.parse(storedOrderDetails) : null;
+      return storedOrderProducts ? JSON.parse(storedOrderProducts) : null;
     } catch (error) {
-      console.error("Error parsing orderDetails from localStorage:", error);
+      console.error("Error parsing order products from localStorage:", error);
       return null;
     }
   });
 
-  const setOrder = (details) => {
-    setOrderDetails(details);
+  const [shippingModeContext, setShippingModeContext] = useState(() => {
+    const storedShippingMode = localStorage.getItem("shippingMode");
+    return storedShippingMode ? storedShippingMode : "pickup";
+  });
+
+  const setOrder = (products, mode) => {
+    setOrderProducts(products);
+    setShippingModeContext(mode);
   };
 
   useEffect(() => {
-    if (orderDetails) {
-      localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
+    if (orderProducts) {
+      localStorage.setItem('orderProducts', JSON.stringify(orderProducts));
     } else {
-      localStorage.removeItem('orderDetails');
+      localStorage.removeItem('orderProducts');
     }
-  }, [orderDetails]);
+  }, [orderProducts]);
+
+  useEffect(() => {
+    localStorage.setItem("shippingMode", shippingModeContext);
+  }, [shippingModeContext]);
 
   const clearOrder = () => {
-    setOrderDetails(null);
+    setOrderProducts(null);
   };
 
   const contextValue = {
-    orderDetails,
+    orderProducts,
+    shippingModeContext,
     setOrder,
     clearOrder,
   };
