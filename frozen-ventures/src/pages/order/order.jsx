@@ -50,17 +50,33 @@ export const Order = () => {
       for (const productId in products) {
         const product = products[productId];
         const orderId = await generateNewOrderId(userId);
-        try {
-          await createOrder(userId, orderId, productId, product);
-        } catch (error) {
-          allOrdersCreated = false;
-          console.error("Error placing order:", error);
-        }
-      }
+    
+        const productInfo = {
+            productPrice: product.productPrice,
+            productName: product.productName,
+            productImage: product.productImage,
+            shopName: product.shopName
+        };
+    
+        const orderInfo = {
+            orderDate: product.orderDate,
+            quantity: product.quantity,
+            shippingMode: product.shippingMode,
+            status: product.status,
+            subTotal: product.subTotal,
+        };
+    
+        const orderData = {
+            ...orderInfo,
+            [productId]: productInfo
+        };
+    
+        await createOrder(userId, orderId, productId, orderData);
+    }
   
-      if (allOrdersCreated) {
-        setShowConfirmOrder(false);
-        setShowSuccessMessage(true);
+    if (allOrdersCreated) {
+      setShowConfirmOrder(false);
+      setShowSuccessMessage(true);
   
         setTimeout(() => {
           clearOrder();

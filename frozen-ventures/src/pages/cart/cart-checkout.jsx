@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { OrderContext } from "../../context/order-context";
+import dayjs from "dayjs";
 
 export const CartCheckout = ({ totalAmount, products }) => {
   const { setOrder } = useContext(OrderContext);
@@ -15,6 +16,7 @@ export const CartCheckout = ({ totalAmount, products }) => {
 
   const handleCheckout = async () => {
     try {
+      const currentDate = dayjs().format("MMMM D, YYYY");
 
       const orderDetails = {
         products: products.reduce((acc, curr) => {
@@ -28,6 +30,7 @@ export const CartCheckout = ({ totalAmount, products }) => {
             subTotal: subTotal.toFixed(2),
             shippingMode: shippingMode,
             status: "pending",
+            orderDate: currentDate,
           };
           return acc;
         }, {}),

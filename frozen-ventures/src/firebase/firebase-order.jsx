@@ -3,26 +3,21 @@ import { realtimeDb } from "./firebase-config";
 
 export const createOrder = async (userId, orderId, productId, orderData) => {
   try {
-    console.log("Order data:", orderData);
-    const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}/${productId}`);
-    await set(ordersRef, orderData);
+      console.log("Order data:", orderData);
+      const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
+      await set(ordersRef, orderData);
 
-    console.log("Order creation successful!");
+      console.log("Order creation successful!");
   } catch (error) {
-    console.error("Error creating order:", error);
-    if (orderData.products) {
+      console.error("Error creating order:", error);
       try {
-        const ordersRef = ref(
-          realtimeDb,
-          `customers/${userId}/orders/${orderId}`
-        );
-        await set(ordersRef, null);
-        console.log("Order rollback successful.");
+          const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
+          await set(ordersRef, null);
+          console.log("Order rollback successful.");
       } catch (rollbackError) {
-        console.error("Error during order rollback:", rollbackError);
+          console.error("Error during order rollback:", rollbackError);
       }
-    }
-    throw error;
+      throw error;
   }
 };
 
