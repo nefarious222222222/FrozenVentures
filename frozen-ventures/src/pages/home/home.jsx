@@ -24,7 +24,7 @@ export const Home = () => {
       transition={{ duration: 0.5, ease: easeInOut }}
       className="home"
     >
-      {!userSignedIn || userSignedIn && user.userRole !== "Customer" ? <Navigate to={"/"} replace={true} /> : null}
+      {userSignedIn && user.userRole !== "Customer" ? <Navigate to={"/"} replace={true} /> : null}
 
       <section class="container hero">
         <div class="first-container">

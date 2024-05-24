@@ -285,6 +285,58 @@
         border: solid 2px var(--color-violet);
       }
     }
+
+    .restock-form-container {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      padding: 40px;
+      border-radius: 20px;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      width: 20vw;
+      box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+
+      .restock-form-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2vh;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+
+        .input-field {
+          display: flex;
+          flex-direction: column;
+          gap: 1vh;
+
+          label {
+            font-size: 1.25rem;
+            font-weight: 700;
+          }
+
+          input {
+            border: none;
+            outline: none;
+            background-color: rgb(236, 236, 236);
+            padding: 10px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            border-radius: 5px;
+            resize: none;
+            box-sizing: border-box;
+            width: 100%;
+          }
+        }
+
+        .button-group {
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    }
   }
 
   .restock-retailer {

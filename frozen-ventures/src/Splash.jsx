@@ -27,7 +27,7 @@ export const Splash = () => {
       }
     } catch {
       setTimeout(() => {
-        window.location.href = "/sign";
+        window.location.href = "/home";
       }, 3000);
     }
   }, []);

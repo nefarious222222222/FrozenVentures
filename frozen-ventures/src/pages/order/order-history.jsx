@@ -6,6 +6,7 @@ import { fetchOrderHistory } from "../../firebase/firebase-order";
 export const OrderHistory = () => {
   const { user } = useContext(UserContext);
   const [orders, setOrders] = useState([]);
+  const [toggledOrders, setToggledOrders] = useState({}); // State to track which orderId's products are toggled
 
   const userId = user.userId;
 
@@ -15,6 +16,12 @@ export const OrderHistory = () => {
         const orderData = await fetchOrderHistory(userId);
         console.log("Fetched order data:", orderData);
         setOrders(orderData);
+        // Initialize toggledOrders state with default values (false) for each orderId
+        const initialToggledOrdersState = {};
+        orderData.forEach((order) => {
+          initialToggledOrdersState[order.orderId] = false;
+        });
+        setToggledOrders(initialToggledOrdersState);
       } catch (error) {
         console.error("Error fetching order history:", error);
       }
@@ -22,6 +29,13 @@ export const OrderHistory = () => {
 
     getOrderHistory();
   }, [userId]);
+
+  const toggleProducts = (orderId) => {
+    setToggledOrders((prevToggledOrders) => ({
+      ...prevToggledOrders,
+      [orderId]: !prevToggledOrders[orderId],
+    }));
+  };
 
   return (
     <div className="container order-history">
@@ -49,23 +63,41 @@ export const OrderHistory = () => {
                   </p>
                 </div>
 
-                <h3>Products:</h3>
-                <div className="products-container">
-                  {Object.values(order.products).map(
-                    (product, productIndex) => (
-                      <div className="product" key={productIndex}>
-                        <img src={product.productImage} alt="" />
+                <button onClick={() => toggleProducts(order.orderId)}>
+                  Toggle Products
+                </button>
 
-                        <div className="product-info">
-                          <p>Product Name: <span>{product.productName}</span></p>
-                          <p>Retailer: <span>{product.shopName}</span></p>
-                          <p>Price: <span>Php {product.productPrice}</span></p>
-                          <p>Quantity: <span>{product.quantity}</span></p>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
+                {toggledOrders[order.orderId] && (
+                  <>
+                    <h3>Products:</h3>
+                    <div className="products-container">
+                      {Object.values(order.products).map(
+                        (product, productIndex) => (
+                          <div className="product" key={productIndex}>
+                            <img src={product.productImage} alt="" />
+
+                            <div className="product-info">
+                              <p>
+                                Product Name:{" "}
+                                <span>{product.productName}</span>
+                              </p>
+                              <p>
+                                Retailer: <span>{product.shopName}</span>
+                              </p>
+                              <p>
+                                Price:{" "}
+                                <span>Php {product.productPrice}</span>
+                              </p>
+                              <p>
+                                Quantity: <span>{product.quantity}</span>
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>

@@ -172,3 +172,25 @@ export const fetchNewProductsThisWeek = async (retailerId) => {
     throw error;
   }
 };
+
+// Update product stock by userId and productid
+export const updateProductStockById = async (userId, productId, newStock) => {
+  const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}`);
+  try {
+    // Fetch the existing product data
+    const snapshot = await get(productRef);
+    if (snapshot.exists()) {
+      const productData = snapshot.val();
+      const currentStock = parseInt(productData.productStock || 0);
+      const updatedStock = currentStock + parseInt(newStock);
+      productData.productStock = updatedStock.toString();
+      await set(productRef, productData);
+      console.log("Product stock updated successfully");
+    } else {
+      throw new Error("Product not found");
+    }
+  } catch (error) {
+    console.error("Error updating product stock:", error);
+    throw error;
+  }
+};

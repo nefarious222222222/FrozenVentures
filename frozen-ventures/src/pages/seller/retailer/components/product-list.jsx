@@ -6,12 +6,13 @@ import {
   addProduct,
   fetchAllProducts,
   fetchLowStockProducts,
+  updateProductStockById // Add this import for the new function
 } from "../../../../firebase/firebase-retailers";
 
 export const ProductList = () => {
   const { user } = useContext(UserContext);
   const userId = user.userId;
-  const shopName = user.userShopName;
+  const shopName = user.shopName;
 
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [productName, setProductName] = useState("");
@@ -23,6 +24,8 @@ export const ProductList = () => {
   const [lowStockAlert, setLowStockAlert] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [restockAmount, setRestockAmount] = useState("");
+  const [restockProductId, setRestockProductId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +37,9 @@ export const ProductList = () => {
 
         const lowStockProducts = await fetchLowStockProducts(userId);
         if (lowStockProducts.length > 0) {
-          const productNames = lowStockProducts.map(product => product.productName).join(", ");
+          const productNames = lowStockProducts
+            .map((product) => product.productName)
+            .join(", ");
           setLowStockAlert(`${productNames} has below 20 stocks`);
         } else {
           setLowStockAlert("");
@@ -62,16 +67,6 @@ export const ProductList = () => {
     }
 
     try {
-      console.log("Adding product:", {
-        userId,
-        productName,
-        productPrice,
-        productStock,
-        productDescription,
-        productImage,
-        shopName,
-      });
-
       await addProduct(userId, {
         productName,
         productPrice,
@@ -99,6 +94,29 @@ export const ProductList = () => {
     }
   };
 
+  const handleRestock = async (productId) => {
+    console.log("Restocking product:", productId, "Amount:", restockAmount);
+    setRestockProductId(null);
+    try {
+      await updateProductStockById(userId, productId, restockAmount);
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.productId === productId
+            ? { ...product, productStock: restockAmount }
+            : product
+        )
+      );
+
+      setSuccess("Successfully updated the stock for Product: " + productId );
+      setTimeout(() => {
+        setSuccess(null);
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error("Error updating product stock:", error);
+    }
+  };
+
   return (
     <div className="product-list">
       <div className="products">
@@ -123,14 +141,56 @@ export const ProductList = () => {
             <div className="product" key={product.productId}>
               <h2>Product Id: {product.productId}</h2>
               <div className="product-info">
-                <img src={product.productImage || "default-image.png"} alt="Product" />
+                <img
+                  src={product.productImage || "default-image.png"}
+                  alt="Product"
+                />
                 <div className="product-description">
                   <h3>{product.productName}</h3>
                   <p>Price: Php {product.productPrice}</p>
                   <p>Stock: {product.productStock}</p>
-                  <button>Restock</button>
+                  <button
+                    onClick={() => setRestockProductId(product.productId)}
+                  >
+                    Restock
+                  </button>
                 </div>
               </div>
+              {restockProductId === product.productId && (
+                <div className="restock-form-container">
+                  <div className="restock-form-content">
+                    <h2>Restock {product.productName}</h2>
+
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleRestock(product.productId);
+                      }}
+                    >
+                      <div className="input-field">
+                        <label htmlFor="restockAmount">Restock Amount:</label>
+                        <input
+                          type="number"
+                          id="restockAmount"
+                          value={restockAmount}
+                          onChange={(e) => setRestockAmount(e.target.value)}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="button-group">
+                        <button type="submit">Restock</button>
+                        <button
+                          type="button"
+                          onClick={() => setRestockProductId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
