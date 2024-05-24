@@ -11,6 +11,8 @@ export const Order = () => {
   const { user } = useContext(UserContext);
   const { products } = orderProducts || {};
 
+  console.log(orderProducts)
+
   let shippingCost;
   if (shippingModeContext == "pickup") {
     shippingCost = 0;
@@ -47,7 +49,6 @@ export const Order = () => {
   
       for (const productId in products) {
         const product = products[productId];
-        console.log(productId)
         const orderId = await generateNewOrderId(userId);
         try {
           await createOrder(userId, orderId, productId, product);

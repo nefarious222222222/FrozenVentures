@@ -43,26 +43,40 @@ export const fetchOrderHistory = async (userId) => {
     const ordersRef = ref(realtimeDb, `customers/${userId}/orders`);
     const snapshot = await get(ordersRef);
     const orders = snapshot.val();
+    
     if (!orders) {
       console.log("No orders found for this user.");
       return [];
     }
 
-    const orderIds = Object.keys(orders);
-    console.log("Order IDs fetched successfully:", orderIds);
+    const orderDetails = [];
+    
+    for (const orderId in orders) {
+      const orderProducts = orders[orderId];
+      const products = [];
 
-    const orderDetailsPromises = orderIds.map(async (orderId) => {
-      const orderDetailsRef = ref(
-        realtimeDb,
-        `customers/${userId}/orders/${orderId}`
-      );
-      const orderDetailsSnapshot = await get(orderDetailsRef);
-      return orderDetailsSnapshot.val();
-    });
+      for (const productId in orderProducts) {
+        const productDetails = orderProducts[productId];
+        products.push({
+          productId,
+          productName: productDetails.productName,
+          productImage: productDetails.productImage,
+          productPrice: productDetails.productPrice,
+          quantity: productDetails.quantity,
+          shippingMode: productDetails.shippingMode,
+          shopName: productDetails.shopName,
+          status: productDetails.status,
+          subTotal: productDetails.subTotal
+        });
+      }
 
-    const orderDetails = await Promise.all(orderDetailsPromises);
+      orderDetails.push({
+        orderId,
+        products
+      });
+    }
+    
     console.log("Order details fetched successfully:", orderDetails);
-
     return orderDetails;
   } catch (error) {
     console.error("Error fetching order history:", error);

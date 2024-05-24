@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { OrderContext } from "../../context/order-context";
-import { Link } from "react-router-dom";
 
 export const CartCheckout = ({ totalAmount, products }) => {
   const { setOrder } = useContext(OrderContext);
