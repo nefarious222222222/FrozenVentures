@@ -9,12 +9,24 @@ export const addItemToCart = async (
   productPrice,
   productName,
   shopName,
-  productImage
+  productImage,
+  productStock
 ) => {
-  const cartItemRef = ref(
-    realtimeDb,
-    `customers/${userId}/cartItems/${productId}`
-  );
+  if (
+    userId == null ||
+    productId == null ||
+    quantity == null ||
+    productPrice == null ||
+    productName == null ||
+    shopName == null ||
+    productImage == null ||
+    productStock == null
+  ) {
+    console.error("Invalid parameters provided to addItemToCart");
+    return;
+  }
+
+  const cartItemRef = ref(realtimeDb, `customers/${userId}/cartItems/${productId}`);
   try {
     const snapshot = await get(cartItemRef);
     if (snapshot.exists()) {
@@ -25,6 +37,7 @@ export const addItemToCart = async (
         productName,
         shopName,
         productImage,
+        productStock,
       });
     } else {
       await set(cartItemRef, {
@@ -33,6 +46,7 @@ export const addItemToCart = async (
         productName,
         shopName,
         productImage,
+        productStock,
       });
     }
   } catch (error) {

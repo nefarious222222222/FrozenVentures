@@ -30,10 +30,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
               }));
               setCartItems(cartItemsArray);
             } else {
-              console.error(
-                "Cart items data is not an object:",
-                cartItemsData
-              );
+              console.error("Cart items data is not an object:", cartItemsData);
             }
           });
         } catch (error) {
@@ -94,7 +91,9 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId) {
         const updatedQuantity = item.quantity + 1;
-        return { ...item, quantity: updatedQuantity };
+        if (updatedQuantity <= item.productStock) {
+          return { ...item, quantity: updatedQuantity };
+        }
       }
       return item;
     });
@@ -102,15 +101,18 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     const selectedItem = updatedCartItems.find(
       (item) => item.productId === productId
     );
-    await addItemToCart(
-      userId,
-      productId,
-      1,
-      selectedItem.productPrice,
-      selectedItem.productName,
-      selectedItem.shopName,
-      selectedItem.productImage
-    );
+    if (selectedItem.quantity <= selectedItem.productStock) {
+      await addItemToCart(
+        userId,
+        productId,
+        1,
+        selectedItem.productPrice,
+        selectedItem.productName,
+        selectedItem.shopName,
+        selectedItem.productImage,
+        selectedItem.productStock,
+      );
+    }
   };
 
   const handleDecrement = async (productId) => {
@@ -132,7 +134,8 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
       selectedItem.productPrice,
       selectedItem.productName,
       selectedItem.shopName,
-      selectedItem.productImage
+      selectedItem.productImage,
+      selectedItem.productStock,
     );
   };
 
@@ -140,9 +143,10 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId) {
         let updatedQuantity = parseInt(event.target.value, 10);
-        
         if (updatedQuantity < 1 || isNaN(updatedQuantity)) {
           updatedQuantity = 1;
+        } else if (updatedQuantity > item.productStock) {
+          updatedQuantity = item.productStock;
         }
         return { ...item, quantity: updatedQuantity };
       }
@@ -152,9 +156,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
   };
 
   const handleQuantityBlur = (productId) => {
-    const selectedItem = cartItems.find(
-      (item) => item.productId === productId
-    );
+    const selectedItem = cartItems.find((item) => item.productId === productId);
     if (selectedItem) {
       addItemToCart(
         userId,
@@ -163,7 +165,8 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
         selectedItem.productPrice,
         selectedItem.productName,
         selectedItem.shopName,
-        selectedItem.productImage
+        selectedItem.productImage,
+        selectedItem.productStock
       );
     }
   };
@@ -175,14 +178,12 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
           {cartItems.map((cartItem) => (
             <tr key={cartItem.productId}>
               <td className="information">
-                <img
-                  src={cartItem.productImage}
-                  alt={cartItem.productName}
-                />
+                <img src={cartItem.productImage} alt={cartItem.productName} />
                 <div className="description">
                   <p>{cartItem.productName}</p>
                   <p>Php {cartItem.productPrice}</p>
                   <p>{cartItem.shopName}</p>
+                  <p>Stocks: {cartItem.productStock}</p>
                 </div>
               </td>
               <td className="quantity">
@@ -198,7 +199,10 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
                   onChange={(e) => handleQuantityChange(e, cartItem.productId)}
                   onBlur={() => handleQuantityBlur(cartItem.productId)}
                 />
-                <button onClick={() => handleIncrement(cartItem.productId)}>
+                <button
+                  onClick={() => handleIncrement(cartItem.productId)}
+                  disabled={cartItem.quantity >= cartItem.productStock}
+                >
                   <Plus size={25} />
                 </button>
               </td>

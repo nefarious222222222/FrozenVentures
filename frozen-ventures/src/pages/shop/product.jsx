@@ -45,7 +45,7 @@ export const Product = () => {
     console.log(productStock)
     if (userId) {
       if (productStock > 0) {
-        await addItemToCart(userId, productId, 1, productPrice, productName, shopName, productImage);
+        await addItemToCart(userId, productId, 1, productPrice, productName, shopName, productImage, productStock);
         const addedProduct = products.find((product) => product.productId === productId);
         setAddedProduct(addedProduct);
         setShowNotification(true);
@@ -71,6 +71,7 @@ export const Product = () => {
               <p>{product.productName}</p>
               <p>Php {product.productPrice}</p>
               <p>{product.shopName}</p>
+              <p>Stocks: {product.productStock}</p>
             </div>
             <ShoppingCart onClick={() => handleAddToCart(product.productId, product.productPrice, product.productName, product.shopName, product.productImage, product.productStock)} />
           </div>
