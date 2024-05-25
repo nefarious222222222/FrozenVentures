@@ -4,7 +4,15 @@ import { UserContext } from "../context/user-context";
 import { useAuth } from "../context/auth-context";
 import logo from "../assets/images/logo.jpg";
 import { Link, useLocation } from "react-router-dom";
-import { Storefront, ShoppingCart, UserCircle, Cube, Truck, ShoppingBag, Package } from "phosphor-react";
+import {
+  Storefront,
+  ShoppingCart,
+  UserCircle,
+  Cube,
+  Truck,
+  ShoppingBag,
+  Package,
+} from "phosphor-react";
 
 export const Navbar = () => {
   const { user } = useContext(UserContext);
@@ -35,8 +43,10 @@ export const Navbar = () => {
           <p className="link title">FrozenVentures</p>
         </Link>
       </div>
-
-      <input type="text" placeholder="Search" />
+      
+      {!userSignedIn || (userSignedIn && user?.userRole === "Customer") ? (
+        <input type="text" placeholder="Search" />
+      ) : null}
 
       <div className="links">
         <div className="links">
@@ -63,26 +73,6 @@ export const Navbar = () => {
 
             <Link to="/history">
               <Cube className="link fake-button" size={30} color={"#533d70"} />
-            </Link>
-          </>
-        ) : null}
-
-        {userSignedIn && user.userRole == "Retailer" ? (
-          <>
-            <Link to="/home-retailer/order-list">
-              <Truck
-                className="link fake-button"
-                size={30}
-                color={"#533d70"}
-              />
-            </Link>
-
-            <Link to="/home-retailer/product-list">
-              <ShoppingBag className="link fake-button" size={30} color={"#533d70"} />
-            </Link>
-
-            <Link to="/home-retailer/restock-retailer">
-              <Package className="link fake-button" size={30} color={"#533d70"} />
             </Link>
           </>
         ) : null}
