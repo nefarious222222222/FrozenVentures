@@ -24,7 +24,7 @@ import { Profile } from "./pages/user-menu/profile/profile";
 import { Settings } from "./pages/user-menu/settings/settings";
 import { UserMenu } from "./pages/user-menu/user-menu";
 import { BuyProduct } from "./pages/shop/buy-product";
-import { OrderHistory } from "./pages/order/order-history";
+import { History } from "./pages/history/history";
 
 function App() {
   return (
@@ -45,7 +45,7 @@ function App() {
                 <Route path="/buy-item/:id" element={<BuyProduct />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/order" element={<Order />} />
-                <Route path="/order-history" element={<OrderHistory/>} />
+                <Route path="/history" element={<History/>} />
                 <Route path="/sign" element={<Sign />} />
                 <Route path="/user-menu" element={<UserMenu />} />
                 <Route path="/profile" element={<Profile />} />

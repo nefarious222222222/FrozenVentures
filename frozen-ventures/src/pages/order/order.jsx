@@ -55,15 +55,15 @@ export const Order = () => {
             productPrice: product.productPrice,
             productName: product.productName,
             productImage: product.productImage,
-            shopName: product.shopName
+            shopName: product.shopName,
+            quantity: product.quantity,
+            subTotal: product.subTotal,
         };
     
         const orderInfo = {
             orderDate: product.orderDate,
-            quantity: product.quantity,
             shippingMode: product.shippingMode,
             status: product.status,
-            subTotal: product.subTotal,
         };
     
         const orderData = {

@@ -38,39 +38,43 @@ export const fetchOrderHistory = async (userId) => {
     const ordersRef = ref(realtimeDb, `customers/${userId}/orders`);
     const snapshot = await get(ordersRef);
     const orders = snapshot.val();
-    
+
     if (!orders) {
       console.log("No orders found for this user.");
       return [];
     }
 
     const orderDetails = [];
-    
-    for (const orderId in orders) {
-      const orderProducts = orders[orderId];
-      const products = [];
 
-      for (const productId in orderProducts) {
-        const productDetails = orderProducts[productId];
+    for (const orderId in orders) {
+      const orderInfo = orders[orderId];
+      const products = [];
+      const { orderDate, quantity, shippingMode, status, subTotal, ...productsData } = orderInfo;
+
+      for (const productId in productsData) {
+        const productDetails = productsData[productId];
         products.push({
           productId,
           productName: productDetails.productName,
           productImage: productDetails.productImage,
           productPrice: productDetails.productPrice,
-          quantity: productDetails.quantity,
-          shippingMode: productDetails.shippingMode,
           shopName: productDetails.shopName,
-          status: productDetails.status,
-          subTotal: productDetails.subTotal
+          quantity: productDetails.quantity,
+          subTotal: productDetails.subTotal,
         });
       }
 
       orderDetails.push({
         orderId,
+        orderDate,
+        quantity,
+        shippingMode,
+        status,
+        subTotal,
         products
       });
     }
-    
+
     console.log("Order details fetched successfully:", orderDetails);
     return orderDetails;
   } catch (error) {
