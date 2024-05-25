@@ -33,7 +33,7 @@ export const generateNewOrderId = async (userId) => {
   return `oid-${String(newNumber).padStart(4, "0")}`;
 };
 
-export const fetchOrderHistory = async (userId) => {
+export const fetchPurchaseHistory = async (userId) => {
   try {
     const ordersRef = ref(realtimeDb, `customers/${userId}/orders`);
     const snapshot = await get(ordersRef);

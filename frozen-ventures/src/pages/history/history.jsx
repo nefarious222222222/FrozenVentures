@@ -1,82 +1,99 @@
 import React, { useContext, useEffect, useState } from "react";
 import "../../assets/styles/history.css";
 import { UserContext } from "../../context/user-context";
-import { fetchOrderHistory } from "../../firebase/firebase-order";
+import { fetchPurchaseHistory } from "../../firebase/firebase-order";
 
 export const History = () => {
   const { user } = useContext(UserContext);
   const userId = user.userId;
 
   const [orders, setOrders] = useState([]);
-  const [toggledOrders, setToggledOrders] = useState({});
+  const [filter, setFilter] = useState("pending"); // Default filter set to "pending"
+
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return string;
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
 
   useEffect(() => {
-    const getOrderHistory = async () => {
+    const getPurchaseHistory = async () => {
       try {
-        const orderData = await fetchOrderHistory(userId);
+        const orderData = await fetchPurchaseHistory(userId);
         console.log("Fetched order data:", orderData);
         setOrders(orderData);
-        const initialToggledOrdersState = {};
-        orderData.forEach((order) => {
-          initialToggledOrdersState[order.orderId] = false;
-        });
-        setToggledOrders(initialToggledOrdersState);
       } catch (error) {
         console.error("Error fetching order history:", error);
       }
     };
 
-    getOrderHistory();
+    getPurchaseHistory();
   }, [userId]);
 
-  const toggleOrder = (orderId) => {
-    setToggledOrders((prevToggledOrders) => ({
-      ...prevToggledOrders,
-      [orderId]: !prevToggledOrders[orderId],
-    }));
-  };
+  const filteredOrders = orders.filter((order) => {
+    if (!filter) return true; // Show all orders if no filter is selected
+    return order.status.toLowerCase() === filter;
+  });
 
   return (
-    <div className="container purchase-history">
+    <div className="container history">
       <h1>History</h1>
-      <div className="purchase-container">
-        {orders.map((order, index) => (
-          <div key={order.orderId} className="order">
-            <div
-              className="order-header"
-              onClick={() => toggleOrder(order.orderId)}
-            >
-              <h3>Order: {index + 1}</h3>
 
-              <div className="order-info">
-                <p>Date {order.orderDate}</p>
-                <p>Shipping Mode: {order.shippingMode}</p>
-                <p>Status: {order.status}</p>
-              </div>
-            </div>
-            {toggledOrders[order.orderId] && (
-              <div className="order-details">
-                {order.products.map((product) => (
-                  <div key={product.productId} className="product">
-                    <div className="product-image">
-                      <img
-                        src={product.productImage}
-                        alt={product.productName}
-                      />
-                    </div>
+      <div className="history-container">
+        <div className="button-group">
+          <button
+            className={filter === "pending" ? "active" : ""}
+            onClick={() => setFilter("pending")}
+          >
+            Pending
+          </button>
+          <button
+            className={filter === "to receive" ? "active" : ""}
+            onClick={() => setFilter("to receive")}
+          >
+            To Receive
+          </button>
+          <button
+            className={filter === "cancelled" ? "active" : ""}
+            onClick={() => setFilter("cancelled")}
+          >
+            Cancelled
+          </button>
+          <button
+            className={filter === "completed" ? "active" : ""}
+            onClick={() => setFilter("completed")}
+          >
+            Completed
+          </button>
+        </div>
+
+        <div className="order-container">
+          {filteredOrders.map((order) => (
+            <div key={order.orderId} className="order-item">
+              {order.products.map((product) => (
+                <div key={product.productId} className="product-container">
+                  <div className="product">
+                    <img src={product.productImage} alt={product.productName} />
+
                     <div className="product-info">
-                      <p>{product.productName}</p>
-                      <p>Price: Php {product.productPrice}</p>
-                      <p>Retailer: {product.shopName}</p>
-                      <p>Quantity: {product.quantity}</p>
-                      <p>Sub Total: {product.subTotal}</p>
+                      <h2>{product.productName}</h2>
+                      <p>Php {product.productPrice}</p>
+                      <p>{product.shopName}</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+
+                  <p>x{product.quantity}</p>
+                  <p>Php {product.subTotal}</p>
+                  <p>{order.orderDate}</p>
+                  <p>{capitalizeFirstLetter(order.shippingMode)}</p>
+                  <p>{capitalizeFirstLetter(order.status)}</p>
+                  {order.status.toLowerCase() === "pending" && (
+                    <button>Cancel Order</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
