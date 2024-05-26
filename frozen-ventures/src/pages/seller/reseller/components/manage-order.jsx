@@ -6,7 +6,7 @@ export const ManageOrder = () => {
   const { user } = useContext(UserContext);
   const userId = user.userId;
   const userRole = user.userRole;
-  const [orders, setOrders] = useState(null);
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,13 +18,9 @@ export const ManageOrder = () => {
     };
 
     fetchData();
-  }, [userId]);
+  }, [userRole, userId]);
 
-  useEffect(() => {
-    if (orders) {
-      console.log("Filtered Orders:", orders);
-    }
-  }, [orders]);
+  console.log(orders);
 
   return (
     <div className="manage-order">
@@ -34,33 +30,31 @@ export const ManageOrder = () => {
         <ul>
           {orders.map(({ customerId, orderId, order }) => (
             <li key={`${customerId}-${orderId}`}>
-              <p>
-                <strong>Customer ID:</strong> {customerId}
-              </p>
-              <p>
-                <strong>Order ID:</strong> {orderId}
-              </p>
-              <p>
-                <strong>Order Date:</strong> {order.orderDate}
-              </p>
-              <p>
-                <strong>Product ID:</strong> {order.pid}
-              </p>
-              <p>
-                <strong>Product Name:</strong> {order.productName}
-              </p>
-              <p>
-                <strong>Quantity:</strong> {order.quantity}
-              </p>
-              <p>
-                <strong>Subtotal:</strong> {order.subTotal}
-              </p>
-              <p>
-                <strong>Shipping Mode:</strong> {order.shippingMode}
-              </p>
-              <p>
-                <strong>Status:</strong> {order.status}
-              </p>
+              <p>Customer ID: {customerId}</p>
+              <p>Order ID: {orderId}</p>
+              <p>Order Date: {order.orderDate}</p>
+              {Object.keys(order).map(
+                (key) =>
+                  key.startsWith("pid-") && (
+                    <div key={key}>
+                      <p>Product ID: {key}</p>
+                      <p>Product Name: {order[key].productName}</p>
+                      <p>
+                        Product Image:{" "}
+                        <img
+                          src={order[key].productImage}
+                          alt={order[key].productName}
+                        />
+                      </p>
+                      <p>Product Price: {order[key].productPrice}</p>
+                      <p>Quantity: {order[key].quantity}</p>
+                      <p>Subtotal: {order[key].subTotal}</p>
+                      <p>Shop Name: {order[key].shopName}</p>
+                    </div>
+                  )
+              )}
+              <p>Shipping Mode: {order.shippingMode}</p>
+              <p>Status: {order.status}</p>
             </li>
           ))}
         </ul>
