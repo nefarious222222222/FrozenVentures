@@ -7,7 +7,7 @@ import { Sidebar } from "./components/sidebar";
 import { ShopPerformance } from "./components/shop-performance";
 import { Shop } from "./components/shop";
 
-export const HomeRetailer = () => {
+export const HomeSeller = () => {
   const { user } = useContext(UserContext);
   const { userSignedIn } = useAuth();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);

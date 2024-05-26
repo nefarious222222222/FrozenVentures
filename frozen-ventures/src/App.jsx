@@ -19,7 +19,7 @@ import { Cart } from "./pages/cart/cart";
 import { Shop } from "./pages/shop/shop";
 import { Sign } from "./pages/auth/sign";
 import { Order } from "./pages/order/order";
-import { HomeRetailer } from "./pages/seller/retailer/home-retailer";
+import { HomeSeller } from "./pages/seller/reseller/home-retailer";
 import { Profile } from "./pages/user-menu/profile/profile";
 import { Settings } from "./pages/user-menu/settings/settings";
 import { UserMenu } from "./pages/user-menu/user-menu";
@@ -51,7 +51,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
 
-                <Route path="/home-retailer/*" element={<HomeRetailer />} />
+                <Route path="/home-reseller" element={<HomeSeller />} />
               </Routes>
               <FooterWithLocation />
             </Router>
