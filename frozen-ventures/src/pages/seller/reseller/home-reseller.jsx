@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 import { Sidebar } from "./components/sidebar";
 import { ShopPerformance } from "./components/shop-performance";
 import { Shop } from "./components/shop";
+import { Cart } from "./components/cart";
 import { History } from "./components/history";
 import { ManageOrder } from "./components/manage-order";
 
@@ -38,6 +39,7 @@ export const HomeSeller = () => {
       <div className="sidebar-content" style={{ marginLeft: isSidebarExpanded ? "15vw" : "5vw" }}>
         {activeItem === "performance" && <ShopPerformance />}
         {activeItem === "shop" && <Shop />}
+        {activeItem === "cart" && <Cart />}
         {activeItem === "history" && <History />}
         {activeItem === "manage-order" && <ManageOrder />}
       </div>

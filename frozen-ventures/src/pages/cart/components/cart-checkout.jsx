@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { OrderContext } from "../../context/order-context";
+import { OrderContext } from "../../../context/order-context";
 import dayjs from "dayjs";
 
 export const CartCheckout = ({ totalAmount, products }) => {

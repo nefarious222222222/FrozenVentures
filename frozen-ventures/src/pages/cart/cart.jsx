@@ -3,11 +3,11 @@ import "../../assets/styles/cart.css";
 import { UserContext } from "../../context/user-context";
 import { useAuth } from "../../context/auth-context";
 import { Navigate } from "react-router-dom";
-import { CartItem } from "./cart-item";
+import { CartItem } from "./components/cart-item";
 import { ShoppingCart, Storefront } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import { Link } from "react-router-dom";
-import { CartCheckout } from "./cart-checkout";
+import { CartCheckout } from "./components/cart-checkout";
 
 export const Cart = () => {
   const { user } = useContext(UserContext);

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { UserContext } from "../../context/user-context";
+import { UserContext } from "../../../context/user-context";
 import { Minus, Plus, Trash } from "phosphor-react";
 import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import {
@@ -7,7 +7,7 @@ import {
   removeItemFromCart,
   addItemToCart,
   fetchProductStockByProductId,
-} from "../../firebase/firebase-products";
+} from "../../../firebase/firebase-products";
 
 export const CartItem = ({ setTotalPrice, setProducts }) => {
   const { user } = useContext(UserContext);

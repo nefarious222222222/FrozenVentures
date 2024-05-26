@@ -215,7 +215,7 @@
         gap: 2vh;
         padding: 20px;
         border-radius: 20px;
-        border: solid 2px var(--color-violet);
+        box-shadow:  0 7px 25px rgba(0, 0, 0, 0.2);
         background-color: white;
 
         .shop-header {
@@ -300,12 +300,17 @@
     }
   }
 
+  .cart-reseller {
+    h1 {
+      padding-bottom: 20px;
+      border-bottom: solid 2px gray;
+    }
+  }
+
   /* History Css */
   .history {
     padding: 0;
   }
 
-  .manage-order {
-    
-  }
+  
 }

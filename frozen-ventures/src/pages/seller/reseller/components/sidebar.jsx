@@ -59,7 +59,7 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
         </li>
         <li
           className={activeItem === "cart" ? "active" : ""}
-          onClick={() => handleItemClick("cart-reseller")}
+          onClick={() => handleItemClick("cart")}
           data-tooltip="Cart"
         >
           <ShoppingCart size={40} />
