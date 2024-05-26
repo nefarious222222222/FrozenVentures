@@ -10,6 +10,7 @@ import {
   Envelope,
   CaretRight,
   CaretLeft,
+  ShoppingCart,
 } from "phosphor-react";
 
 export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
@@ -55,6 +56,14 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
         >
           <Storefront size={40} />
           {isExpanded && <p>Shop</p>}
+        </li>
+        <li
+          className={activeItem === "cart" ? "active" : ""}
+          onClick={() => handleItemClick("cart-reseller")}
+          data-tooltip="Cart"
+        >
+          <ShoppingCart size={40} />
+          {isExpanded && <p>Cart</p>}
         </li>
         <li
           className={activeItem === "history" ? "active" : ""}
