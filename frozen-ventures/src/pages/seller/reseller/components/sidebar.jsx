@@ -17,7 +17,7 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
-    onToggle(!isExpanded); // Pass the new state of the sidebar
+    onToggle(!isExpanded);
   };
 
   const handleItemClick = (item) => {
@@ -66,7 +66,7 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
         </li>
         <li
           className={activeItem === "order" ? "active" : ""}
-          onClick={() => handleItemClick("order")}
+          onClick={() => handleItemClick("manage-order")}
           data-tooltip="Manage Order"
         >
           <Truck size={40} />
@@ -74,7 +74,7 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
         </li>
         <li
           className={activeItem === "product" ? "active" : ""}
-          onClick={() => handleItemClick("product")}
+          onClick={() => handleItemClick("manage-product")}
           data-tooltip="Manage Product"
         >
           <Coin size={40} />
@@ -82,7 +82,7 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
         </li>
         <li
           className={activeItem === "inventory" ? "active" : ""}
-          onClick={() => handleItemClick("inventory")}
+          onClick={() => handleItemClick("manage-inventory")}
           data-tooltip="Manage Inventory"
         >
           <Cube size={40} />

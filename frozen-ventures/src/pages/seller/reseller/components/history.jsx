@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import "../../assets/styles/history.css";
-import { UserContext } from "../../context/user-context";
-import { fetchPurchaseHistory } from "../../firebase/firebase-order";
+import { UserContext } from "../../../../context/user-context";
 
 export const History = () => {
   const { user } = useContext(UserContext);
@@ -67,32 +65,7 @@ export const History = () => {
         </div>
 
         <div className="order-container">
-          {filteredOrders.map((order) => (
-            <div key={order.orderId} className="order-item">
-              {order.products.map((product) => (
-                <div key={product.productId} className="product-container">
-                  <div className="product">
-                    <img src={product.productImage} alt={product.productName} />
-
-                    <div className="product-info">
-                      <h2>{product.productName}</h2>
-                      <p>Php {product.productPrice}</p>
-                      <p>{product.shopName}</p>
-                    </div>
-                  </div>
-
-                  <p>x{product.quantity}</p>
-                  <p>Php {product.subTotal}</p>
-                  <p>{order.orderDate}</p>
-                  <p>{capitalizeFirstLetter(order.shippingMode)}</p>
-                  <p>{capitalizeFirstLetter(order.status)}</p>
-                  {order.status.toLowerCase() === "pending" && (
-                    <button>Cancel Order</button>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
+          {/* DITO YUNG ORDER NG RETAILER AND DISTRIBUTOR */}
         </div>
       </div>
     </div>

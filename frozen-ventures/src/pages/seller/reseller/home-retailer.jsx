@@ -1,11 +1,13 @@
 import React, { useContext, useState } from "react";
-import "../../../assets/styles/retailer.css";
+import "../../../assets/styles/reseller.css";
 import { UserContext } from "../../../context/user-context";
 import { useAuth } from "../../../context/auth-context";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Sidebar } from "./components/sidebar";
 import { ShopPerformance } from "./components/shop-performance";
 import { Shop } from "./components/shop";
+import { History } from "./components/history";
+import { ManageOrder } from "./components/manage-order";
 
 export const HomeSeller = () => {
   const { user } = useContext(UserContext);
@@ -36,6 +38,8 @@ export const HomeSeller = () => {
       <div className="sidebar-content" style={{ marginLeft: isSidebarExpanded ? "15vw" : "5vw" }}>
         {activeItem === "performance" && <ShopPerformance />}
         {activeItem === "shop" && <Shop />}
+        {activeItem === "history" && <History />}
+        {activeItem === "manage-order" && <ManageOrder />}
       </div>
     </div>
   );
