@@ -34,12 +34,12 @@ const LineChartData = {
     {
       label: "Sales",
       data: [15, 30, 80, 50, 20, 40, 100],
-      borderColor: "cyan",
+      borderColor: "rgb( 126 , 166, 189)",
     },
     {
       label: "Orders",
       data: [10, 40, 30, 50, 60, 20, 90],
-      borderColor: "violet",
+      borderColor: "rgb(83, 61, 112)",
     },
   ],
 };
