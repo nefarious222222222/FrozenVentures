@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/individual-product.css";
 import { UserContext } from "../../context/user-context";
-import { useParams, useNavigate } from "react-router-dom";
+import { OrderContext } from "../../context/order-context";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import {
   fetchProductByProductId,
   setCartItemQuantity,
@@ -14,19 +15,20 @@ import {
   WarningCircle,
 } from "phosphor-react";
 import { motion as m, AnimatePresence } from "framer-motion";
+import dayjs from "dayjs";
 
 export const IndividualProduct = () => {
   const { user } = useContext(UserContext);
+  const { setOrder } = useContext(OrderContext);
   const { productId } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
-  const [quantity, setQuantity] = useState(1); // Initial quantity
+  const [quantity, setQuantity] = useState(1);
+  const [orderSet, setOrderSet] = useState(false);
 
   const userId = user.userId;
-
-  console.log(userId);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -56,12 +58,42 @@ export const IndividualProduct = () => {
       setTimeout(() => {
         setShowNotification(false);
         navigate("/cart");
-      }, 3000);
+      }, 2000);
     } else {
       setShowErrorNotification(true);
-      setTimeout(() => setShowErrorNotification(false), 3000);
+      setTimeout(() => setShowErrorNotification(false), 2000);
     }
   };
+
+  const handleBuyNow = async () => {
+    try {
+      const currentDate = dayjs().format("MMMM D, YYYY");
+
+      const orderDetails = {
+        products: {
+          [productId]: {
+            productImage: product.productImage,
+            productName: product.productName,
+            productPrice: product.productPrice,
+            quantity: quantity,
+            shopName: product.shopName,
+            subTotal: (product.productPrice * quantity).toFixed(2),
+            status: "pending",
+            orderDate: currentDate,
+          },
+        },
+      };
+
+      setOrder(orderDetails);
+      setOrderSet(true);
+    } catch (error) {
+      console.error("Error during checkout:", error.message);
+    }
+  };
+
+  if (orderSet) {
+    return <Navigate to="/order" replace />;
+  }
 
   const handleIncrement = () => {
     if (quantity < product.productStock) {
@@ -77,11 +109,7 @@ export const IndividualProduct = () => {
 
   const handleInputChange = (e) => {
     let newQuantity = parseInt(e.target.value);
-    if (
-      !isNaN(newQuantity) &&
-      newQuantity >= 1 &&
-      newQuantity <= product.productStock
-    ) {
+    if (!isNaN(newQuantity) && newQuantity >= 1 && newQuantity <= product.productStock) {
       setQuantity(newQuantity);
     }
   };
@@ -139,10 +167,7 @@ export const IndividualProduct = () => {
                       min="1"
                       max={product.productStock}
                     />
-                    <button
-                      onClick={handleIncrement}
-                      disabled={quantity >= product.productStock}
-                    >
+                    <button onClick={handleIncrement} disabled={quantity >= product.productStock}>
                       <Plus size={25} />
                     </button>
                   </div>
@@ -155,7 +180,7 @@ export const IndividualProduct = () => {
 
           <div className="button-group">
             <button onClick={handleAddToCart}>Add to Cart</button>
-            <button>Buy Now</button>
+            <button onClick={handleBuyNow}>Buy Now</button>
           </div>
         </div>
       )}
