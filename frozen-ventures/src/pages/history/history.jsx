@@ -67,32 +67,70 @@ export const History = () => {
         </div>
 
         <div className="order-container">
-          {filteredOrders.map((order) => (
-            <div key={order.orderId} className="order-item">
-              {order.products.map((product) => (
-                <div key={product.productId} className="product-container">
-                  <div className="product">
-                    <img src={product.productImage} alt={product.productName} />
+          {filteredOrders.length > 0 ? (
+            filteredOrders.map((order) => (
+              <div key={order.orderId} className="order-item">
+                {order.products.map((product) => (
+                  <div key={product.productId} className="product-container">
+                    <div className="product">
+                      <img
+                        src={product.productImage}
+                        alt={product.productName}
+                      />
 
-                    <div className="product-info">
-                      <h2>{product.productName}</h2>
-                      <p>Php {product.productPrice}</p>
-                      <p>{product.shopName}</p>
+                      <div className="product-info">
+                        <h2>{product.productName}</h2>
+                        <p>Php {product.productPrice}</p>
+                        <p>{product.shopName}</p>
+                      </div>
                     </div>
-                  </div>
 
-                  <p>x{product.quantity}</p>
-                  <p>Php {product.subTotal}</p>
-                  <p>{order.orderDate}</p>
-                  <p>{capitalizeFirstLetter(order.shippingMode)}</p>
-                  <p>{capitalizeFirstLetter(order.status)}</p>
-                  {order.status.toLowerCase() === "pending" && (
-                    <button>Cancel Order</button>
-                  )}
-                </div>
-              ))}
+                    <div className="info">
+                      <span>Quantity:</span>
+                      <p>x{product.quantity}</p>
+                    </div>
+
+                    <div className="info">
+                      <span>Sub Total:</span>
+                      <p>Php {product.subTotal}</p>
+                    </div>
+
+                    <div className="info">
+                      <span>Order Date:</span>
+                      <p>{order.orderDate}</p>
+                    </div>
+
+                    <div className="info">
+                      <span>Shipping Mode:</span>
+                      <p>{capitalizeFirstLetter(order.shippingMode)}</p>
+                    </div>
+
+                    <div className="info">
+                      <span>Status:</span>
+                      <p>{capitalizeFirstLetter(order.status)}</p>
+                    </div>
+
+                    {order.status.toLowerCase() === "pending" && (
+                      <button>Cancel Order</button>
+                    )}
+
+                    {order.status.toLowerCase() === "to receive" && (
+                      <button>Order Received</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            <div className="empty-section">
+              <h2>
+                Section <span>Empty</span>
+              </h2>
+              <p>
+                No <span>records</span> found for this <span>section</span>
+              </p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

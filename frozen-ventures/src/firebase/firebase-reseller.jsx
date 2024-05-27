@@ -51,3 +51,21 @@ export async function fetchMatchingOrdersForSeller(role, retailerId) {
     return [];
   }
 }
+
+export async function fetchUserPersonalInfo(userId) {
+  try {
+    const userPersonalInfoRef = ref(realtimeDb, `users/${userId}/personalInfo`);
+    const userPersonalInfoSnapshot = await get(userPersonalInfoRef);
+
+    if (userPersonalInfoSnapshot.exists()) {
+      const personalInfo = userPersonalInfoSnapshot.val();
+      return personalInfo;
+    } else {
+      console.log("User personal info not found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user personal info:", error);
+    return null;
+  }
+}

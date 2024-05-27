@@ -1,6 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../../context/user-context";
-import { fetchMatchingOrdersForSeller } from "../../../../firebase/firebase-reseller";
+import {
+  fetchMatchingOrdersForSeller,
+  fetchUserPersonalInfo,
+} from "../../../../firebase/firebase-reseller";
+
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
 
 export const ManageOrder = () => {
   const { user } = useContext(UserContext);
@@ -25,9 +32,24 @@ export const ManageOrder = () => {
     setFilter(value);
   };
 
+  const [customerInfo, setCustomerInfo] = useState({});
+
+  useEffect(() => {
+    const fetchCustomerInfo = async () => {
+      if (orders.length > 0) {
+        const customerId = orders[0].customerId;
+        const info = await fetchUserPersonalInfo(customerId);
+        setCustomerInfo(info);
+      }
+    };
+
+    fetchCustomerInfo();
+  }, [orders]);
+
   const filteredOrders = orders.filter(({ order }) => {
     if (filter === "Order Request" && order.status === "pending") return true;
-    if (filter === "Cancel Request" && order.status === "cancel request") return true;
+    if (filter === "Cancel Request" && order.status === "cancel request")
+      return true;
     if (filter === "Refund Request" && order.status === "refund request")
       return true;
     if (filter === "Completed" && order.status === "completed") return true;
@@ -74,39 +96,69 @@ export const ManageOrder = () => {
         </div>
 
         {filteredOrders.length > 0 ? (
-          <ul>
+          <div className="order-item-container">
             {filteredOrders.map(({ customerId, orderId, order }) => (
-              <li key={`${customerId}-${orderId}`}>
-                <p>Customer ID: {customerId}</p>
-                <p>Order ID: {orderId}</p>
-                <p>Order Date: {order.orderDate}</p>
+              <div className="order-item" key={`${customerId}-${orderId}`}>
+                <div className="order-info">
+                  <p>
+                    {customerInfo.firstName} {customerInfo.lastName}
+                  </p>
+                  <p><span>Order Date:</span> {order.orderDate}</p>
+                </div>
+
                 {Object.keys(order).map(
                   (key) =>
                     key.startsWith("pid-") && (
-                      <div key={key}>
-                        <p>Product ID: {key}</p>
-                        <p>Product Name: {order[key].productName}</p>
-                        <p>
-                          Product Image:{" "}
+                      <div className="product" key={key}>
+                        <div className="product-info">
                           <img
                             src={order[key].productImage}
                             alt={order[key].productName}
                           />
-                        </p>
-                        <p>Product Price: {order[key].productPrice}</p>
-                        <p>Quantity: {order[key].quantity}</p>
-                        <p>Subtotal: {order[key].subTotal}</p>
-                        <p>Shop Name: {order[key].shopName}</p>
+
+                          <div className="product-description">
+                            <p>{order[key].productName}</p>
+                            <p>Php {order[key].productPrice}</p>
+                            <p>{order[key].shopName}</p>
+                          </div>
+                        </div>
+
+                        <div className="info">
+                          <span>Quantity:</span>
+                          <p>x{order[key].quantity}</p>
+                        </div>
+
+                        <div className="info">
+                          <span>Total:</span>
+                          <p>Php {order[key].subTotal}</p>
+                        </div>
+
+                        <div className="info">
+                          <span>Shipping Mode:</span>
+                          <p>{capitalizeFirstLetter(order.shippingMode)}</p>
+                        </div>
+
+                        <div className="info">
+                          <span>Status:</span>
+                          <p>{capitalizeFirstLetter(order.status)}</p>
+                        </div>
+
+                        {order.shippingMode === "pickup" ? (
+                          <button>Accept</button>
+                        ) : (
+                          <button>Ship</button>
+                        )}
                       </div>
                     )
                 )}
-                <p>Shipping Mode: {order.shippingMode}</p>
-                <p>Status: {order.status}</p>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p>No matching orders found.</p>
+          <div className="empty-section">
+            <h2>Section <span>Empty</span></h2>
+            <p>No <span>records</span> found for this <span>section</span></p>
+          </div>
         )}
       </div>
     </div>

@@ -215,7 +215,7 @@
         gap: 2vh;
         padding: 20px;
         border-radius: 20px;
-        box-shadow:  0 7px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 7px 25px rgba(0, 0, 0, 0.2);
         background-color: white;
 
         .shop-header {
@@ -314,7 +314,10 @@
 
   .manage-order {
     .order-container {
-      padding: 30px 0;
+      margin: 40px 0;
+      min-height: 80vh;
+      border-radius: 20px;
+      box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
 
       .button-group {
         display: flex;
@@ -340,9 +343,137 @@
           transition: all 0.3s ease;
         }
 
-        button:hover, button.active {
+        button:hover,
+        button.active {
           background-color: var(--color-violet);
           color: white;
+        }
+      }
+
+      .order-item-container {
+        padding: 40px;
+
+        .order-item:last-child {
+          margin-bottom: 0;
+        }
+
+        .order-item {
+          display: flex;
+          flex-direction: column;
+          border-radius: 10px;
+          gap: 2vh;
+          padding: 40px;
+          margin-bottom: 40px;
+          box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+
+          .order-info {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: solid 2px gray;
+
+            p,
+            span {
+              font-size: 1.5rem;
+              font-weight: 700;
+            }
+
+            span {
+              font-weight: 500;
+            }
+          }
+
+          .product {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .product-info {
+              display: flex;
+              align-items: center;
+              gap: 1vw;
+
+              p:first-child {
+                font-size: 1.75rem;
+                font-weight: 700;
+                color: var(--color-violet);
+              }
+
+              p {
+                font-size: 1.25rem;
+                font-weight: 600;
+              }
+
+              img {
+                width: 200px;
+                border-radius: 20px;
+              }
+            }
+
+            .info {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+
+              span {
+                font-size: 1.25rem;
+                font-weight: 500;
+              }
+
+              p {
+                font-size: 1.5rem;
+                font-weight: 600;
+              }
+            }
+
+            button {
+              padding: 10px 20px;
+              font-size: 1.25rem;
+              font-weight: 800;
+              border: none;
+              border-radius: 10px;
+              cursor: pointer;
+              color: var(--color-violet);
+              background-color: var(--color-pale-stone);
+              transition: all 0.3s ease;
+            }
+
+            button:hover {
+              color: var(--color-pale-stone);
+              background-color: var(--color-violet);
+            }
+          }
+        }
+      }
+
+      .empty-section {
+        width: 100%;
+        min-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        h2 {
+          font-size: 5rem;
+
+          span {
+            font-size: 5rem;
+          }
+        }
+
+        span {
+          color: var(--color-violet);
+        }
+
+        p {
+          font-size: 3rem;
+          font-weight: 500;
+
+          span {
+            font-size: 3rem;
+            font-weight: 500;
+          }
         }
       }
     }

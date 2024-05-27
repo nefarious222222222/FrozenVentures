@@ -41,6 +41,7 @@
 
     .order-container {
       padding: 20px 40px;
+      min-height: 70vh;
 
       .order-item:last-child {
         border: none;
@@ -52,7 +53,23 @@
 
         p {
           font-size: 1.25rem;
-          font-weight: 500;
+          font-weight: 600;
+        }
+
+        .info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          span {
+            font-size: 1.25rem;
+            font-weight: 500;
+          }
+
+          p {
+            font-size: 1.5rem;
+            font-weight: 600;
+          }
         }
 
         button {
@@ -92,6 +109,37 @@
               font-weight: 700;
               color: var(--color-violet);
             }
+          }
+        }
+      }
+
+      .empty-section {
+        width: 100%;
+        min-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        h2 {
+          font-size: 5rem;
+
+          span {
+            font-size: 5rem;
+          }
+        }
+
+        span {
+          color: var(--color-violet);
+        }
+
+        p {
+          font-size: 3rem;
+          font-weight: 500;
+
+          span {
+            font-size: 3rem;
+            font-weight: 500;
           }
         }
       }

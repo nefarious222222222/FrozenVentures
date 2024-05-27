@@ -37,7 +37,7 @@ export const Navbar = () => {
       <div className="title-container">
         <Link
           className="link-container"
-          to={userRole === "Retailer" ? "/home-retailer" : "/home"}
+          to={userRole === "Retailer" ? "/home-reseller" : "/home"}
         >
           <img src={logo} alt="Sharsh" />
           <p className="link title">FrozenVentures</p>
