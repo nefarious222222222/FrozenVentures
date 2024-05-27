@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import "../../assets/styles/home.css";
 import { UserContext } from "../../context/user-context";
 import { useAuth } from "../../context/auth-context";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Product } from "../shop/product";
 import { easeInOut, motion as m } from "framer-motion";
 
@@ -16,6 +16,11 @@ import five from "../../assets/images/5.png";
 export const Home = () => {
   const { user } = useContext(UserContext);
   const { userSignedIn } = useAuth();
+  const navigate = useNavigate();
+
+  const handleMoreFlavorsClick = () => {
+    navigate("/shop");
+  };
 
   return (
     <m.div
@@ -70,7 +75,7 @@ export const Home = () => {
             satisfy every palate and treat yourself to the perfect ice cream
             experience
           </p>
-          <button>More Flavors</button>
+          <button onClick={handleMoreFlavorsClick}>More Flavors</button>
         </div>
 
         <img src={five} alt="" />

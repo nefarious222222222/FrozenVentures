@@ -69,7 +69,11 @@ export const Cart = () => {
               <span>Sub Total: </span>Php {totalPrice.toFixed(2)}
             </p>
 
-            <button className="checkOutButton" onClick={handleCheckout}>
+            <button
+              className="checkOutButton"
+              onClick={handleCheckout}
+              disabled={totalPrice === 0}
+            >
               Check Out
             </button>
           </div>

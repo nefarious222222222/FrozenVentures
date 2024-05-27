@@ -3,11 +3,11 @@ import "../../assets/styles/product.css";
 import { UserContext } from "../../context/user-context";
 import { motion as m, AnimatePresence } from "framer-motion";
 import { ShoppingCart, WarningCircle } from "phosphor-react";
-import { fetchAllProductsFromAllUsers, addItemToCart } from "../../firebase/firebase-products";
+import { fetchAllProductsFromRetailers, addItemToCart } from "../../firebase/firebase-products";
 
 export async function getProductsFromDatabase() {
   try {
-    const databaseProducts = await fetchAllProductsFromAllUsers();
+    const databaseProducts = await fetchAllProductsFromRetailers();
     const products = databaseProducts.map((product) => ({
       productId: product.productId,
       productName: product.productName,
@@ -15,6 +15,7 @@ export async function getProductsFromDatabase() {
       shopName: product.shopName,
       productImage: product.productImage,
       productDescription: product.productDescription,
+      productSize: product.productSize,
       productStock: product.productStock,
     }));
     return products;
@@ -69,9 +70,9 @@ export const Product = () => {
           <div className="product-box">
             <div className="product-info">
               <p>{product.productName}</p>
-              <p>Php {product.productPrice}</p>
               <p>{product.shopName}</p>
-              <p>Stocks: {product.productStock}</p>
+              <p>Size: {product.productSize}</p>
+              <p>Php {product.productPrice}</p>
             </div>
             <ShoppingCart onClick={() => handleAddToCart(product.productId, product.productPrice, product.productName, product.shopName, product.productImage, product.productStock)} />
           </div>

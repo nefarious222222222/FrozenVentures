@@ -128,7 +128,7 @@ export const addProduct = async (
 };
 
 // Fetch all products from all users
-export const fetchAllProductsFromAllUsers = async () => {
+export const fetchAllProductsFromRetailers = async () => {
   try {
     const dbRef = ref(realtimeDb);
     const snapshot = await get(child(dbRef, "retailers"));
