@@ -20,8 +20,6 @@ import { Shop } from "./pages/shop/shop";
 import { Sign } from "./pages/auth/sign";
 import { Order } from "./pages/order/order";
 import { HomeSeller } from "./pages/seller/reseller/home-reseller";
-import { Profile } from "./pages/user-menu/profile/profile";
-import { Settings } from "./pages/user-menu/settings/settings";
 import { UserMenu } from "./pages/user-menu/user-menu";
 import { History } from "./pages/history/history";
 import { IndividualProduct } from "./pages/shop/individual-product";
@@ -48,8 +46,6 @@ function App() {
                 <Route path="/history" element={<History/>} />
                 <Route path="/sign" element={<Sign />} />
                 <Route path="/user-menu" element={<UserMenu />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/settings" element={<Settings />} />
 
                 <Route path="/home-reseller" element={<HomeSeller />} />
               </Routes>

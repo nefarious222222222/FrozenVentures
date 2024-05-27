@@ -2,27 +2,75 @@ import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/order.css";
 import { OrderContext } from "../../context/order-context";
 import { UserContext } from "../../context/user-context";
+import { useNavigate } from "react-router-dom";
 import { motion as m, AnimatePresence, easeInOut } from "framer-motion";
 import { ShoppingCart, Storefront, X } from "phosphor-react";
+import dayjs from "dayjs";
 import { generateNewOrderId, createOrder } from "../../firebase/firebase-order";
+import {
+  getUserInfoById,
+  getUserPersonalInfoById,
+} from "../../firebase/firebase-users";
 
 export const Order = () => {
-  const { orderProducts, shippingModeContext, clearOrder } = useContext(OrderContext);
+  const { orderProducts, clearOrder } = useContext(OrderContext);
   const { user } = useContext(UserContext);
   const { products } = orderProducts || {};
-
-  console.log(orderProducts)
-
-  let shippingCost;
-  if (shippingModeContext == "pickup") {
-    shippingCost = 0;
-  } else if (shippingModeContext == "delivery"){
-    shippingCost = 10;
-  }
+  const navigate = useNavigate();
 
   const [showConfirmOrder, setShowConfirmOrder] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [formUserPersonal, setFormUserPersonal] = useState({
+    firstName: "",
+    lastName: "",
+    street: "",
+    barangay: "",
+    municipality: "",
+    province: "",
+    zip: "",
+  });
+  const [isEditingShippingMode, setIsEditingShippingMode] = useState(false);
+  const [isEditingShippingDate, setIsEditingShippingDate] = useState(false);
+  const [shippingMode, setShippingMode] = useState("pickup");
+  const [shippingAddressError, setShippingAddressError] = useState(false);
+
   const userId = user.userId;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user?.userId) {
+        const userData = await getUserInfoById(user?.userId);
+        const userPersonal = await getUserPersonalInfoById(user?.userId);
+
+        if (userData && userPersonal) {
+          const userEmail = userData.email;
+
+          setFormUserPersonal({
+            firstName: userPersonal.firstName,
+            lastName: userPersonal.lastName,
+            street: userPersonal.street,
+            barangay: userPersonal.barangay,
+            municipality: userPersonal.municipality,
+            province: userPersonal.province,
+            zip: userPersonal.zip,
+          });
+
+          setUserEmail(userEmail);
+        }
+      }
+    };
+
+    fetchData();
+  }, [user?.userId]);
+
+  const handleEditUserInfo = () => {
+    navigate("/user-menu");
+  };
+
+  const handleEditShippingAddress = () => {
+    navigate("/user-menu");
+  };
 
   let totalProductAmount = 0;
 
@@ -33,10 +81,20 @@ export const Order = () => {
     }
   }
 
-  const totalOrderCost = parseFloat(totalProductAmount) + parseFloat(shippingCost);
+  const shippingCost = shippingMode === "pickup" ? 0 : 10;
+  const totalOrderCost =
+    parseFloat(totalProductAmount) + parseFloat(shippingCost);
 
   const handleConfirmOrderShow = () => {
-    setShowConfirmOrder(true);
+    if (isShippingAddressEmpty()) {
+      setShippingAddressError(true);
+
+      setTimeout(() => {
+        setShippingAddressError(false);
+      }, 2000);
+    } else {
+      setShowConfirmOrder(true);
+    }
   };
 
   const handleConfirmOrderClose = () => {
@@ -45,39 +103,45 @@ export const Order = () => {
 
   const handlePlaceOrder = async () => {
     try {
+      if (isShippingAddressEmpty()) {
+        setShippingAddressError(true);
+        return;
+      }
+
       let allOrdersCreated = true;
-  
+
       for (const productId in products) {
         const product = products[productId];
         const orderId = await generateNewOrderId(userId);
-    
+
         const productInfo = {
-            productPrice: product.productPrice,
-            productName: product.productName,
-            productImage: product.productImage,
-            shopName: product.shopName,
-            quantity: product.quantity,
-            subTotal: product.subTotal,
+          productPrice: product.productPrice,
+          productName: product.productName,
+          productImage: product.productImage,
+          shopName: product.shopName,
+          quantity: product.quantity,
+          subTotal: product.subTotal,
         };
-    
+
         const orderInfo = {
-            orderDate: product.orderDate,
-            shippingMode: product.shippingMode,
-            status: product.status,
+          orderDate: product.orderDate,
+          shippingMode: shippingMode,
+          shippingDate: shippingDate,
+          status: product.status,
         };
-    
+
         const orderData = {
-            ...orderInfo,
-            [productId]: productInfo
+          ...orderInfo,
+          [productId]: productInfo,
         };
-    
+
         await createOrder(userId, orderId, productId, orderData);
-    }
-  
-    if (allOrdersCreated) {
-      setShowConfirmOrder(false);
-      setShowSuccessMessage(true);
-  
+      }
+
+      if (allOrdersCreated) {
+        setShowConfirmOrder(false);
+        setShowSuccessMessage(true);
+
         setTimeout(() => {
           clearOrder();
           window.location.href = "/home";
@@ -89,6 +153,47 @@ export const Order = () => {
       console.log(error);
     }
   };
+
+  const handleEditShippingMode = () => {
+    setIsEditingShippingMode(!isEditingShippingMode);
+  };
+
+  const handleShippingModeChange = (mode) => {
+    setShippingMode(mode);
+    setIsEditingShippingMode(false);
+  };
+
+  const handleEditShippingDate = () => {
+    setIsEditingShippingDate(!isEditingShippingDate);
+  };
+
+  const handleShippingDateChange = (event) => {
+    const selectedDate = dayjs(event.target.value);
+    const formattedDate = selectedDate.format("MMMM DD, YYYY");
+    setShippingDate(formattedDate);
+    setIsEditingShippingDate(false);
+  };
+
+  const isShippingAddressEmpty = () => {
+    const { street, barangay, municipality, province, zip } = formUserPersonal;
+    return !street || !barangay || !municipality || !province || !zip;
+  };
+
+  const getCurrentDate = () => {
+    const currentDate = dayjs().format("YYYY-MM-DD");
+    return currentDate;
+  };
+
+  const getMaxDate = () => {
+    return dayjs().add(7, "day").format("YYYY-MM-DD");
+  };
+
+  const [shippingDate, setShippingDate] = useState(getCurrentDate());
+
+  useEffect(() => {
+    const formattedDate = dayjs(shippingDate).format("MMMM DD, YYYY");
+    setShippingDate(formattedDate);
+  }, []);
 
   return (
     <m.div
@@ -104,7 +209,7 @@ export const Order = () => {
           {totalProductAmount > 0 ? (
             <>
               <p>
-                Order Total: <span>Php {totalOrderCost}</span>
+                Order Total: <span>Php {totalOrderCost.toFixed(2)}</span>
               </p>
               <button onClick={handleConfirmOrderShow}>Place Order</button>
             </>
@@ -116,42 +221,75 @@ export const Order = () => {
         <div className="info">
           <div className="title-info">
             <h3>Your Information</h3>
-            <button>Edit</button>
+            <button onClick={handleEditUserInfo}>Edit</button>
           </div>
 
-          <h4>Vince Canaria</h4>
-          <p>vincecanaria@gmail.com</p>
+          <h4>
+            {formUserPersonal.firstName} {formUserPersonal.lastName}
+          </h4>
+          <p>{userEmail}</p>
         </div>
 
         <div className="info">
           <div className="title-info">
             <h3>Shipping Address</h3>
-            <button>Edit</button>
+            <button onClick={handleEditShippingAddress}>Edit</button>
           </div>
 
-          <p>#100 Dota Street</p>
-          <p>Radiant</p>
-          <p>Valve City</p>
-          <p>Steam</p>
-          <p>0420</p>
+          <p>{formUserPersonal.street}</p>
+          <p>{formUserPersonal.barangay}</p>
+          <p>{formUserPersonal.municipality}</p>
+          <p>{formUserPersonal.province}</p>
+          <p>{formUserPersonal.zip}</p>
         </div>
 
         <div className="info">
           <div className="title-info">
-            <h3>Payment</h3>
-            <button>Edit</button>
+            <h3>Shipping Mode</h3>
+            <button onClick={handleEditShippingMode}>Edit</button>
           </div>
-
-          <p>Cash On Delivery</p>
+          {isEditingShippingMode ? (
+            <div className="ship-group">
+              <button
+                className="ship-btn"
+                onClick={() => handleShippingModeChange("pickup")}
+              >
+                Pickup
+              </button>
+              <button
+                className="ship-btn"
+                onClick={() => handleShippingModeChange("delivery")}
+              >
+                Delivery
+              </button>
+            </div>
+          ) : (
+            <p>
+              {shippingMode.charAt(0).toUpperCase() + shippingMode.slice(1)}
+            </p>
+          )}
         </div>
 
         <div className="info">
           <div className="title-info">
-            <h3>Shipping Date</h3>
-            <button>Edit</button>
+            <h3>
+              {shippingMode.charAt(0).toUpperCase() + shippingMode.slice(1)}{" "}
+              Date
+            </h3>
+            <button onClick={handleEditShippingDate}>Edit</button>
           </div>
-
-          <p>May 9,2024</p>
+          {isEditingShippingDate ? (
+            <input
+              className="ship-date"
+              type="date"
+              min={getCurrentDate()}
+              max={getMaxDate()}
+              value={getCurrentDate()}
+              onChange={handleShippingDateChange}
+            />
+          ) : (
+            <p>{shippingDate}</p>
+          )}
         </div>
       </div>
 
@@ -186,7 +324,10 @@ export const Order = () => {
                       <p>{product.quantity}</p>
                     </td>
                     <td>
-                      <p>Php {(product.productPrice * product.quantity).toFixed(2)}</p>
+                      <p>
+                        Php{" "}
+                        {(product.productPrice * product.quantity).toFixed(2)}
+                      </p>
                     </td>
                   </tr>
                 ))}
@@ -205,7 +346,7 @@ export const Order = () => {
             </div>
             <div className="shipping">
               <p className="label">Shipping</p>
-              <p className="price">Php </p>
+              <p className="price">Php {shippingCost.toFixed(2)}</p>
             </div>
             <div className="line"></div>
             <div className="total">
@@ -286,11 +427,28 @@ export const Order = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="success-message"
+            className="success message"
           >
             <div className="header">
-              <h2>Order Placed Successfully</h2>
-              <p>Your order has been successfully placed.</p>
+              <h2>Order Successful</h2>
+              <p>Your order has been successfully placed</p>
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {shippingAddressError && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="error message"
+          >
+            <div className="header">
+              <h2>Order Unsuccessful</h2>
+              <p>Address cannot be incomplete</p>
             </div>
           </m.div>
         )}

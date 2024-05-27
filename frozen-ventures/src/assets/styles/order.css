@@ -56,6 +56,7 @@
     padding: 20px 0 50px 0;
     border-radius: 10px;
     background-color: var(--color-pale-violet);
+    height: 45vh;
 
     .title-info {
       display: flex;
@@ -101,6 +102,33 @@
       p {
         font-weight: 500;
       }
+    }
+
+    .ship-group {
+      display: flex;
+      gap: 1vw;
+
+      .ship-btn {
+        padding: 5px 20px;
+        font-weight: 600;
+        border-radius: 5px;
+        cursor: pointer;
+        color: var(--color-violet);
+        background-color: white;
+        border: solid 2px var(--color-violet);
+        transition: all 0.3s ease;
+      }
+
+      .ship-btn:hover {
+        background-color: var(--color-violet);
+        color: white;
+      }
+    }
+
+    .ship-date {
+      padding: 5px;
+      border-radius: 5px;
+      border: solid 2px var(--color-violet);
     }
   }
 
@@ -359,7 +387,7 @@
     }
   }
 
-  .success-message {
+  .message {
     position: fixed;
     gap: 30px;
     top: 50%;
@@ -369,13 +397,10 @@
     border-radius: 20px;
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
     z-index: 999;
-    border: solid 2px rgb(33, 114, 17);
-    background-color: rgb(190, 255, 181);
 
     h2 {
       font-size: 2rem;
       font-weight: 600;
-      color: rgb(33, 114, 17);
       text-align: center;
       margin-bottom: 1vh;
     }
@@ -383,8 +408,33 @@
     p {
       font-size: 1.5rem;
       font-weight: 600;
-      color: rgb(33, 114, 17);
       text-align: center;
+    }
+  }
+
+  .success {
+    border: solid 2px rgb(33, 114, 17);
+    background-color: rgb(190, 255, 181);
+
+    h2 {
+      color: rgb(33, 114, 17);
+    }
+
+    p {
+      color: rgb(33, 114, 17);
+    }
+  }
+
+  .error {
+    border: solid 2px rgb(114, 17, 17);
+    background-color: rgb(255, 181, 181);
+
+    h2 {
+      color: rgb(114, 17, 17);
+    }
+
+    p {
+      color: rgb(114, 17, 17);
     }
   }
 }

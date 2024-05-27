@@ -13,14 +13,8 @@ export const OrderContextProvider = ({ children }) => {
     }
   });
 
-  const [shippingModeContext, setShippingModeContext] = useState(() => {
-    const storedShippingMode = localStorage.getItem("shippingMode");
-    return storedShippingMode ? storedShippingMode : "pickup";
-  });
-
   const setOrder = (products, mode) => {
     setOrderProducts(products);
-    setShippingModeContext(mode);
   };
 
   useEffect(() => {
@@ -31,17 +25,12 @@ export const OrderContextProvider = ({ children }) => {
     }
   }, [orderProducts]);
 
-  useEffect(() => {
-    localStorage.setItem("shippingMode", shippingModeContext);
-  }, [shippingModeContext]);
-
   const clearOrder = () => {
     setOrderProducts(null);
   };
 
   const contextValue = {
     orderProducts,
-    shippingModeContext,
     setOrder,
     clearOrder,
   };
