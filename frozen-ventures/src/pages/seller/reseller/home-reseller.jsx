@@ -9,6 +9,7 @@ import { Shop } from "./components/shop";
 import { Cart } from "./components/cart";
 import { History } from "./components/history";
 import { ManageOrder } from "./components/manage-order";
+import { ManageProducts } from "./components/manage-products";
 
 export const HomeSeller = () => {
   const { user } = useContext(UserContext);
@@ -42,6 +43,7 @@ export const HomeSeller = () => {
         {activeItem === "cart" && <Cart />}
         {activeItem === "history" && <History />}
         {activeItem === "manage-order" && <ManageOrder />}
+        {activeItem === "manage-products" && <ManageProducts />}
       </div>
     </div>
   );

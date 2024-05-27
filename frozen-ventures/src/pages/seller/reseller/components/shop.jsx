@@ -4,9 +4,8 @@ import ImageOne from "../../../../assets/images/1.jpg";
 export const Shop = () => {
   return (
     <div className="shop-reseller">
-      <h1>Shop</h1>
-
       <div className="search-bar">
+        <h1>Shop</h1>
         <input type="text" placeholder="Search" />
       </div>
 

@@ -74,7 +74,7 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
           {isExpanded && <p>History</p>}
         </li>
         <li
-          className={activeItem === "order" ? "active" : ""}
+          className={activeItem === "manage-order" ? "active" : ""}
           onClick={() => handleItemClick("manage-order")}
           data-tooltip="Manage Order"
         >
@@ -82,15 +82,15 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
           {isExpanded && <p>Manage Order</p>}
         </li>
         <li
-          className={activeItem === "product" ? "active" : ""}
-          onClick={() => handleItemClick("manage-product")}
-          data-tooltip="Manage Product"
+          className={activeItem === "manage-products" ? "active" : ""}
+          onClick={() => handleItemClick("manage-products")}
+          data-tooltip="Manage Products"
         >
           <Coin size={40} />
           {isExpanded && <p>Manage Product</p>}
         </li>
         <li
-          className={activeItem === "inventory" ? "active" : ""}
+          className={activeItem === "manage-inventory" ? "active" : ""}
           onClick={() => handleItemClick("manage-inventory")}
           data-tooltip="Manage Inventory"
         >

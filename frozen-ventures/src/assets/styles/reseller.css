@@ -189,11 +189,11 @@
     z-index: 1;
 
     .search-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       width: 100%;
-      display: flex;
-      justify-content: center;
-      border-bottom: solid 2px gray;
-      padding: 20px 0;
+      border-bottom: solid 2px var(--color-violet);
+      padding-bottom: 20px;
 
       input {
         font-size: 1.25rem;
@@ -303,7 +303,7 @@
   .cart-reseller {
     h1 {
       padding-bottom: 20px;
-      border-bottom: solid 2px gray;
+      border-bottom: solid 2px var(--color-violet);
     }
   }
 
@@ -312,6 +312,7 @@
     padding: 0;
   }
 
+  /* Manage order Css */
   .manage-order {
     .order-container {
       margin: 40px 0;
@@ -473,6 +474,120 @@
           span {
             font-size: 3rem;
             font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  /* Manage products Css */
+  .manage-products {
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: solid 2px var(--color-violet);
+      padding-bottom: 20px;
+
+      button {
+        padding: 10px 20px;
+        font-weight: 800;
+        border-radius: 10px;
+        cursor: pointer;
+        border: solid 2px var(--color-violet);
+        color: var(--color-violet);
+        background-color: white;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--color-violet);
+        color: white;
+      }
+    }
+
+    .products-container {
+      padding: 20px 0;
+      
+      .product-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .product-item {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+        box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+        
+        .product-info {
+          display: flex;
+          justify-content: space-between;
+          padding-bottom: 20px;
+          margin-bottom: 20px;
+          border-bottom: solid 2px gray;
+
+          p, span {
+            font-size: 1.5rem;
+            font-weight: 500;
+
+            span {
+              font-weight: 700;
+            }
+          }
+        }
+
+        .product {
+          display: flex;
+          align-items: center;
+          gap: 1vw;
+
+          img {
+            width: 200px;
+            border-radius: 20px;
+          }
+
+          .product-text {
+            display: flex;
+            flex-direction: column;
+            padding: 0 20px;
+            gap: 3vh;
+
+            p, span {
+              font-size: 1.25rem;
+              font-weight: 500;
+  
+              span {
+                font-weight: 700;
+              }
+            }
+
+            .info {
+              display: flex;
+              justify-content: space-between;
+            }
+
+            .description {
+              text-align: justify;
+            }
+          }
+
+          button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            cursor: pointer;
+            color: var(--color-violet);
+            background-color: var(--color-pale-stone);
+            transition: all 0.3s ease;
+          }
+
+          button:hover {
+            background-color: var(--color-violet);
+            color: var(--color-pale-stone);
           }
         }
       }

@@ -1,10 +1,14 @@
 import { ref, get, set } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
 
-export async function fetchMatchingOrdersForSeller(role, retailerId) {
+// Fetch orders for retailer and distributor
+export async function fetchMatchingOrdersForSeller(role, sellerId) {
   try {
     const lowerCaseRole = role.toLowerCase();
-    const sellerProductsRef = ref(realtimeDb, `${lowerCaseRole}s/${retailerId}/products`);
+    const sellerProductsRef = ref(
+      realtimeDb,
+      `${lowerCaseRole}s/${sellerId}/products`
+    );
     const sellerProductsSnapshot = await get(sellerProductsRef);
 
     if (!sellerProductsSnapshot.exists()) {
@@ -15,7 +19,7 @@ export async function fetchMatchingOrdersForSeller(role, retailerId) {
     const sellerProducts = sellerProductsSnapshot.val();
     const sellerProductIds = Object.keys(sellerProducts);
 
-    const customersRef = ref(realtimeDb, 'customers');
+    const customersRef = ref(realtimeDb, "customers");
     const customersSnapshot = await get(customersRef);
 
     if (!customersSnapshot.exists()) {
@@ -52,6 +56,7 @@ export async function fetchMatchingOrdersForSeller(role, retailerId) {
   }
 }
 
+// Fetch personal info for order
 export async function fetchUserPersonalInfo(userId) {
   try {
     const userPersonalInfoRef = ref(realtimeDb, `users/${userId}/personalInfo`);
@@ -67,5 +72,28 @@ export async function fetchUserPersonalInfo(userId) {
   } catch (error) {
     console.error("Error fetching user personal info:", error);
     return null;
+  }
+}
+
+// Fetch products of retailer or distributor
+export async function fetchSellerProducts(role, sellerId) {
+  try {
+    const lowerCaseRole = role.toLowerCase();
+    const sellerProductsRef = ref(
+      realtimeDb,
+      `${lowerCaseRole}s/${sellerId}/products`
+    );
+    const sellerProductsSnapshot = await get(sellerProductsRef);
+
+    if (!sellerProductsSnapshot.exists()) {
+      console.log("No products found for the given seller.");
+      return [];
+    }
+
+    const sellerProducts = sellerProductsSnapshot.val();
+    return sellerProducts;
+  } catch (error) {
+    console.error("Error fetching seller products:", error);
+    return [];
   }
 }
