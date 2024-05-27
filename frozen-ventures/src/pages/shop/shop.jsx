@@ -1,6 +1,6 @@
 import React from "react";
 import "../../assets/styles/shop.css";
-import { Product } from "./product";
+import { Products } from "./products";
 import { easeInOut, motion as m } from "framer-motion";
 
 import carrousel from "../../assets/images/0.jpg";
@@ -32,7 +32,7 @@ export const Shop = () => {
 
       <div className="products-container">
         <div className="products">
-          <Product />
+          <Products />
         </div>
       </div>
     </m.div>

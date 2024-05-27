@@ -2,7 +2,7 @@ import { ref, get, set, onValue, remove, child } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
 
 // Add items to the realtime database to update cart
-export const addItemToCart = async (
+export const setCartItemQuantity = async (
   userId,
   productId,
   quantity,
@@ -10,6 +10,7 @@ export const addItemToCart = async (
   productName,
   shopName,
   productImage,
+  setQuantityDirectly = false
 ) => {
   if (
     userId == null ||
@@ -24,18 +25,31 @@ export const addItemToCart = async (
     return;
   }
 
-  const cartItemRef = ref(realtimeDb, `customers/${userId}/cartItems/${productId}`);
+  const cartItemRef = ref(
+    realtimeDb,
+    `customers/${userId}/cartItems/${productId}`
+  );
   try {
     const snapshot = await get(cartItemRef);
     if (snapshot.exists()) {
-      const existingQuantity = snapshot.val().quantity;
-      await set(cartItemRef, {
-        quantity: existingQuantity + quantity,
-        productPrice,
-        productName,
-        shopName,
-        productImage,
-      });
+      if (setQuantityDirectly) {
+        await set(cartItemRef, {
+          quantity: quantity,
+          productPrice,
+          productName,
+          shopName,
+          productImage,
+        });
+      } else {
+        const existingQuantity = snapshot.val().quantity;
+        await set(cartItemRef, {
+          quantity: existingQuantity + quantity,
+          productPrice,
+          productName,
+          shopName,
+          productImage,
+        });
+      }
     } else {
       await set(cartItemRef, {
         quantity,
@@ -51,8 +65,12 @@ export const addItemToCart = async (
 };
 
 // Fetch the items from the cart in the realtime database
-export const fetchCartItemsForUser = (userId, callback) => {
-  const cartItemsRef = ref(realtimeDb, `customers/${userId}/cartItems`);
+export const fetchCartItemsForUser = (userRole, userId, callback) => {
+  const lowerCaseUserRole = userRole.toLowerCase();
+  const cartItemsRef = ref(
+    realtimeDb,
+    `${lowerCaseUserRole}s/${userId}/cartItems`
+  );
   onValue(
     cartItemsRef,
     (snapshot) => {
@@ -105,7 +123,7 @@ export const addProduct = async (
   productStock,
   productDescription,
   productImage,
-  shopName,
+  shopName
 ) => {
   const newProductId = await generateNewProductId(userId);
   const newProductRef = ref(
@@ -155,19 +173,9 @@ export const fetchAllProductsFromRetailers = async () => {
   }
 };
 
-// Function to fetch products added within the last 7 days
-export const fetchLatestProductsFromAllUsers = async () => {
-  const allProducts = await fetchAllProductsFromAllUsers();
-  const oneWeekAgo = dayjs().subtract(7, 'day').toDate();
-  return allProducts.filter(product => {
-    const productDate = new Date(product.dateAdded);
-    return productDate >= oneWeekAgo;
-  });
-};
-
 // Fetch product stock in retailer by product id
 export const fetchProductStockByProductId = async (productId) => {
-  const retailersRef = ref(realtimeDb, 'retailers');
+  const retailersRef = ref(realtimeDb, "retailers");
 
   try {
     const retailersSnapshot = await get(retailersRef);
@@ -176,7 +184,10 @@ export const fetchProductStockByProductId = async (productId) => {
 
       for (const retailerId in retailers) {
         if (retailers.hasOwnProperty(retailerId)) {
-          const productRef = child(retailersRef, `${retailerId}/products/${productId}/productStock`);
+          const productRef = child(
+            retailersRef,
+            `${retailerId}/products/${productId}/productStock`
+          );
           const productSnapshot = await get(productRef);
           if (productSnapshot.exists()) {
             return productSnapshot.val();
@@ -191,6 +202,72 @@ export const fetchProductStockByProductId = async (productId) => {
     }
   } catch (error) {
     console.error("Error fetching product stock:", error);
+    return null;
+  }
+};
+
+// Fetch product size in retailer by product id
+export const fetchProductSizeByProductId = async (productId) => {
+  const retailersRef = ref(realtimeDb, "retailers");
+
+  try {
+    const retailersSnapshot = await get(retailersRef);
+    if (retailersSnapshot.exists()) {
+      const retailers = retailersSnapshot.val();
+
+      for (const retailerId in retailers) {
+        if (retailers.hasOwnProperty(retailerId)) {
+          const productRef = child(
+            retailersRef,
+            `${retailerId}/products/${productId}/productSize`
+          );
+          const productSnapshot = await get(productRef);
+          if (productSnapshot.exists()) {
+            return productSnapshot.val();
+          }
+        }
+      }
+      console.log("Product size not found for productId:", productId);
+      return null;
+    } else {
+      console.log("No retailers found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching product size:", error);
+    return null;
+  }
+};
+
+// Fetch the product by productId
+export const fetchProductByProductId = async (productId) => {
+  const retailersRef = ref(realtimeDb, "retailers");
+
+  try {
+    const retailersSnapshot = await get(retailersRef);
+    if (retailersSnapshot.exists()) {
+      const retailers = retailersSnapshot.val();
+
+      for (const retailerId in retailers) {
+        if (retailers.hasOwnProperty(retailerId)) {
+          const productRef = child(
+            retailersRef,
+            `${retailerId}/products/${productId}`
+          );
+          const productSnapshot = await get(productRef);
+          if (productSnapshot.exists()) {
+            return { retailerId, ...productSnapshot.val() };
+          }
+        }
+      }
+      console.log("Product not found for productId:", productId);
+      return null;
+    } else {
+      console.log("No retailers found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching product:", error);
     return null;
   }
 };

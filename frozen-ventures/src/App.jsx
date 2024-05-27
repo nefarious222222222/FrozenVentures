@@ -23,8 +23,8 @@ import { HomeSeller } from "./pages/seller/reseller/home-reseller";
 import { Profile } from "./pages/user-menu/profile/profile";
 import { Settings } from "./pages/user-menu/settings/settings";
 import { UserMenu } from "./pages/user-menu/user-menu";
-import { BuyProduct } from "./pages/shop/buy-product";
 import { History } from "./pages/history/history";
+import { IndividualProduct } from "./pages/shop/individual-product";
 
 function App() {
   return (
@@ -42,7 +42,7 @@ function App() {
 
                 <Route path="/home" element={<Home />} />
                 <Route path="/shop" element={<Shop />} />
-                <Route path="/buy-item/:id" element={<BuyProduct />} />
+                <Route path="/individual-product/:productId" element={<IndividualProduct />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/order" element={<Order />} />
                 <Route path="/history" element={<History/>} />

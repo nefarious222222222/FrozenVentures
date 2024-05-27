@@ -86,7 +86,7 @@ export const Cart = () => {
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Total Price</th>
-                <th>Delete</th>
+                <th>Remove</th>
               </tr>
             </thead>
           </table>

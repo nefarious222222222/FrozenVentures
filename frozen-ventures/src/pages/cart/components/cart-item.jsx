@@ -5,8 +5,9 @@ import { AnimatePresence, easeInOut, motion as m } from "framer-motion";
 import {
   fetchCartItemsForUser,
   removeItemFromCart,
-  addItemToCart,
+  setCartItemQuantity,
   fetchProductStockByProductId,
+  fetchProductSizeByProductId,
 } from "../../../firebase/firebase-products";
 
 export const CartItem = ({ setTotalPrice, setProducts }) => {
@@ -17,20 +18,22 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
   const confirmDeleteRef = useRef(null);
 
   const userId = user.userId;
+  const userRole = user.userRole;
 
   useEffect(() => {
     const fetchCartItems = () => {
       if (userId) {
         try {
-          fetchCartItemsForUser(userId, async (cartItemsData) => {
-            console.log("Cart items data:", cartItemsData);
+          fetchCartItemsForUser(userRole, userId, async (cartItemsData) => {
             if (typeof cartItemsData === "object") {
               const cartItemsArray = await Promise.all(
                 Object.keys(cartItemsData).map(async (key) => {
                   const productStock = await fetchProductStockByProductId(key);
+                  const productSize = await fetchProductSizeByProductId(key);
                   return {
                     productId: key,
                     productStock: productStock,
+                    productSize: productSize,
                     ...cartItemsData[key],
                   };
                 })
@@ -94,6 +97,30 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     };
   }, []);
 
+  const updateCartItemQuantity = async (productId, newQuantity) => {
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.productId === productId) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    setCartItems(updatedCartItems);
+
+    const selectedItem = updatedCartItems.find(
+      (item) => item.productId === productId
+    );
+    await setCartItemQuantity(
+      userId,
+      productId,
+      newQuantity,
+      selectedItem.productPrice,
+      selectedItem.productName,
+      selectedItem.shopName,
+      selectedItem.productImage,
+      selectedItem.productStock
+    );
+  };
+
   const handleIncrement = async (productId) => {
     const productStock = await fetchProductStockByProductId(productId);
     if (!productStock) {
@@ -101,66 +128,34 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
       return;
     }
 
-    const updatedCartItems = cartItems.map((item) => {
-      if (item.productId === productId) {
-        const updatedQuantity = item.quantity + 1;
-        if (updatedQuantity <= productStock) {
-          return { ...item, quantity: updatedQuantity };
-        }
-      }
-      return item;
-    });
-    setCartItems(updatedCartItems);
-    const selectedItem = updatedCartItems.find(
-      (item) => item.productId === productId
-    );
-    if (selectedItem.quantity <= productStock) {
-      await addItemToCart(
-        userId,
-        productId,
-        1,
-        selectedItem.productPrice,
-        selectedItem.productName,
-        selectedItem.shopName,
-        selectedItem.productImage,
-        selectedItem.productStock
-      );
+    const selectedItem = cartItems.find((item) => item.productId === productId);
+    const updatedQuantity = selectedItem.quantity + 1;
+    if (updatedQuantity <= productStock) {
+      await updateCartItemQuantity(productId, updatedQuantity);
     }
   };
 
   const handleDecrement = async (productId) => {
-    const updatedCartItems = cartItems.map((item) => {
-      if (item.productId === productId && item.quantity > 1) {
-        const updatedQuantity = item.quantity - 1;
-        return { ...item, quantity: updatedQuantity };
-      }
-      return item;
-    });
-    setCartItems(updatedCartItems);
-    const selectedItem = updatedCartItems.find(
-      (item) => item.productId === productId
-    );
-    await addItemToCart(
-      userId,
-      productId,
-      -1,
-      selectedItem.productPrice,
-      selectedItem.productName,
-      selectedItem.shopName,
-      selectedItem.productImage,
-      selectedItem.productStock,
-    );
+    const selectedItem = cartItems.find((item) => item.productId === productId);
+    if (selectedItem.quantity > 1) {
+      const updatedQuantity = selectedItem.quantity - 1;
+      await updateCartItemQuantity(productId, updatedQuantity);
+    }
   };
 
   const handleQuantityChange = (event, productId) => {
+    let updatedQuantity = parseInt(event.target.value, 10);
+    if (updatedQuantity < 1 || isNaN(updatedQuantity)) {
+      updatedQuantity = 1;
+    }
+
+    const selectedItem = cartItems.find((item) => item.productId === productId);
+    if (updatedQuantity > selectedItem.productStock) {
+      updatedQuantity = selectedItem.productStock;
+    }
+
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId) {
-        let updatedQuantity = parseInt(event.target.value, 10);
-        if (updatedQuantity < 1 || isNaN(updatedQuantity)) {
-          updatedQuantity = 1;
-        } else if (updatedQuantity > item.productStock) {
-          updatedQuantity = item.productStock;
-        }
         return { ...item, quantity: updatedQuantity };
       }
       return item;
@@ -168,19 +163,10 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     setCartItems(updatedCartItems);
   };
 
-  const handleQuantityBlur = (productId) => {
+  const handleQuantityBlur = async (productId) => {
     const selectedItem = cartItems.find((item) => item.productId === productId);
     if (selectedItem) {
-      addItemToCart(
-        userId,
-        productId,
-        selectedItem.quantity,
-        selectedItem.productPrice,
-        selectedItem.productName,
-        selectedItem.shopName,
-        selectedItem.productImage,
-        selectedItem.productStock
-      );
+      await updateCartItemQuantity(productId, selectedItem.quantity);
     }
   };
 
@@ -194,8 +180,9 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
                 <img src={cartItem.productImage} alt={cartItem.productName} />
                 <div className="description">
                   <p>{cartItem.productName}</p>
-                  <p>Php {cartItem.productPrice}</p>
                   <p>{cartItem.shopName}</p>
+                  <p>{cartItem.productSize}</p>
+                  <p>Php {cartItem.productPrice}</p>
                   <p>Stocks: {cartItem.productStock}</p>
                 </div>
               </td>

@@ -3,7 +3,7 @@ import "../../assets/styles/home.css";
 import { UserContext } from "../../context/user-context";
 import { useAuth } from "../../context/auth-context";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Product } from "../shop/product";
+import { Products } from "../shop/products";
 import { easeInOut, motion as m } from "framer-motion";
 
 import carrousel from "../../assets/images/0.jpg";
@@ -61,7 +61,7 @@ export const Home = () => {
         </div>
 
         <div className="products">
-          <Product />
+          <Products />
         </div>
       </section>
 
