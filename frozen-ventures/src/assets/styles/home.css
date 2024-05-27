@@ -77,7 +77,6 @@
     .type-container {
       display: flex;
       gap: 20px;
-
       color: var(--color-secondary-text);
 
       button {
@@ -96,6 +95,10 @@
         cursor: pointer;
       }
     }
+  }
+
+  .products {
+    width: 90vw;
   }
 }
 

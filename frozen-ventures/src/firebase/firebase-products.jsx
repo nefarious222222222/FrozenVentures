@@ -167,14 +167,26 @@ export const fetchLatestProductsFromAllUsers = async () => {
 
 // Fetch product stock in retailer by product id
 export const fetchProductStockByProductId = async (productId) => {
-  const productRef = ref(realtimeDb, `retailers/2024-0003/products/${productId}/productStock`);
-  
+  const retailersRef = ref(realtimeDb, 'retailers');
+
   try {
-    const snapshot = await get(productRef);
-    if (snapshot.exists()) {
-      return snapshot.val();
-    } else {
+    const retailersSnapshot = await get(retailersRef);
+    if (retailersSnapshot.exists()) {
+      const retailers = retailersSnapshot.val();
+
+      for (const retailerId in retailers) {
+        if (retailers.hasOwnProperty(retailerId)) {
+          const productRef = child(retailersRef, `${retailerId}/products/${productId}/productStock`);
+          const productSnapshot = await get(productRef);
+          if (productSnapshot.exists()) {
+            return productSnapshot.val();
+          }
+        }
+      }
       console.log("Product stock not found for productId:", productId);
+      return null;
+    } else {
+      console.log("No retailers found.");
       return null;
     }
   } catch (error) {

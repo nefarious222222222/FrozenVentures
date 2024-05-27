@@ -205,7 +205,7 @@ export const Order = () => {
             </div>
             <div className="shipping">
               <p className="label">Shipping</p>
-              <p className="price">Php {shippingCost.toFixed(2)}</p>
+              <p className="price">Php </p>
             </div>
             <div className="line"></div>
             <div className="total">

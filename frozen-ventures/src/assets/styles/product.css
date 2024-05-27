@@ -3,7 +3,7 @@
   justify-content: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 5vw;
+  justify-content: space-between;
   border-radius: 20px;
 
   .product-card {

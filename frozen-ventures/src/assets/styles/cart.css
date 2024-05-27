@@ -4,10 +4,47 @@
   flex-direction: column;
   justify-content: space-between;
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--color-violet);
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--color-violet);
+    }
+
+    .checkout {
+      display: flex;
+      align-items: center;
+      gap: 2vw;
+
+      p , span {
+        font-size: 1.5rem;
+        font-weight: 500;
+        
+        span {
+          font-weight: 600;
+        }
+      }
+
+      button {
+        font-size: 1.25rem;
+        font-weight: 800;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: solid 2px var(--color-violet);
+        color: var(--color-violet);
+        cursor: pointer;
+        background-color: white;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        color: white;
+        background-color: var(--color-violet);
+      }
+    }
   }
 
   .cart-container {
@@ -265,126 +302,6 @@
     button:hover {
       color: var(--color-pale-stone);
       background-color: var(--color-violet);
-    }
-  }
-}
-
-/* Check Out Css */
-
-.cart-checkout {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 20px;
-  padding: 40px;
-  background-color: var(--color-pale-violet);
-
-  h2 {
-    font-size: 2rem;
-  }
-
-  form {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-secondary-text);
-  }
-
-  .button-container {
-    input[type="radio"] {
-      display: none;
-    }
-
-    label {
-      position: relative;
-      color: var(--color-violet);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 20px;
-      border: solid 2px var(--color-violet);
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 1.25rem;
-      font-weight: 700;
-      transition: all 0.3s ease;
-
-      span {
-        font-size: 1.25rem;
-        font-weight: 800;
-      }
-    }
-
-    label:before {
-      content: "";
-      height: 15px;
-      width: 15px;
-      border: solid 2px var(--color-violet);
-      border-radius: 50%;
-    }
-
-    input[type="radio"]:checked + label:before {
-      width: 15px;
-      height: 15px;
-      border: 3px solid var(--color-pale-violet);
-      background-color: var(--color-violet);
-    }
-
-    input[type="radio"]:checked + label {
-      background-color: var(--color-violet);
-      color: white;
-    }
-  }
-
-  .total-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-    .sub-total,
-    .shipping,
-    .total {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 500;
-      color: black;
-
-      p {
-        font-size: 1.5rem;
-        font-weight: 800;
-      }
-
-      .label {
-        font-weight: 600;
-        margin-right: 200px;
-      }
-    }
-
-    .line {
-      border: solid 1px var(--color-dark-gray);
-      margin: 10px 0;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--color-violet);
-      background-color: var(--color-pale-stone);
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background-color: var(--color-violet);
-      color: var(--color-pale-stone);
-      cursor: pointer;
     }
   }
 }
