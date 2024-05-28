@@ -119,8 +119,6 @@ export const Order = () => {
           productName: product.productName,
           productImage: product.productImage,
           shopName: product.shopName,
-          quantity: product.quantity,
-          subTotal: product.subTotal,
         };
 
         const orderInfo = {
@@ -128,6 +126,8 @@ export const Order = () => {
           shippingMode: shippingMode,
           shippingDate: shippingDate,
           status: product.status,
+          quantity: product.quantity,
+          subTotal: product.subTotal,
         };
 
         const orderData = {
@@ -135,7 +135,7 @@ export const Order = () => {
           [productId]: productInfo,
         };
 
-        await createOrder(userId, orderId, productId, orderData);
+        await createOrder(userId, orderId, orderData);
       }
 
       if (allOrdersCreated) {

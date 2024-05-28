@@ -87,12 +87,12 @@ export const History = () => {
 
                     <div className="info">
                       <span>Quantity:</span>
-                      <p>x{product.quantity}</p>
+                      <p>x{order.quantity}</p>
                     </div>
 
                     <div className="info">
                       <span>Sub Total:</span>
-                      <p>Php {product.subTotal}</p>
+                      <p>Php {order.subTotal}</p>
                     </div>
 
                     <div className="info">

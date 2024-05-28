@@ -1,23 +1,26 @@
 import { ref, get, set } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
 
-export const createOrder = async (userId, orderId, productId, orderData) => {
+export const createOrder = async (userId, orderId, orderData) => {
   try {
-      console.log("Order data:", orderData);
-      const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
-      await set(ordersRef, orderData);
+    console.log("Order data:", orderData);
+    const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
+    await set(ordersRef, orderData);
 
-      console.log("Order creation successful!");
+    console.log("Order creation successful!");
   } catch (error) {
-      console.error("Error creating order:", error);
-      try {
-          const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
-          await set(ordersRef, null);
-          console.log("Order rollback successful.");
-      } catch (rollbackError) {
-          console.error("Error during order rollback:", rollbackError);
-      }
-      throw error;
+    console.error("Error creating order:", error);
+    try {
+      const ordersRef = ref(
+        realtimeDb,
+        `customers/${userId}/orders/${orderId}`
+      );
+      await set(ordersRef, null);
+      console.log("Order rollback successful.");
+    } catch (rollbackError) {
+      console.error("Error during order rollback:", rollbackError);
+    }
+    throw error;
   }
 };
 
@@ -48,30 +51,38 @@ export const fetchPurchaseHistory = async (userId) => {
 
     for (const orderId in orders) {
       const orderInfo = orders[orderId];
+      const { orderDate, shippingMode, status, subTotal, quantity, shippingDate, ...productsData } =
+        orderInfo;
+
       const products = [];
-      const { orderDate, quantity, shippingMode, status, subTotal, ...productsData } = orderInfo;
 
       for (const productId in productsData) {
-        const productDetails = productsData[productId];
-        products.push({
-          productId,
-          productName: productDetails.productName,
-          productImage: productDetails.productImage,
-          productPrice: productDetails.productPrice,
-          shopName: productDetails.shopName,
-          quantity: productDetails.quantity,
-          subTotal: productDetails.subTotal,
-        });
+        if (
+          productId !== "orderDate" &&
+          productId !== "shippingMode" &&
+          productId !== "status" &&
+          productId !== "subTotal"
+        ) {
+          const productDetails = productsData[productId];
+          products.push({
+            productId,
+            productName: productDetails.productName,
+            productImage: productDetails.productImage,
+            productPrice: productDetails.productPrice,
+            shopName: productDetails.shopName,
+          });
+        }
       }
 
       orderDetails.push({
         orderId,
         orderDate,
-        quantity,
         shippingMode,
         status,
         subTotal,
-        products
+        products,
+        quantity,
+        subTotal,
       });
     }
 
