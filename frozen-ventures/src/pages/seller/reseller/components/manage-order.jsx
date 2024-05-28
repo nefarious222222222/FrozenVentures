@@ -125,12 +125,17 @@ export const ManageOrder = () => {
 
                         <div className="info">
                           <span>Quantity:</span>
-                          <p>x{order[key].quantity}</p>
+                          <p>x{order.quantity}</p>
                         </div>
 
                         <div className="info">
                           <span>Total:</span>
-                          <p>Php {order[key].subTotal}</p>
+                          <p>Php {order.subTotal}</p>
+                        </div>
+
+                        <div className="info">
+                          <span>Shipping Date:</span>
+                          <p>{order.shippingDate}</p>
                         </div>
 
                         <div className="info">

@@ -51,7 +51,7 @@ export const Navbar = () => {
       <div className="links">
         <div className="links">
           {!userSignedIn || (userSignedIn && user?.userRole === "Customer") ? (
-            <Link to="/shop">
+            <Link to="/shop" title="Shop">
               <Storefront
                 className="link fake-button"
                 size={32}
@@ -63,7 +63,7 @@ export const Navbar = () => {
 
         {userSignedIn && user.userRole == "Customer" ? (
           <>
-            <Link to="/cart">
+            <Link to="/cart" title="Cart">
               <ShoppingCart
                 className="link fake-button"
                 size={30}
@@ -71,14 +71,14 @@ export const Navbar = () => {
               />
             </Link>
 
-            <Link to="/history">
+            <Link to="/history" title="History">
               <Cube className="link fake-button" size={30} color={"#fff"} />
             </Link>
           </>
         ) : null}
 
         {userSignedIn ? (
-          <Link to="/user-menu">
+          <Link to="/user-menu" title="User Menu">
             <UserCircle
               className="link fake-button"
               size={35}
