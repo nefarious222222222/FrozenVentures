@@ -106,7 +106,7 @@
   align-items: center;
   min-width: 35vw;
   gap: 40px;
-  padding: 40px 0 20px 0;
+  padding: 40px 0 0 0;
 
   form {
     display: flex;
@@ -129,11 +129,13 @@
 
       input {
         outline: none;
-        padding: 5px;
+        padding: 10px;
         width: 25vw;
         font-size: 1.25rem;
         border-radius: 5px;
         border: none;
+        border-bottom: solid 3px var(--color-violet);
+        border-right: solid 3px var(--color-violet);
       }
     }
 
@@ -146,14 +148,14 @@
 
       button {
         border: none;
-        border-radius: 10px;
+        border-radius: 5px;
         margin-top: 20px;
-        padding: 10px 20px;
+        padding: 10px 40px;
         width: fit-content;
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: 800;
-        color: var(--color-violet);
-        background-color: white;
+        color: white;
+        background-color: #705296;
         cursor: pointer;
         transition: all 0.3s ease;
       }

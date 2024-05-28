@@ -3,7 +3,7 @@ import "../../assets/styles/individual-product.css";
 import { useAuth } from "../../context/auth-context";
 import { UserContext } from "../../context/user-context";
 import { OrderContext } from "../../context/order-context";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import {
   fetchProductByProductId,
   addItemCartQuantity,
@@ -23,7 +23,6 @@ export const IndividualProduct = () => {
   const { user } = useContext(UserContext);
   const { setOrder } = useContext(OrderContext);
   const { productId } = useParams();
-  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
@@ -59,7 +58,6 @@ export const IndividualProduct = () => {
       setShowNotification(true);
       setTimeout(() => {
         setShowNotification(false);
-        navigate("/cart");
       }, 2000);
     } else {
       setShowErrorNotification(true);
