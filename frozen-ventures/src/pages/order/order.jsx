@@ -145,7 +145,7 @@ export const Order = () => {
         setTimeout(() => {
           clearOrder();
           window.location.href = "/home";
-        }, 2000);
+        }, 1000);
       } else {
         console.log("Error placing order");
       }

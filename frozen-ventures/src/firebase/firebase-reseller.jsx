@@ -1,4 +1,4 @@
-import { ref, get, set } from "firebase/database";
+import { ref, get, set, onChildAdded, runTransaction } from 'firebase/database';
 import { realtimeDb } from "./firebase-config";
 
 // Fetch orders for retailer and distributor
@@ -97,3 +97,41 @@ export async function fetchSellerProducts(role, sellerId) {
     return [];
   }
 }
+
+// Updates the order status
+export const updateOrderStatus = async (customerId, orderId, newStatus) => {
+  try {
+    const orderRef = ref(realtimeDb, `customers/${customerId}/orders/${orderId}/status`);
+    await set(orderRef, newStatus);
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    throw error;
+  }
+};
+
+// Updates the stock of the product
+export const updateProductStock = async (userId, productId, quantity) => {
+  try {
+    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}/productStock`);
+    const snapshot = await get(productRef);
+
+    if (snapshot.exists()) {
+      const currentStock = snapshot.val();
+
+      if (quantity > currentStock) {
+        console.error("Error: Quantity exceeds available stock.");
+        throw new Error("Requested quantity exceeds available stock.");
+      }
+
+      const updatedStock = currentStock - quantity;
+      await set(productRef, updatedStock);
+      console.log("Product stock updated successfully.");
+    } else {
+      throw new Error("Product data not found.");
+    }
+  } catch (error) {
+    console.error("Error updating product stock:", error);
+    throw error;
+  }
+};
+

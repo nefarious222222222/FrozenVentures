@@ -2,6 +2,65 @@ import React, { useContext, useEffect, useState } from "react";
 import "../../assets/styles/history.css";
 import { UserContext } from "../../context/user-context";
 import { fetchPurchaseHistory } from "../../firebase/firebase-order";
+import { updateOrderStatusToCancel } from "../../firebase/firebase-history";
+
+const Popup = ({ orderId, productName, onClose }) => {
+  const { user } = useContext(UserContext);
+  const userId = user.userId;
+  const [cancelReason, setCancelReason] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateOrderStatusToCancel(userId, orderId, cancelReason);
+      onClose();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating order:", error);
+    }
+  };
+
+  return (
+    <div className="popup">
+      <form className="popup-content" onSubmit={handleSubmit}>
+        <div className="popup-header">
+          <h2>Cancel Order for {productName}</h2>
+        </div>
+
+        <label htmlFor="cancelReason" required>
+          Reason for cancelling:
+        </label>
+        <select
+          name="cancelReason"
+          id="cancelReason"
+          value={cancelReason}
+          onChange={(e) => setCancelReason(e.target.value)}
+          required
+        >
+          <option value="" disabled>
+            Select a reason
+          </option>
+          <option value="Item no longer needed">Item no longer needed</option>
+          <option value="Found better price elsewhere">
+            Found better price elsewhere
+          </option>
+          <option value="Changed mind">Changed mind</option>
+          <option value="Ordered by mistake">Ordered by mistake</option>
+          <option value="Delivery taking too long">
+            Delivery taking too long
+          </option>
+        </select>
+
+        <div className="button-group">
+          <button type="submit">Submit</button>
+          <button type="button" onClick={onClose}>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 export const History = () => {
   const { user } = useContext(UserContext);
@@ -9,6 +68,9 @@ export const History = () => {
 
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("pending");
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState("");
 
   const capitalizeFirstLetter = (string) => {
     if (!string) return string;
@@ -34,6 +96,17 @@ export const History = () => {
     return order.status.toLowerCase() === filter;
   });
 
+  const handleCancelClick = (orderId, productName) => {
+    setSelectedOrder(orderId);
+    setSelectedProduct(productName);
+    setShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+    setSelectedProduct("");
+  };
+
   return (
     <div className="container history">
       <h1>History</h1>
@@ -53,10 +126,16 @@ export const History = () => {
             To Receive
           </button>
           <button
-            className={filter === "cancel request" ? "active" : ""}
-            onClick={() => setFilter("cancel request")}
+            className={filter === "cancel requested" ? "active" : ""}
+            onClick={() => setFilter("cancel requested")}
           >
             Cancel Request
+          </button>
+          <button
+            className={filter === "canceled" ? "active" : ""}
+            onClick={() => setFilter("canceled")}
+          >
+            Canceled
           </button>
           <button
             className={filter === "completed" ? "active" : ""}
@@ -110,17 +189,25 @@ export const History = () => {
                       <p>{capitalizeFirstLetter(order.shippingMode)}</p>
                     </div>
 
-                    <div className="info">
-                      <span>Status:</span>
-                      <p>{capitalizeFirstLetter(order.status)}</p>
-                    </div>
-
                     {order.status.toLowerCase() === "pending" && (
-                      <button>Cancel Order</button>
+                      <button
+                        onClick={() =>
+                          handleCancelClick(order.orderId, product.productName)
+                        }
+                      >
+                        Cancel Order
+                      </button>
                     )}
 
                     {order.status.toLowerCase() === "to receive" && (
                       <button>Order Received</button>
+                    )}
+
+                    {order.status.toLowerCase() === "cancel requested" && (
+                      <div className="info">
+                        <span>Cancelation Reason:</span>
+                        <p>{order.cancelReason}</p>
+                      </div>
                     )}
                   </div>
                 ))}
@@ -138,6 +225,14 @@ export const History = () => {
           )}
         </div>
       </div>
+
+      {showPopup && (
+        <Popup
+          orderId={selectedOrder}
+          productName={selectedProduct}
+          onClose={closePopup}
+        />
+      )}
     </div>
   );
 };

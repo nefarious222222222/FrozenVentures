@@ -51,7 +51,7 @@ export const fetchPurchaseHistory = async (userId) => {
 
     for (const orderId in orders) {
       const orderInfo = orders[orderId];
-      const { orderDate, shippingMode, status, subTotal, quantity, shippingDate, ...productsData } =
+      const { orderDate, shippingMode, status, subTotal, quantity, shippingDate, cancelReason, ...productsData } =
         orderInfo;
 
       const products = [];
@@ -84,6 +84,7 @@ export const fetchPurchaseHistory = async (userId) => {
         quantity,
         subTotal,
         shippingDate,
+        cancelReason,
       });
     }
 
