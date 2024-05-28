@@ -17,6 +17,8 @@ export const Cart = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [products, setProducts] = useState([]);
   const [orderSet, setOrderSet] = useState(false);
+  const [cartItemError, setCartItemError] = useState(false);
+  const [errorProduct, setErrorProduct] = useState(null);
 
   const handleCheckout = async () => {
     try {
@@ -24,7 +26,24 @@ export const Cart = () => {
 
       const orderDetails = {
         products: products.reduce((acc, curr) => {
-          const subTotal = parseFloat(curr.productPrice) * parseInt(curr.quantity);
+          const subTotal =
+            parseFloat(curr.productPrice) * parseInt(curr.quantity);
+          if (curr.quantity > curr.productStock) {
+            setErrorProduct(curr.productName);
+            setCartItemError(true);
+
+            console.log(cartItemError, errorProduct)
+
+            setTimeout(() => {
+              setCartItemError(false);
+              setErrorProduct(null);
+            }, 3000);
+
+            throw new Error(
+              `Quantity for ${curr.productName} exceeds available stock.`
+            );
+          }
+
           acc[curr.productId] = {
             productImage: curr.productImage,
             productName: curr.productName,
@@ -97,6 +116,23 @@ export const Cart = () => {
         </div>
       </div>
 
+      <AnimatePresence>
+        {cartItemError && (
+          <m.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="error-message"
+          >
+            <div className="header">
+              <h2>Checkout Error</h2>
+              <p>Quantity for {errorProduct} exceeds available stock</p>
+            </div>
+          </m.div>
+        )}
+      </AnimatePresence>
+
       {totalPrice === 0 && (
         <AnimatePresence>
           <m.div
@@ -118,8 +154,8 @@ export const Cart = () => {
 
             <div className="message-two">
               <p>
-                <span>Venture</span> into the <span>product catalog</span>,
-                and maybe you'll find something <span>frosty</span>.
+                <span>Venture</span> into the <span>product catalog</span>, and
+                maybe you'll find something <span>frosty</span>.
               </p>
               <Link to="/shop">
                 <button>

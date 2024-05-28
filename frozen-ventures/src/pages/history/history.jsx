@@ -53,10 +53,10 @@ export const History = () => {
             To Receive
           </button>
           <button
-            className={filter === "cancelled" ? "active" : ""}
-            onClick={() => setFilter("cancelled")}
+            className={filter === "cancel request" ? "active" : ""}
+            onClick={() => setFilter("cancel request")}
           >
-            Cancelled
+            Cancel Request
           </button>
           <button
             className={filter === "completed" ? "active" : ""}
@@ -91,13 +91,18 @@ export const History = () => {
                     </div>
 
                     <div className="info">
-                      <span>Sub Total:</span>
+                      <span>Total:</span>
                       <p>Php {order.subTotal}</p>
                     </div>
 
                     <div className="info">
                       <span>Order Date:</span>
                       <p>{order.orderDate}</p>
+                    </div>
+
+                    <div className="info">
+                      <span>Shipping Date:</span>
+                      <p>{order.shippingDate}</p>
                     </div>
 
                     <div className="info">

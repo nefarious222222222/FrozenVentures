@@ -4,6 +4,35 @@
   flex-direction: column;
   justify-content: space-between;
 
+  .error-message {
+    position: fixed;
+    gap: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    border: solid 2px rgb(114, 17, 17);
+    background-color: rgb(255, 181, 181);
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1vh;
+      color: rgb(114, 17, 17);
+    }
+
+    p {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      color: rgb(114, 17, 17);
+    }
+  }
+
   .cart-header {
     display: flex;
     justify-content: space-between;
@@ -19,10 +48,11 @@
       align-items: center;
       gap: 2vw;
 
-      p , span {
+      p,
+      span {
         font-size: 1.5rem;
         font-weight: 500;
-        
+
         span {
           font-weight: 600;
         }

@@ -83,6 +83,7 @@ export const fetchPurchaseHistory = async (userId) => {
         products,
         quantity,
         subTotal,
+        shippingDate,
       });
     }
 

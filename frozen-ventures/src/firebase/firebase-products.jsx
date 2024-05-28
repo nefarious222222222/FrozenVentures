@@ -64,6 +64,59 @@ export const setCartItemQuantity = async (
   }
 };
 
+// Add to the old cart items
+export const addItemCartQuantity = async (
+  userId,
+  productId,
+  quantity,
+  productPrice,
+  productName,
+  shopName,
+  productImage
+) => {
+  if (
+    userId == null ||
+    productId == null ||
+    quantity == null ||
+    productPrice == null ||
+    productName == null ||
+    shopName == null ||
+    productImage == null
+  ) {
+    console.error("Invalid parameters provided to addItemToCart");
+    return;
+  }
+
+  const cartItemRef = ref(
+    realtimeDb,
+    `customers/${userId}/cartItems/${productId}`
+  );
+
+  try {
+    const snapshot = await get(cartItemRef);
+    if (snapshot.exists()) {
+      const existingQuantity = snapshot.val().quantity || 0;
+      await set(cartItemRef, {
+        quantity: existingQuantity + quantity,
+        productPrice,
+        productName,
+        shopName,
+        productImage,
+      });
+    } else {
+      await set(cartItemRef, {
+        quantity,
+        productPrice,
+        productName,
+        shopName,
+        productImage,
+      });
+    }
+  } catch (error) {
+    console.error("Error adding item to cart:", error);
+  }
+};
+
 // Fetch the items from the cart in the realtime database
 export const fetchCartItemsForUser = (userRole, userId, callback) => {
   const lowerCaseUserRole = userRole.toLowerCase();

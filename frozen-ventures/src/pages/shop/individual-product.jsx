@@ -6,6 +6,7 @@ import { useParams, useNavigate, Navigate } from "react-router-dom";
 import {
   fetchProductByProductId,
   setCartItemQuantity,
+  addItemCartQuantity,
 } from "../../firebase/firebase-products";
 import {
   ArrowRight,
@@ -44,7 +45,7 @@ export const IndividualProduct = () => {
       return;
     }
     if (product.productStock > 0) {
-      await setCartItemQuantity(
+      await addItemCartQuantity(
         userId,
         productId,
         quantity,
