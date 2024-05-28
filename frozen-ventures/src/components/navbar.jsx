@@ -55,7 +55,7 @@ export const Navbar = () => {
               <Storefront
                 className="link fake-button"
                 size={32}
-                color={"#533d70"}
+                color={"#fff"}
               />
             </Link>
           ) : null}
@@ -67,12 +67,12 @@ export const Navbar = () => {
               <ShoppingCart
                 className="link fake-button"
                 size={30}
-                color={"#533d70"}
+                color={"#fff"}
               />
             </Link>
 
             <Link to="/history">
-              <Cube className="link fake-button" size={30} color={"#533d70"} />
+              <Cube className="link fake-button" size={30} color={"#fff"} />
             </Link>
           </>
         ) : null}
@@ -82,7 +82,7 @@ export const Navbar = () => {
             <UserCircle
               className="link fake-button"
               size={35}
-              color={"#533d70"}
+              color={"#fff"}
             />
           </Link>
         ) : (

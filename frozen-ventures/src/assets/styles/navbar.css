@@ -8,11 +8,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 30px;
-  background-color: white;
+  background-color: var(--color-violet);
   z-index: 999;
 
   .title {
-    color: var(--color-violet);
+    color: white;
   }
   
   p {
@@ -39,7 +39,7 @@
   input {
     font-size: 1.25rem;
     font-weight: 400;
-    border: solid 2px var(--color-violet);
+    border: none;
     border-radius: 20px;
     padding: 5px 10px;
     outline: none;
@@ -50,22 +50,16 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    color: black;
-
-    .link {
-      font-weight: 600;
-      color: black;
-    }
   }
   
   .fake-button {
     padding: 5px;
-    border-radius: 5px;
+    border-radius: 50%;
     transition: all 0.3s ease;
   }
 
   .fake-button:hover {
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 40px rgba(255, 255, 255, 0.5);
   }
 
   button {
