@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/individual-product.css";
+import { useAuth } from "../../context/auth-context";
 import { UserContext } from "../../context/user-context";
 import { OrderContext } from "../../context/order-context";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 import {
   fetchProductByProductId,
-  setCartItemQuantity,
   addItemCartQuantity,
 } from "../../firebase/firebase-products";
 import {
@@ -19,6 +19,7 @@ import { motion as m, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 
 export const IndividualProduct = () => {
+  const { userSignedIn } = useAuth();
   const { user } = useContext(UserContext);
   const { setOrder } = useContext(OrderContext);
   const { productId } = useParams();
@@ -29,7 +30,7 @@ export const IndividualProduct = () => {
   const [quantity, setQuantity] = useState(1);
   const [orderSet, setOrderSet] = useState(false);
 
-  const userId = user.userId;
+  const userId = user?.userId;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -122,6 +123,7 @@ export const IndividualProduct = () => {
       transition={{ duration: 0.5 }}
       className="container individual-product"
     >
+       {!userSignedIn ? <Navigate to={"/sign"} replace={true} /> : null}
       {product && (
         <div className="product-details">
           <div className="header">
