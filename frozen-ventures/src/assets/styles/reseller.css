@@ -195,7 +195,17 @@
       border-bottom: solid 2px var(--color-violet);
       padding-bottom: 20px;
       margin-bottom: 20px;
-    }
+
+      input {
+        font-size: 1.25rem;
+        font-weight: 400;
+        border: solid 2px var(--color-violet);
+        border-radius: 20px;
+        padding: 5px 10px;
+        outline: none;
+        min-width: 500px;
+      }
+    } 
   }
 
   /* Cart reseller Css */
