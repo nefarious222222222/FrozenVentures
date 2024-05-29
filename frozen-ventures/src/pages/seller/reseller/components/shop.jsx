@@ -37,25 +37,27 @@ export const Shop = () => {
         <input type="text" placeholder="Search" />
       </div>
 
-      {products.map((product) => (
-        <div key={product.productId}>
-          <div className="product-card">
-            <img src={product.productImage} alt={product.productName} />
-            <div className="product-box">
-              <div className="product-info">
-                <div className="info-group">
-                  <p className="name">{product.productName}</p>
-                  <p>{product.shopName}</p>
-                </div>
-                <div className="info-group">
-                  <p className="price">Php {product.productPrice}</p>
-                  <p>{product.productSize}</p>
+      <div className="product-container">
+        {products.map((product) => (
+          <div key={product.productId}>
+            <div className="product-card">
+              <img src={product.productImage} alt={product.productName} />
+              <div className="product-box">
+                <div className="product-info">
+                  <div className="info-group">
+                    <p className="name">{product.productName}</p>
+                    <p>{product.shopName}</p>
+                  </div>
+                  <div className="info-group">
+                    <p className="price">Php {product.productPrice}</p>
+                    <p>{product.productSize}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
