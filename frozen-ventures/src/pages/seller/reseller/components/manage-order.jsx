@@ -21,6 +21,7 @@ export const ManageOrder = () => {
   const [popupMessage, setPopupMessage] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,12 +35,6 @@ export const ManageOrder = () => {
     fetchData();
   }, [userRole, userId]);
 
-  const handleFilterClick = (value) => {
-    setFilter(value);
-  };
-
-  const [customerInfo, setCustomerInfo] = useState({});
-
   useEffect(() => {
     const fetchCustomerInfo = async () => {
       if (orders.length > 0) {
@@ -51,6 +46,10 @@ export const ManageOrder = () => {
 
     fetchCustomerInfo();
   }, [orders]);
+
+  const handleFilterClick = (value) => {
+    setFilter(value);
+  };
 
   const filteredOrders = orders.filter(({ order }) => {
     if (filter === "Order Request" && order.status === "pending") return true;
@@ -94,6 +93,7 @@ export const ManageOrder = () => {
 
         setShowPopup(false);
         setSelectedOrder(null);
+        window.location.reload();
       } catch (error) {
         console.error("Error processing order:", error);
         setShowPopup(false);
@@ -143,16 +143,16 @@ export const ManageOrder = () => {
             Refund Requests
           </button>
           <button
-            className={filter === "Completed" ? "active" : ""}
-            onClick={() => handleFilterClick("Completed")}
-          >
-            Completed
-          </button>
-          <button
             className={filter === "Returned Order" ? "active" : ""}
             onClick={() => handleFilterClick("Returned Order")}
           >
             Returned Orders
+          </button>
+          <button
+            className={filter === "Completed" ? "active" : ""}
+            onClick={() => handleFilterClick("Completed")}
+          >
+            Completed
           </button>
         </div>
 
@@ -217,7 +217,7 @@ export const ManageOrder = () => {
                           </div>
                         )}
 
-                        {order.status.toLowerCase() !== "to receive" && (
+                        {order.status.toLowerCase() !== "completed" && (
                           <>
                             {order.status.toLowerCase() ===
                             "cancel requested" ? (
