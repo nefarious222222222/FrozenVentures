@@ -4,7 +4,6 @@ import {
   fetchMatchingOrdersForSeller,
   fetchUserPersonalInfo,
   updateOrderStatus,
-  updateProductStock,
 } from "../../../../firebase/firebase-reseller";
 
 const capitalizeFirstLetter = (string) => {
@@ -60,6 +59,7 @@ export const ManageOrder = () => {
     if (filter === "Refund Request" && order.status === "refund request")
       return true;
     if (filter === "Completed" && order.status === "completed") return true;
+    if (filter === "Cancelled" && order.status === "cancelled") return true;
     if (filter === "Returned Order" && order.status === "returned") return true;
     return false;
   });
@@ -80,11 +80,9 @@ export const ManageOrder = () => {
 
   const handleConfirmAction = async () => {
     if (selectedOrder) {
-      const { customerId, key, orderId, order } = selectedOrder;
+      const { customerId, orderId, order } = selectedOrder;
 
       try {
-        await updateProductStock(userId, key, order.quantity);
-
         if (popupMessage.includes("order")) {
           await updateOrderStatus(customerId, orderId, "to receive");
         } else if (popupMessage.includes("request")) {
@@ -154,6 +152,12 @@ export const ManageOrder = () => {
           >
             Completed
           </button>
+          <button
+            className={filter === "Cancelled" ? "active" : ""}
+            onClick={() => handleFilterClick("Cancelled")}
+          >
+            Cancelled
+          </button>
         </div>
 
         {filteredOrders.length > 0 ? (
@@ -217,7 +221,7 @@ export const ManageOrder = () => {
                           </div>
                         )}
 
-                        {order.status.toLowerCase() !== "completed" && (
+                        {order.status.toLowerCase() !== "completed" && order.status.toLowerCase() !== "cancelled" && (
                           <>
                             {order.status.toLowerCase() ===
                             "cancel requested" ? (

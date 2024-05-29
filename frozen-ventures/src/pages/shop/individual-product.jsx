@@ -111,6 +111,10 @@ export const IndividualProduct = () => {
     let newQuantity = parseInt(e.target.value);
     if (!isNaN(newQuantity) && newQuantity >= 1 && newQuantity <= product.productStock) {
       setQuantity(newQuantity);
+    } else if (newQuantity < 1) {
+      setQuantity(1);
+    } else if (newQuantity > product.productStock) {
+      setQuantity(product.productStock);
     }
   };
 
@@ -121,7 +125,7 @@ export const IndividualProduct = () => {
       transition={{ duration: 0.5 }}
       className="container individual-product"
     >
-       {!userSignedIn ? <Navigate to={"/sign"} replace={true} /> : null}
+      {!userSignedIn ? <Navigate to={"/sign"} replace={true} /> : null}
       {product && (
         <div className="product-details">
           <div className="header">
@@ -165,10 +169,11 @@ export const IndividualProduct = () => {
                       type="number"
                       value={quantity}
                       onChange={handleInputChange}
-                      min="1"
-                      max={product.productStock}
                     />
-                    <button onClick={handleIncrement} disabled={quantity >= product.productStock}>
+                    <button
+                      onClick={handleIncrement}
+                      disabled={quantity >= product.productStock}
+                    >
                       <Plus size={25} />
                     </button>
                   </div>
