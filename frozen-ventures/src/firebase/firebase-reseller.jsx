@@ -175,3 +175,24 @@ export const editProduct = async (userId, productId, updatedProductData) => {
     throw error;
   }
 };
+
+// Update product stock by productId
+export const updateProductStockByProductId = async (userId, productId, newStock) => {
+  try {
+    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}`);
+    const snapshot = await get(productRef);
+    
+    if (snapshot.exists()) {
+      const currentProductData = snapshot.val();
+      currentProductData.productStock = newStock;
+      await set(productRef, currentProductData);
+
+      console.log("Product stock updated successfully.");
+    } else {
+      throw new Error("Product data not found.");
+    }
+  } catch (error) {
+    console.error("Error updating product stock:", error);
+    throw error;
+  }
+};
