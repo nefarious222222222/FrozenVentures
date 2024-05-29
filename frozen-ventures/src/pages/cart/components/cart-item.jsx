@@ -98,17 +98,33 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
   }, []);
 
   const updateCartItemQuantity = async (productId, newQuantity) => {
+    const selectedItem = cartItems.find((item) => item.productId === productId);
+    if (!selectedItem) {
+      console.error("Selected item not found in cart.");
+      return;
+    }
+  
+    const productStock = await fetchProductStockByProductId(productId);
+    if (!productStock) {
+      console.error("Product stock not found for productId:", productId);
+      return;
+    }
+  
+    if (newQuantity < 1 || isNaN(newQuantity)) {
+      newQuantity = 1;
+    } else if (newQuantity > productStock) {
+      newQuantity = productStock;
+    }
+  
     const updatedCartItems = cartItems.map((item) => {
       if (item.productId === productId) {
         return { ...item, quantity: newQuantity };
       }
       return item;
     });
+  
     setCartItems(updatedCartItems);
-
-    const selectedItem = updatedCartItems.find(
-      (item) => item.productId === productId
-    );
+  
     await setCartItemQuantity(
       userId,
       productId,
@@ -117,7 +133,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
       selectedItem.productName,
       selectedItem.shopName,
       selectedItem.productImage,
-      selectedItem.productStock
+      productStock
     );
   };
 
