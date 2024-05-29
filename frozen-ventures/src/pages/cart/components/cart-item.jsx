@@ -70,7 +70,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
 
   const handleConfirmDelete = async () => {
     if (itemToDelete) {
-      await removeItemFromCart(userId, itemToDelete);
+      await removeItemFromCart(userRole, userId, itemToDelete);
       setCartItems(cartItems.filter((item) => item.productId !== itemToDelete));
     }
     setShowConfirmDelete(false);

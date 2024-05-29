@@ -141,10 +141,11 @@ export const fetchCartItemsForUser = (userRole, userId, callback) => {
 };
 
 // Remove the item from the cart in realtime database
-export const removeItemFromCart = async (userId, productId) => {
+export const removeItemFromCart = async (userRole, userId, productId) => {
+  const lowerCaseUserRole = userRole.toLowerCase();
   const cartItemRef = ref(
     realtimeDb,
-    `customers/${userId}/cartItems/${productId}`
+    `${lowerCaseUserRole}s/${userId}/cartItems/${productId}`
   );
   try {
     await remove(cartItemRef);
@@ -154,61 +155,28 @@ export const removeItemFromCart = async (userId, productId) => {
   }
 };
 
-// Function to generate a new product ID
-const generateNewProductId = async (userId) => {
-  const productsRef = ref(realtimeDb, `retailers/${userId}/products`);
-  const snapshot = await get(productsRef);
-  const products = snapshot.val();
-  const productIds = Object.keys(products || {});
-  if (productIds.length === 0) return "pid-0001";
-
-  const lastProductId = productIds[productIds.length - 1];
-  const lastNumber = parseInt(lastProductId.split("-")[1], 10);
-  const newNumber = lastNumber + 1;
-  return `pid-${String(newNumber).padStart(4, "0")}`;
-};
-
-// Add product in firebase
-export const addProduct = async (
-  userId,
-  productName,
-  productPrice,
-  productStock,
-  productDescription,
-  productImage,
-  shopName
-) => {
-  const newProductId = await generateNewProductId(userId);
-  const newProductRef = ref(
-    realtimeDb,
-    `retailers/${userId}/products/${newProductId}`
-  );
-  try {
-    await set(newProductRef, {
-      productId: newProductId,
-      productName,
-      productPrice,
-      productStock,
-      productDescription,
-      productImage,
-      shopName,
-    });
-  } catch (error) {
-    console.error("Error adding product:", error);
-  }
-};
-
 // Fetch all products from all users
-export const fetchAllProductsFromRetailers = async () => {
+export const fetchProductsBasedOnUserRole = async (userRole) => {
   try {
+    let targetRole;
+    if (userRole.toLowerCase() === "customer") {
+      targetRole = "retailers";
+    } else if (userRole.toLowerCase() === "retailer") {
+      targetRole = "distributors";
+    } else {
+      console.log("Invalid user role");
+      return [];
+    }
+
     const dbRef = ref(realtimeDb);
-    const snapshot = await get(child(dbRef, "retailers"));
+    const snapshot = await get(child(dbRef, targetRole));
+    
     if (snapshot.exists()) {
-      const retailersData = snapshot.val();
+      const usersData = snapshot.val();
       const allProducts = [];
 
-      for (const retailerId in retailersData) {
-        const products = retailersData[retailerId].products;
+      for (const userId in usersData) {
+        const products = usersData[userId].products;
         if (products) {
           for (const productId in products) {
             allProducts.push({ productId, ...products[productId] });
@@ -221,7 +189,7 @@ export const fetchAllProductsFromRetailers = async () => {
       return [];
     }
   } catch (error) {
-    console.error("Error fetching all products from all users:", error);
+    console.error(`Error fetching products for ${userRole}:`, error);
     throw error;
   }
 };

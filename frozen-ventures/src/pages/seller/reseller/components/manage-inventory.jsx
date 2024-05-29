@@ -20,7 +20,6 @@ export const ManageInventory = () => {
     const getProducts = async () => {
       const fetchedProducts = await fetchSellerProducts(userRole, userId);
       setProducts(fetchedProducts);
-      // Store original product stock
       setOriginalProductStock(fetchedProducts);
     };
 
@@ -47,6 +46,7 @@ export const ManageInventory = () => {
   const handleConfirmSave = async () => {
     try {
       await updateProductStockByProductId(
+        userRole,
         userId,
         selectedProduct.productId,
         selectedProduct.newStock

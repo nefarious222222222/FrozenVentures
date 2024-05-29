@@ -26,7 +26,7 @@ export const HomeSeller = () => {
     setIsSidebarExpanded(expanded);
   };
 
-  if (!userSignedIn || (userSignedIn && user.userRole !== "Retailer")) {
+  if (!userSignedIn || (userSignedIn && user.userRole !== "Retailer" && user.userRole !== "Distributor")) {
     return <Navigate to={"/"} replace={true} />;
   }
 

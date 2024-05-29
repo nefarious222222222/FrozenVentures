@@ -1,40 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../../assets/styles/product.css";
-import { motion as m, AnimatePresence } from "framer-motion";
+import { UserContext } from "../../context/user-context";
 import { Link } from "react-router-dom";
-import { fetchAllProductsFromRetailers } from "../../firebase/firebase-products";
-
-export async function getProductsFromDatabase() {
-  try {
-    const databaseProducts = await fetchAllProductsFromRetailers();
-    const products = databaseProducts.map((product) => ({
-      productId: product.productId,
-      productName: product.productName,
-      productPrice: product.productPrice,
-      shopName: product.shopName,
-      productImage: product.productImage,
-      productDescription: product.productDescription,
-      productSize: product.productSize,
-      productStock: product.productStock,
-    }));
-    return products;
-  } catch (error) {
-    console.error("Error converting database products data:", error);
-    return [];
-  }
-}
+import { fetchProductsBasedOnUserRole } from "../../firebase/firebase-products";
 
 export const Products = () => {
+  const { user } = useContext(UserContext);
+  const userRole = user.userRole;
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const productsFromDatabase = await getProductsFromDatabase();
-      setProducts(productsFromDatabase);
+      try {
+        const databaseProducts = await fetchProductsBasedOnUserRole(userRole);
+        const formattedProducts = databaseProducts.map((product) => ({
+          productId: product.productId,
+          productName: product.productName,
+          productPrice: product.productPrice,
+          shopName: product.shopName,
+          productImage: product.productImage,
+          productDescription: product.productDescription,
+          productSize: product.productSize,
+          productStock: product.productStock,
+        }));
+        setProducts(formattedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
     };
     fetchProducts();
-  }, []);
-
+  }, [userRole]);
+  
   return (
     <div className="product-container">
       {products.map((product) => (

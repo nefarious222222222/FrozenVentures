@@ -3,7 +3,6 @@ import { UserContext } from "../../../../context/user-context";
 import {
   fetchSellerProducts,
   addProduct,
-  generateNewProductId,
   editProduct,
 } from "../../../../firebase/firebase-reseller";
 
@@ -23,6 +22,7 @@ export const ManageProducts = () => {
     productDescription: "",
     productImage: null,
     productStock: "0",
+    productSize: "",
     shopName: shopName,
   });
 
@@ -119,18 +119,16 @@ export const ManageProducts = () => {
 
     try {
       if (showAddProductPopup) {
-        const newProductId = await generateNewProductId(userId);
         const currentDate = Date.now();
-
         const productData = {
           ...newProductData,
           dateAdded: currentDate,
         };
 
-        await addProduct(userId, newProductId, productData);
+        await addProduct(userRole, userId, productData);
         setShowAddProductPopup(false);
       } else if (showEditProductPopup) {
-        await editProduct(userId, currentProductId, newProductData);
+        await editProduct(userRole, userId, currentProductId, newProductData);
         setShowEditProductPopup(false);
       }
 
@@ -140,6 +138,7 @@ export const ManageProducts = () => {
         productDescription: "",
         productImage: null,
         productStock: "0",
+        productSize: "",
         shopName: shopName,
       });
 
@@ -192,7 +191,9 @@ export const ManageProducts = () => {
                   </p>
                 </div>
 
-                <button onClick={() => handleEditProduct(productId)}>Edit</button>
+                <button onClick={() => handleEditProduct(productId)}>
+                  Edit
+                </button>
               </div>
             </div>
           ))
@@ -252,16 +253,30 @@ export const ManageProducts = () => {
                 </div>
               </div>
 
-              <div className="input-field">
-                <label htmlFor="productStock">Product Stock:</label>
-                <input
-                  type="number"
-                  id="productStock"
-                  name="productStock"
-                  value={newProductData.productStock}
-                  onChange={handleProductFormChange}
-                  required
-                />
+              <div className="input-container">
+                <div className="input-field">
+                  <label htmlFor="productStock">Product Stock:</label>
+                  <input
+                    type="number"
+                    id="productStock"
+                    name="productStock"
+                    value={newProductData.productStock}
+                    onChange={handleProductFormChange}
+                    required
+                  />
+                </div>
+
+                <div className="input-field">
+                  <label htmlFor="productSize">Product Size:</label>
+                  <input
+                    type="text"
+                    id="productSize"
+                    name="productSize"
+                    value={newProductData.productSize}
+                    onChange={handleProductFormChange}
+                    required
+                  />
+                </div>
               </div>
 
               <div className="input-field">
@@ -276,7 +291,9 @@ export const ManageProducts = () => {
               </div>
 
               <div className="button-group">
-                <button type="submit">{showAddProductPopup ? "Add" : "Save"}</button>
+                <button type="submit">
+                  {showAddProductPopup ? "Add" : "Save"}
+                </button>
                 <button
                   type="button"
                   onClick={() => {

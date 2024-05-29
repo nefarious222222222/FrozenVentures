@@ -135,33 +135,56 @@ export const updateProductStock = async (userId, productId, quantity) => {
   }
 };
 
-// Add a new product
-export const addProduct = async (userId, productId, productData) => {
+export const generateNewProductId = async (userRole, userId) => {
+  const lowerCaseUserRole = userRole.toLowerCase();
+  const productsRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products`);
+  const snapshot = await get(productsRef);
+  const products = snapshot.val();
+  
+  const prefix = lowerCaseUserRole === "retailer" ? "pid" : "dpid";
+  
+  if (!products) {
+    return `${prefix}-0001`;
+  }
+
+  const productIds = Object.keys(products);
+
+  const filteredProductIds = productIds.filter(id => id.startsWith(prefix));
+
+  if (filteredProductIds.length === 0) {
+    return `${prefix}-0001`;
+  }
+
+  filteredProductIds.sort((a, b) => {
+    const numA = parseInt(a.split("-")[1], 10);
+    const numB = parseInt(b.split("-")[1], 10);
+    return numA - numB;
+  });
+
+  const lastProductId = filteredProductIds[filteredProductIds.length - 1];
+  const lastNumber = parseInt(lastProductId.split("-")[1], 10);
+  const newNumber = lastNumber + 1;
+
+  return `${prefix}-${String(newNumber).padStart(4, "0")}`;
+};
+
+export const addProduct = async (userRole, userId, productData) => {
   try {
-    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}`);
+    const newProductId = await generateNewProductId(userRole, userId);
+    const lowerCaseUserRole = userRole.toLowerCase();
+    const productRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products/${newProductId}`);
     await set(productRef, productData);
-    console.log("Product added successfully.");
+    console.log("Product added successfully with ID:");
   } catch (error) {
     console.error("Error adding product:", error);
     throw error;
   }
 };
 
-export const generateNewProductId = async (userId) => {
-  const productsRef = ref(realtimeDb, `retailers/${userId}/products`);
-  const snapshot = await get(productsRef);
-  const products = snapshot.val();
-  const productIds = Object.keys(products || {});
-  if (productIds.length === 0) return "pid-0001";
-  const lastProductId = productIds[productIds.length - 1];
-  const lastNumber = parseInt(lastProductId.split("-")[1], 10);
-  const newNumber = lastNumber + 1;
-  return `pid-${String(newNumber).padStart(4, "0")}`;
-};
-
-export const editProduct = async (userId, productId, updatedProductData) => {
+export const editProduct = async (userRole, userId, productId, updatedProductData) => {
   try {
-    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}`);
+    const lowerCaseUserRole = userRole.toLowerCase();
+    const productRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products/${productId}`);
     
     const snapshot = await get(productRef);
     if (!snapshot.exists()) {
@@ -177,9 +200,10 @@ export const editProduct = async (userId, productId, updatedProductData) => {
 };
 
 // Update product stock by productId
-export const updateProductStockByProductId = async (userId, productId, newStock) => {
+export const updateProductStockByProductId = async (userRole, userId, productId, newStock) => {
   try {
-    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}`);
+    const lowerCaseUserRole = userRole.toLowerCase();
+    const productRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products/${productId}`);
     const snapshot = await get(productRef);
     
     if (snapshot.exists()) {

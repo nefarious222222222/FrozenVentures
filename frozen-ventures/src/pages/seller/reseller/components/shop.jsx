@@ -1,7 +1,35 @@
-import React from "react";
-import ImageOne from "../../../../assets/images/1.jpg";
+import React, { useContext, useState, useEffect } from "react";
+import { UserContext } from "../../../../context/user-context";
+import { fetchProductsBasedOnUserRole } from "../../../../firebase/firebase-products";
 
 export const Shop = () => {
+  const { user } = useContext(UserContext);
+  const userRole = user.userRole;
+
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const databaseProducts = await fetchProductsBasedOnUserRole(userRole);
+        const formattedProducts = databaseProducts.map((product) => ({
+          productId: product.productId,
+          productName: product.productName,
+          productPrice: product.productPrice,
+          shopName: product.shopName,
+          productImage: product.productImage,
+          productDescription: product.productDescription,
+          productSize: product.productSize,
+          productStock: product.productStock,
+        }));
+        setProducts(formattedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, [userRole]);
+
   return (
     <div className="shop-reseller">
       <div className="search-bar">
@@ -9,66 +37,25 @@ export const Shop = () => {
         <input type="text" placeholder="Search" />
       </div>
 
-      <div className="reseller-container">
-        <div className="reseller-shop">
-          <div className="shop-header">
-            <p>Php 450</p>
-            <img src={ImageOne} alt="" />
-            <h2>Senog Ays Krim</h2>
-          </div>
-
-          <form className="input-container">
-            <div className="input-field">
-              <label htmlFor="flavor-select">Flavor:</label>
-              <select id="flavor-select" name="flavors">
-                <option value="" disabled>
-                  -- Please choose an option --
-                </option>
-                <option value="vanilla">Vanilla</option>
-                <option value="chocolate">Chocolate</option>
-                <option value="strawberry">Strawberry</option>
-                <option value="mint">Mint</option>
-                <option value="caramel">Caramel</option>
-              </select>
-            </div>
-
-            <div className="input-field">
-              <label htmlFor="size-select">Size:</label>
-              <select id="size-select" name="sizes">
-                <option value="" disabled>
-                  -- Please choose a size --
-                </option>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-                <option value="extra-large">Extra Large</option>
-              </select>
-            </div>
-
-            <div className="input-field">
-              <label htmlFor="size-select">Quantity:</label>
-              <input type="number" />
-            </div>
-
-            <div className="input-footer">
-              <div className="input-field">
-                <label htmlFor="size-select">Add Ons:</label>
-                <select id="size-select" name="sizes">
-                  <option value="" disabled>
-                    -- Please choose an add ons --
-                  </option>
-                  <option value="small">Small</option>
-                  <option value="medium">Medium</option>
-                  <option value="large">Large</option>
-                  <option value="extra-large">Extra Large</option>
-                </select>
+      {products.map((product) => (
+        <div key={product.productId}>
+          <div className="product-card">
+            <img src={product.productImage} alt={product.productName} />
+            <div className="product-box">
+              <div className="product-info">
+                <div className="info-group">
+                  <p className="name">{product.productName}</p>
+                  <p>{product.shopName}</p>
+                </div>
+                <div className="info-group">
+                  <p className="price">Php {product.productPrice}</p>
+                  <p>{product.productSize}</p>
+                </div>
               </div>
-
-              <button>Add to cart</button>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 };
