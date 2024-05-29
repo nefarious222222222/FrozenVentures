@@ -1,4 +1,4 @@
-import { ref, get, set, onChildAdded, runTransaction } from 'firebase/database';
+import { ref, get, set } from 'firebase/database';
 import { realtimeDb } from "./firebase-config";
 
 // Fetch orders for retailer and distributor
@@ -135,3 +135,43 @@ export const updateProductStock = async (userId, productId, quantity) => {
   }
 };
 
+// Add a new product
+export const addProduct = async (userId, productId, productData) => {
+  try {
+    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}`);
+    await set(productRef, productData);
+    console.log("Product added successfully.");
+  } catch (error) {
+    console.error("Error adding product:", error);
+    throw error;
+  }
+};
+
+export const generateNewProductId = async (userId) => {
+  const productsRef = ref(realtimeDb, `retailers/${userId}/products`);
+  const snapshot = await get(productsRef);
+  const products = snapshot.val();
+  const productIds = Object.keys(products || {});
+  if (productIds.length === 0) return "pid-0001";
+  const lastProductId = productIds[productIds.length - 1];
+  const lastNumber = parseInt(lastProductId.split("-")[1], 10);
+  const newNumber = lastNumber + 1;
+  return `pid-${String(newNumber).padStart(4, "0")}`;
+};
+
+export const editProduct = async (userId, productId, updatedProductData) => {
+  try {
+    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}`);
+    
+    const snapshot = await get(productRef);
+    if (!snapshot.exists()) {
+      throw new Error("Product not found.");
+    }
+    
+    await set(productRef, updatedProductData);
+    console.log("Product updated successfully.");
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw error;
+  }
+};
