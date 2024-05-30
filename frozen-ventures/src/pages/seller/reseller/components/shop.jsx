@@ -1,12 +1,16 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { UserContext } from "../../../../context/user-context";
+import { OrderContext } from "../../../../context/order-context"; // Import OrderContext
 import { fetchProductsBasedOnUserRole, addItemCartQuantity } from "../../../../firebase/firebase-products";
 import { Minus, Plus, UserCircle, ArrowRight, WarningCircle } from "phosphor-react";
 import { motion as m, AnimatePresence } from "framer-motion";
+import { Navigate } from "react-router-dom"; // Import Navigate
+import dayjs from "dayjs"; // Import dayjs for date formatting
 import "../../../../assets/styles/shop.css"; // Assuming this file exists for styling
 
 export const Shop = () => {
   const { user } = useContext(UserContext);
+  const { setOrder } = useContext(OrderContext); // Use OrderContext to set the order
   const userRole = user.userRole;
   const userId = user?.userId;
 
@@ -15,6 +19,7 @@ export const Shop = () => {
   const [quantity, setQuantity] = useState(1);
   const [showNotification, setShowNotification] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
+  const [orderSet, setOrderSet] = useState(false); // Track if order is set
   const popupRef = useRef(null);
 
   useEffect(() => {
@@ -48,8 +53,30 @@ export const Shop = () => {
     setSelectedProduct(null);
   };
 
-  const handleBuyProduct = () => {
-    console.log("happy lang")
+  const handleBuyProduct = async () => {
+    try {
+      const currentDate = dayjs().format("MMMM D, YYYY");
+
+      const orderDetails = {
+        products: {
+          [selectedProduct.productId]: {
+            productImage: selectedProduct.productImage,
+            productName: selectedProduct.productName,
+            productPrice: selectedProduct.productPrice,
+            quantity: quantity,
+            shopName: selectedProduct.shopName,
+            subTotal: (selectedProduct.productPrice * quantity).toFixed(2),
+            status: "pending",
+            orderDate: currentDate,
+          },
+        },
+      };
+
+      setOrder(orderDetails);
+      setOrderSet(true);
+    } catch (error) {
+      console.error("Error during checkout:", error.message);
+    }
   };
 
   const handleAddToCart = async () => {
@@ -115,6 +142,10 @@ export const Shop = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [selectedProduct]);
+
+  if (orderSet) {
+    return <Navigate to="/order" replace />;
+  }
 
   return (
     <div className="shop-reseller">

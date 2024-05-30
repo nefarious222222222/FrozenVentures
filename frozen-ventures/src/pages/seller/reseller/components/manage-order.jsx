@@ -34,10 +34,12 @@ export const ManageOrder = () => {
     fetchData();
   }, [userRole, userId]);
 
+  console.log(userRole);
+
   useEffect(() => {
     const fetchCustomerInfo = async () => {
       if (orders.length > 0) {
-        const customerId = orders[0].customerId;
+        const customerId = orders[0].targetId;
         const info = await fetchUserPersonalInfo(customerId);
         setCustomerInfo(info);
       }
@@ -80,13 +82,12 @@ export const ManageOrder = () => {
 
   const handleConfirmAction = async () => {
     if (selectedOrder) {
-      const { customerId, orderId, order } = selectedOrder;
-
+      const { targetId, orderId } = selectedOrder;
       try {
         if (popupMessage.includes("order")) {
-          await updateOrderStatus(customerId, orderId, "to receive");
+          await updateOrderStatus(userRole, targetId, orderId, "to receive");
         } else if (popupMessage.includes("request")) {
-          await updateOrderStatus(customerId, orderId, "cancelled");
+          await updateOrderStatus(userRole, targetId, orderId, "cancelled");
         }
 
         setShowPopup(false);
@@ -162,8 +163,8 @@ export const ManageOrder = () => {
 
         {filteredOrders.length > 0 ? (
           <div className="order-item-container">
-            {filteredOrders.map(({ customerId, orderId, order }) => (
-              <div className="order-item" key={`${customerId}-${orderId}`}>
+            {filteredOrders.map(({ targetId, orderId, order }) => (
+              <div className="order-item" key={`${targetId}-${orderId}`}>
                 <div className="order-info">
                   <p>
                     {customerInfo.firstName} {customerInfo.lastName}
@@ -178,9 +179,12 @@ export const ManageOrder = () => {
                   </p>
                 </div>
 
-                {Object.keys(order).map(
-                  (key) =>
-                    key.startsWith("pid-") && (
+                {Object.keys(order).map((key) => {
+                  const isRetailer = userRole === "retailer";
+                  const prefix = isRetailer ? "pid-" : "dpid-";
+
+                  if (key.startsWith(prefix)) {
+                    return (
                       <div className="product" key={key}>
                         <div className="product-info">
                           <img
@@ -216,62 +220,66 @@ export const ManageOrder = () => {
 
                         {order.status.toLowerCase() === "cancel requested" && (
                           <div className="info">
-                            <span>Cancelation Reason:</span>
+                            <span>Cancellation Reason:</span>
                             <p>{order.cancelReason}</p>
                           </div>
                         )}
 
-                        {order.status.toLowerCase() !== "completed" && order.status.toLowerCase() !== "cancelled" && (
-                          <>
-                            {order.status.toLowerCase() ===
-                            "cancel requested" ? (
-                              <button
-                                onClick={() =>
-                                  handleAcceptRequest({
-                                    customerId,
-                                    key,
-                                    orderId,
-                                    order,
-                                  })
-                                }
-                              >
-                                Accept Request
-                              </button>
-                            ) : order.status.toLowerCase() ===
-                              "refund requested" ? (
-                              <button>Process Refund</button>
-                            ) : order[key].shippingMode === "pickup" ? (
-                              <button
-                                onClick={() =>
-                                  handleAcceptOrder({
-                                    customerId,
-                                    key,
-                                    orderId,
-                                    order,
-                                  })
-                                }
-                              >
-                                Accept Order
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() =>
-                                  handleAcceptOrder({
-                                    customerId,
-                                    key,
-                                    orderId,
-                                    order,
-                                  })
-                                }
-                              >
-                                Ship Order
-                              </button>
-                            )}
-                          </>
-                        )}
+                        {order.status.toLowerCase() !== "completed" &&
+                          order.status.toLowerCase() !== "cancelled" && (
+                            <>
+                              {order.status.toLowerCase() ===
+                              "cancel requested" ? (
+                                <button
+                                  onClick={() =>
+                                    handleAcceptRequest({
+                                      targetId,
+                                      key,
+                                      orderId,
+                                      order,
+                                    })
+                                  }
+                                >
+                                  Accept Request
+                                </button>
+                              ) : order.status.toLowerCase() ===
+                                "refund requested" ? (
+                                <button>Process Refund</button>
+                              ) : order.shippingMode === "pickup" ? (
+                                <button
+                                  onClick={() =>
+                                    handleAcceptOrder({
+                                      targetId,
+                                      key,
+                                      orderId,
+                                      order,
+                                    })
+                                  }
+                                >
+                                  Accept Order
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    handleAcceptOrder({
+                                      targetId,
+                                      key,
+                                      orderId,
+                                      order,
+                                    })
+                                  }
+                                >
+                                  Ship Order
+                                </button>
+                              )}
+                            </>
+                          )}
                       </div>
-                    )
-                )}
+                    );
+                  } else {
+                    return null;
+                  }
+                })}
               </div>
             ))}
           </div>

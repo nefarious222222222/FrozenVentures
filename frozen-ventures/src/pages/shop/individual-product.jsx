@@ -34,7 +34,7 @@ export const IndividualProduct = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const productData = await fetchProductByProductId(productId);
+      const productData = await fetchProductByProductId(userRole, productId);
       setProduct(productData);
     };
     fetchProduct();

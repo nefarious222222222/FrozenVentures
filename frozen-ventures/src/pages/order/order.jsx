@@ -36,6 +36,7 @@ export const Order = () => {
   const [shippingAddressError, setShippingAddressError] = useState(false);
 
   const userId = user.userId;
+  const userRole= user.userRole;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -135,7 +136,7 @@ export const Order = () => {
           [productId]: productInfo,
         };
 
-        await createOrder(userId, orderId, orderData);
+        await createOrder(userRole, userId, orderId, orderData);
       }
 
       if (allOrdersCreated) {

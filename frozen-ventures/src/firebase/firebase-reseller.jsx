@@ -1,4 +1,4 @@
-import { ref, get, set } from 'firebase/database';
+import { ref, get, set } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
 
 // Fetch orders for retailer and distributor
@@ -19,27 +19,37 @@ export async function fetchMatchingOrdersForSeller(role, sellerId) {
     const sellerProducts = sellerProductsSnapshot.val();
     const sellerProductIds = Object.keys(sellerProducts);
 
-    const customersRef = ref(realtimeDb, "customers");
-    const customersSnapshot = await get(customersRef);
-
-    if (!customersSnapshot.exists()) {
-      console.log("No customers found.");
+    let targetPath;
+    if (lowerCaseRole === "retailer") {
+      targetPath = "customers";
+    } else if (lowerCaseRole === "distributor") {
+      targetPath = "retailers";
+    } else {
+      console.log("Invalid role specified.");
       return [];
     }
 
-    const customers = customersSnapshot.val();
+    const targetRef = ref(realtimeDb, targetPath);
+    const targetSnapshot = await get(targetRef);
+
+    if (!targetSnapshot.exists()) {
+      console.log(`No ${targetPath} found.`);
+      return [];
+    }
+
+    const targets = targetSnapshot.val();
     const matchingOrders = [];
 
-    for (const customerId in customers) {
-      const customerOrders = customers[customerId].orders || {};
+    for (const targetId in targets) {
+      const targetOrders = targets[targetId].orders || {};
 
-      for (const orderId in customerOrders) {
-        const order = customerOrders[orderId];
+      for (const orderId in targetOrders) {
+        const order = targetOrders[orderId];
 
         for (const productId in order) {
           if (sellerProductIds.includes(productId)) {
             matchingOrders.push({
-              customerId,
+              targetId,
               orderId,
               order,
             });
@@ -99,9 +109,23 @@ export async function fetchSellerProducts(role, sellerId) {
 }
 
 // Updates the order status
-export const updateOrderStatus = async (customerId, orderId, newStatus) => {
+export const updateOrderStatus = async (
+  userRole,
+  customerId,
+  orderId,
+  newStatus
+) => {
   try {
-    const orderRef = ref(realtimeDb, `customers/${customerId}/orders/${orderId}/status`);
+    let path;
+    if (userRole.toLowerCase() === "retailer") {
+      path = `customers/${customerId}/orders/${orderId}/status`;
+    } else if (userRole.toLowerCase() === "distributor") {
+      path = `retailers/${customerId}/orders/${orderId}/status`;
+    } else {
+      throw new Error("Invalid user role");
+    }
+
+    const orderRef = ref(realtimeDb, path);
     await set(orderRef, newStatus);
   } catch (error) {
     console.error("Error updating order status:", error);
@@ -112,7 +136,10 @@ export const updateOrderStatus = async (customerId, orderId, newStatus) => {
 // Updates the stock of the product
 export const updateProductStock = async (userId, productId, quantity) => {
   try {
-    const productRef = ref(realtimeDb, `retailers/${userId}/products/${productId}/productStock`);
+    const productRef = ref(
+      realtimeDb,
+      `retailers/${userId}/products/${productId}/productStock`
+    );
     const snapshot = await get(productRef);
 
     if (snapshot.exists()) {
@@ -137,19 +164,22 @@ export const updateProductStock = async (userId, productId, quantity) => {
 
 export const generateNewProductId = async (userRole, userId) => {
   const lowerCaseUserRole = userRole.toLowerCase();
-  const productsRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products`);
+  const productsRef = ref(
+    realtimeDb,
+    `${lowerCaseUserRole}s/${userId}/products`
+  );
   const snapshot = await get(productsRef);
   const products = snapshot.val();
-  
+
   const prefix = lowerCaseUserRole === "retailer" ? "pid" : "dpid";
-  
+
   if (!products) {
     return `${prefix}-0001`;
   }
 
   const productIds = Object.keys(products);
 
-  const filteredProductIds = productIds.filter(id => id.startsWith(prefix));
+  const filteredProductIds = productIds.filter((id) => id.startsWith(prefix));
 
   if (filteredProductIds.length === 0) {
     return `${prefix}-0001`;
@@ -172,7 +202,10 @@ export const addProduct = async (userRole, userId, productData) => {
   try {
     const newProductId = await generateNewProductId(userRole, userId);
     const lowerCaseUserRole = userRole.toLowerCase();
-    const productRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products/${newProductId}`);
+    const productRef = ref(
+      realtimeDb,
+      `${lowerCaseUserRole}s/${userId}/products/${newProductId}`
+    );
     await set(productRef, productData);
     console.log("Product added successfully with ID:");
   } catch (error) {
@@ -181,16 +214,24 @@ export const addProduct = async (userRole, userId, productData) => {
   }
 };
 
-export const editProduct = async (userRole, userId, productId, updatedProductData) => {
+export const editProduct = async (
+  userRole,
+  userId,
+  productId,
+  updatedProductData
+) => {
   try {
     const lowerCaseUserRole = userRole.toLowerCase();
-    const productRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products/${productId}`);
-    
+    const productRef = ref(
+      realtimeDb,
+      `${lowerCaseUserRole}s/${userId}/products/${productId}`
+    );
+
     const snapshot = await get(productRef);
     if (!snapshot.exists()) {
       throw new Error("Product not found.");
     }
-    
+
     await set(productRef, updatedProductData);
     console.log("Product updated successfully.");
   } catch (error) {
@@ -200,12 +241,20 @@ export const editProduct = async (userRole, userId, productId, updatedProductDat
 };
 
 // Update product stock by productId
-export const updateProductStockByProductId = async (userRole, userId, productId, newStock) => {
+export const updateProductStockByProductId = async (
+  userRole,
+  userId,
+  productId,
+  newStock
+) => {
   try {
     const lowerCaseUserRole = userRole.toLowerCase();
-    const productRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/products/${productId}`);
+    const productRef = ref(
+      realtimeDb,
+      `${lowerCaseUserRole}s/${userId}/products/${productId}`
+    );
     const snapshot = await get(productRef);
-    
+
     if (snapshot.exists()) {
       const currentProductData = snapshot.val();
       currentProductData.productStock = newStock;

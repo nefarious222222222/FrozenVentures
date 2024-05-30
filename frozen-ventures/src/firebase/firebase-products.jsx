@@ -284,8 +284,16 @@ export const fetchProductSizeByProductId = async (userRole, productId) => {
 
 // Fetch the product by productId
 export const fetchProductByProductId = async (userRole, productId) => {
-  const lowerCaseUserRole = userRole.toLowerCase();
-  const retailersRef = ref(realtimeDb, `${lowerCaseUserRole}s`);
+  let targetRole;
+    if (userRole.toLowerCase() === "customer") {
+      targetRole = "retailers";
+    } else if (userRole.toLowerCase() === "retailer") {
+      targetRole = "distributors";
+    } else {
+      console.log("Invalid user role");
+      return [];
+    }
+  const retailersRef = ref(realtimeDb, targetRole);
 
   try {
     const retailersSnapshot = await get(retailersRef);

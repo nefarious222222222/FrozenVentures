@@ -1,10 +1,10 @@
 import { ref, get, set } from "firebase/database";
 import { realtimeDb } from "./firebase-config";
 
-export const createOrder = async (userId, orderId, orderData) => {
+export const createOrder = async (userRole, userId, orderId, orderData) => {
+  const lowerCaseUserRole = userRole.toLowerCase();
   try {
-    console.log("Order data:", orderData);
-    const ordersRef = ref(realtimeDb, `customers/${userId}/orders/${orderId}`);
+    const ordersRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/orders/${orderId}`);
     await set(ordersRef, orderData);
 
     console.log("Order creation successful!");
@@ -13,7 +13,7 @@ export const createOrder = async (userId, orderId, orderData) => {
     try {
       const ordersRef = ref(
         realtimeDb,
-        `customers/${userId}/orders/${orderId}`
+        `${lowerCaseUserRole}s/${userId}/orders/${orderId}`
       );
       await set(ordersRef, null);
       console.log("Order rollback successful.");
@@ -25,12 +25,25 @@ export const createOrder = async (userId, orderId, orderData) => {
 };
 
 export const generateNewOrderId = async (userId) => {
-  const ordersRef = ref(realtimeDb, `customers/${userId}/orders`);
-  const snapshot = await get(ordersRef);
-  const orders = snapshot.val();
-  const orderIds = Object.keys(orders || {});
-  if (orderIds.length === 0) return "oid-0001";
-  const lastOrderId = orderIds[orderIds.length - 1];
+  const paths = [
+    `customers/${userId}/orders`,
+    `retailers/${userId}/orders`,
+    `distributors/${userId}/orders`,
+  ];
+
+  let allOrderIds = [];
+
+  for (const path of paths) {
+    const ordersRef = ref(realtimeDb, path);
+    const snapshot = await get(ordersRef);
+    const orders = snapshot.val();
+    const orderIds = Object.keys(orders || {});
+    allOrderIds = allOrderIds.concat(orderIds);
+  }
+
+  if (allOrderIds.length === 0) return "oid-0001";
+  
+  const lastOrderId = allOrderIds.sort().pop();
   const lastNumber = parseInt(lastOrderId.split("-")[1], 10);
   const newNumber = lastNumber + 1;
   return `oid-${String(newNumber).padStart(4, "0")}`;
@@ -79,7 +92,6 @@ export const fetchPurchaseHistory = async (userId) => {
         orderDate,
         shippingMode,
         status,
-        subTotal,
         products,
         quantity,
         subTotal,

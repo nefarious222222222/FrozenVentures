@@ -104,7 +104,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
       return;
     }
   
-    const productStock = await fetchProductStockByProductId(productId);
+    const productStock = await fetchProductStockByProductId(userRole, productId);
     if (!productStock) {
       console.error("Product stock not found for productId:", productId);
       return;
@@ -139,7 +139,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
   };
 
   const handleIncrement = async (productId) => {
-    const productStock = await fetchProductStockByProductId(productId);
+    const productStock = await fetchProductStockByProductId(userRole, productId);
     if (!productStock) {
       console.error("Product stock not found for productId:", productId);
       return;
