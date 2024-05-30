@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../../context/user-context";
+import { fetchPurchaseHistory } from "../../../../firebase/firebase-order";
 
 export const History = () => {
   const { user } = useContext(UserContext);

@@ -28,8 +28,8 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
             if (typeof cartItemsData === "object") {
               const cartItemsArray = await Promise.all(
                 Object.keys(cartItemsData).map(async (key) => {
-                  const productStock = await fetchProductStockByProductId(key);
-                  const productSize = await fetchProductSizeByProductId(key);
+                  const productStock = await fetchProductStockByProductId(userRole, key);
+                  const productSize = await fetchProductSizeByProductId(userRole, key);
                   return {
                     productId: key,
                     productStock: productStock,
