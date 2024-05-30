@@ -118,17 +118,17 @@ export const ManageProducts = () => {
     }
 
     try {
-      if (showAddProductPopup) {
-        const currentDate = Date.now();
-        const productData = {
-          ...newProductData,
-          dateAdded: currentDate,
-        };
+      const productData = {
+        ...newProductData,
+        productImage: newProductData.productImage || products[currentProductId].productImage,
+      };
 
+      if (showAddProductPopup) {
+        productData.dateAdded = Date.now();
         await addProduct(userRole, userId, productData);
         setShowAddProductPopup(false);
       } else if (showEditProductPopup) {
-        await editProduct(userRole, userId, currentProductId, newProductData);
+        await editProduct(userRole, userId, currentProductId, productData);
         setShowEditProductPopup(false);
       }
 
@@ -217,7 +217,7 @@ export const ManageProducts = () => {
                   name="productImage"
                   onChange={handleImageChange}
                   accept=".jpg, .jpeg, .png"
-                  required
+                  required={showAddProductPopup}
                 />
               </div>
 
