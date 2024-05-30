@@ -3,6 +3,7 @@ import { realtimeDb } from "./firebase-config";
 
 // Add items to the realtime database to update cart
 export const setCartItemQuantity = async (
+  userRole,
   userId,
   productId,
   quantity,
@@ -25,9 +26,11 @@ export const setCartItemQuantity = async (
     return;
   }
 
+
+  const lowerCaseUserRole = userRole.toLowerCase();
   const cartItemRef = ref(
     realtimeDb,
-    `customers/${userId}/cartItems/${productId}`
+    `${lowerCaseUserRole}s/${userId}/cartItems/${productId}`
   );
   try {
     const snapshot = await get(cartItemRef);
@@ -66,6 +69,7 @@ export const setCartItemQuantity = async (
 
 // Add to the old cart items
 export const addItemCartQuantity = async (
+  userRole,
   userId,
   productId,
   quantity,
@@ -87,9 +91,10 @@ export const addItemCartQuantity = async (
     return;
   }
 
+  const lowerCaseUserRole = userRole.toLowerCase();
   const cartItemRef = ref(
     realtimeDb,
-    `customers/${userId}/cartItems/${productId}`
+    `${lowerCaseUserRole}s/${userId}/cartItems/${productId}`
   );
 
   try {

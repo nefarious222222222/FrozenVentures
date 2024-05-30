@@ -277,10 +277,10 @@ export const ManageProducts = () => {
                     required
                   >
                     <option value="" disabled>Select a size</option>
-                    <option value="S">Small</option>
-                    <option value="M">Medium</option>
-                    <option value="L">Large</option>
-                    <option value="XL">Extra Large</option>
+                    <option value="Jr. Cup">Jr. Cup</option>
+                    <option value="1 Pint">1 Pint</option>
+                    <option value="1.7 Liters">1.7 Liters</option>
+                    <option value="1 Gallon">1 Gallon</option>
                   </select>
                 </div>
               </div>

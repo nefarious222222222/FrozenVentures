@@ -30,6 +30,7 @@ export const IndividualProduct = () => {
   const [orderSet, setOrderSet] = useState(false);
 
   const userId = user?.userId;
+  const userRole = user?.userRole;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -46,6 +47,7 @@ export const IndividualProduct = () => {
     }
     if (product.productStock > 0) {
       await addItemCartQuantity(
+        userRole,
         userId,
         productId,
         quantity,

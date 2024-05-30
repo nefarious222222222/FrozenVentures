@@ -126,6 +126,7 @@ export const CartItem = ({ setTotalPrice, setProducts }) => {
     setCartItems(updatedCartItems);
   
     await setCartItemQuantity(
+      userRole,
       userId,
       productId,
       newQuantity,

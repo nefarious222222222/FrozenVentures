@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { UserContext } from "../../../../context/user-context";
 import { fetchProductsBasedOnUserRole } from "../../../../firebase/firebase-products";
 
@@ -7,6 +7,8 @@ export const Shop = () => {
   const userRole = user.userRole;
 
   const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const popupRef = useRef(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -30,6 +32,42 @@ export const Shop = () => {
     fetchProducts();
   }, [userRole]);
 
+  const handleProductClick = (product) => {
+    setSelectedProduct(product);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedProduct(null);
+  };
+
+  const handleBuyProduct = () => {
+    // Implement the buy logic here
+    console.log("Buy product:", selectedProduct);
+  };
+
+  const handleAddToCart = () => {
+    // Implement the add to cart logic here
+    console.log("Add to cart:", selectedProduct);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        handleClosePopup();
+      }
+    };
+
+    if (selectedProduct) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectedProduct]);
+
   return (
     <div className="shop-reseller">
       <div className="search-bar">
@@ -40,7 +78,7 @@ export const Shop = () => {
       <div className="product-container">
         {products.map((product) => (
           <div key={product.productId}>
-            <div className="product-card">
+            <div className="product-card" onClick={() => handleProductClick(product)}>
               <img src={product.productImage} alt={product.productName} />
               <div className="product-box">
                 <div className="product-info">
@@ -58,6 +96,25 @@ export const Shop = () => {
           </div>
         ))}
       </div>
+
+      {selectedProduct && (
+        <div className="popup">
+          <div className="popup-content" ref={popupRef}>
+            <h2>{selectedProduct.productName}</h2>
+            <img src={selectedProduct.productImage} alt={selectedProduct.productName} />
+            <p><strong>Price:</strong> Php {selectedProduct.productPrice}</p>
+            <p><strong>Shop:</strong> {selectedProduct.shopName}</p>
+            <p><strong>Size:</strong> {selectedProduct.productSize}</p>
+            <p><strong>Stock:</strong> {selectedProduct.productStock}</p>
+            <p><strong>Description:</strong> {selectedProduct.productDescription}</p>
+            <div className="button-group">
+              <button onClick={handleBuyProduct}>Buy</button>
+              <button onClick={handleAddToCart}>Add to Cart</button>
+              <button onClick={handleClosePopup}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
