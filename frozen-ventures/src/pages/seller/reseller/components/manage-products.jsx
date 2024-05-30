@@ -254,28 +254,34 @@ export const ManageProducts = () => {
               </div>
 
               <div className="input-container">
-                <div className="input-field">
-                  <label htmlFor="productStock">Product Stock:</label>
-                  <input
-                    type="number"
-                    id="productStock"
-                    name="productStock"
-                    value={newProductData.productStock}
-                    onChange={handleProductFormChange}
-                    required
-                  />
-                </div>
-
+                {showAddProductPopup && (
+                  <div className="input-field">
+                    <label htmlFor="productStock">Product Stock:</label>
+                    <input
+                      type="number"
+                      id="productStock"
+                      name="productStock"
+                      value={newProductData.productStock}
+                      onChange={handleProductFormChange}
+                      required
+                    />
+                  </div>
+                )}
                 <div className="input-field">
                   <label htmlFor="productSize">Product Size:</label>
-                  <input
-                    type="text"
+                  <select
                     id="productSize"
                     name="productSize"
                     value={newProductData.productSize}
                     onChange={handleProductFormChange}
                     required
-                  />
+                  >
+                    <option value="" disabled>Select a size</option>
+                    <option value="S">Small</option>
+                    <option value="M">Medium</option>
+                    <option value="L">Large</option>
+                    <option value="XL">Extra Large</option>
+                  </select>
                 </div>
               </div>
 

@@ -514,7 +514,8 @@
           }
 
           input,
-          textarea {
+          textarea,
+          select {
             font-size: 1.25rem;
             outline: none;
             padding: 5px;
