@@ -26,7 +26,6 @@ export const setCartItemQuantity = async (
     return;
   }
 
-
   const lowerCaseUserRole = userRole.toLowerCase();
   const cartItemRef = ref(
     realtimeDb,
@@ -175,7 +174,7 @@ export const fetchProductsBasedOnUserRole = async (userRole) => {
 
     const dbRef = ref(realtimeDb);
     const snapshot = await get(child(dbRef, targetRole));
-    
+
     if (snapshot.exists()) {
       const usersData = snapshot.val();
       const allProducts = [];
