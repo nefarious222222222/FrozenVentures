@@ -6,7 +6,7 @@ import { fetchProductsBasedOnUserRole } from "../../firebase/firebase-products";
 
 export const Products = () => {
   const { user } = useContext(UserContext);
-  const userRole = user.userRole;
+  const userRole = user?.userRole;
   const [products, setProducts] = useState([]);
 
   useEffect(() => {

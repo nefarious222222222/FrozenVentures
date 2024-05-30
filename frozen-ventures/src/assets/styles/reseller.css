@@ -400,9 +400,50 @@
 
   /* Cart reseller Css */
   .cart-reseller {
-    h1 {
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
       padding-bottom: 20px;
       border-bottom: solid 2px var(--color-violet);
+  
+      h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--color-violet);
+      }
+  
+      .checkout {
+        display: flex;
+        align-items: center;
+        gap: 2vw;
+  
+        p,
+        span {
+          font-size: 1.5rem;
+          font-weight: 500;
+  
+          span {
+            font-weight: 700;
+          }
+        }
+  
+        button {
+          font-size: 1.25rem;
+          font-weight: 800;
+          padding: 10px 20px;
+          border-radius: 10px;
+          border: solid 2px var(--color-violet);
+          color: var(--color-violet);
+          cursor: pointer;
+          background-color: white;
+          transition: all 0.3s ease;
+        }
+  
+        button:hover {
+          color: white;
+          background-color: var(--color-violet);
+        }
+      }
     }
   }
 
