@@ -261,13 +261,12 @@ export const UserList = () => {
         <thead>
           <tr>
             <th>User ID</th>
+            <th>Role</th>
             <th>First Name</th>
             <th>Last Name</th>
-            <th>Birthdate</th>
-            <th>Gender</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Role</th>
+            <th>Status</th>
           </tr>
         </thead>
 
@@ -278,16 +277,13 @@ export const UserList = () => {
                 <p>{user.id}</p>
               </td>
               <td>
+                <p>{user.role}</p>
+              </td>
+              <td>
                 <p>{user.firstName}</p>
               </td>
               <td>
                 <p>{user.lastName}</p>
-              </td>
-              <td>
-                <p>{user.birthdate}</p>
-              </td>
-              <td>
-                <p>{user.gender}</p>
               </td>
               <td>
                 <p>{user.email}</p>
@@ -296,7 +292,7 @@ export const UserList = () => {
                 <p>{user.phone}</p>
               </td>
               <td>
-                <p>{user.role}</p>
+                <p>{user.status}</p>
               </td>
             </tr>
           ))}

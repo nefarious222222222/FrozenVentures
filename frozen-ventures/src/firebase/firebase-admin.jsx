@@ -132,3 +132,56 @@ export const updateUserById = async (userId, updatedUserInfo) => {
     };
   }
 };
+
+export async function getPendingUsers() {
+  const usersRef = ref(realtimeDb, "users");
+  try {
+    const snapshot = await get(usersRef);
+    const users = [];
+    snapshot.forEach((childSnapshot) => {
+      const userData = childSnapshot.val();
+      if (userData && userData.accountInfo && userData.accountInfo.status === "pending") {
+        const { accountInfo, personalInfo } = userData;
+        users.push({
+          id: childSnapshot.key,
+          ...accountInfo,
+          ...personalInfo,
+        });
+      }
+    });
+    return users;
+  } catch (error) {
+    console.error("Error fetching pending users:", error);
+    throw error;
+  }
+}
+
+// Fetch users by role with pending status
+export async function getPendingUsersByRole(role) {
+  const usersRef = ref(realtimeDb, "users");
+  try {
+    const snapshot = await get(usersRef);
+    const users = [];
+    snapshot.forEach((childSnapshot) => {
+      const userData = childSnapshot.val();
+      if (userData && userData.accountInfo && userData.accountInfo.role === role && userData.accountInfo.status === "pending") {
+        const { accountInfo, personalInfo } = userData;
+        users.push({
+          id: childSnapshot.key,
+          ...accountInfo,
+          ...personalInfo,
+        });
+      }
+    });
+    return users;
+  } catch (error) {
+    console.error(`Error fetching pending ${role} users:`, error);
+    throw error;
+  }
+}
+
+// Update user status
+export const updateUserStatus = async (userId, status) => {
+  const userRef = ref(realtimeDb, `users/${userId}/accountInfo`);
+  await update(userRef, { status });
+};

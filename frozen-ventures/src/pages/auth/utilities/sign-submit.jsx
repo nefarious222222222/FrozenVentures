@@ -51,7 +51,7 @@ export function useFormSubmit() {
         inputPhone,
         inputEmail,
         selectedRole,
-        inputShopName: inputShopName || "Not Applicable",
+        inputShopName: inputShopName,
       };
 
       await addUserAccountInfo(accountInfo, userId);

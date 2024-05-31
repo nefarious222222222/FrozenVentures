@@ -64,10 +64,10 @@
         justify-content: center;
         align-items: center;
         min-width: 10vw;
+        max-width: 12vw;
         padding: 20px 0;
 
         p {
-          text-align: center;
           font-size: 1.25rem;
           font-weight: 600;
         }

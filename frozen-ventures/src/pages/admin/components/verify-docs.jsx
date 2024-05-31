@@ -1,72 +1,46 @@
 import React, { useState, useEffect } from "react";
 import {
-  getAllUsers,
-  getRetailers,
-  getDistributors,
-  getManufacturers,
-  updateUserIsVerifiedStatus,
+  getPendingUsers,
+  getPendingUsersByRole,
+  updateUserStatus,
 } from "../../../firebase/firebase-admin";
 import { motion as m, easeInOut } from "framer-motion";
 
 export const VerifyDocs = () => {
   const [userList, setUserList] = useState([]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const users = await getAllUsers();
-        setUserList(users);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
   const [selectedRole, setSelectedRole] = useState("All");
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        let users;
-        switch (selectedRole) {
-          case "Retailer":
-            users = await getRetailers();
-            break;
-          case "Distributor":
-            users = await getDistributors();
-            break;
-          case "Manufacturer":
-            users = await getManufacturers();
-            break;
-          default:
-            users = await getAllUsers();
-        }
-        setUserList(users);
-      } catch (error) {
-        console.error("Error fetching users:", error);
+  const fetchUsers = async () => {
+    try {
+      let users;
+      switch (selectedRole) {
+        case "Retailer":
+          users = await getPendingUsersByRole("Retailer");
+          break;
+        case "Distributor":
+          users = await getPendingUsersByRole("Distributor");
+          break;
+        case "Manufacturer":
+          users = await getPendingUsersByRole("Manufacturer");
+          break;
+        default:
+          users = await getPendingUsers();
       }
-    };
+      setUserList(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchUsers();
   }, [selectedRole]);
 
-  const pendingUsers = userList.filter((user) => user.isVerified === "pending");
-
   const handleVerify = async (userId) => {
     try {
-      await updateUserIsVerifiedStatus(userId, "verified");
-      const updatedUserList = userList.map((user) => {
-        if (user.id === userId) {
-          return {
-            ...user,
-            isVerified: "verified",
-          };
-        }
-        return user;
-      });
-      setUserList(updatedUserList);
+      await updateUserStatus(userId, "verified");
+      // Refresh the page after successful verification
+      window.location.reload();
     } catch (error) {
       console.error("Error verifying user:", error);
     }
@@ -118,41 +92,29 @@ export const VerifyDocs = () => {
             <th>Email</th>
             <th>Phone</th>
             <th>Role</th>
-            <th>isVerified</th>
+            <th>Status</th>
             <th>Document</th>
             <th>Actions</th>
           </tr>
         </thead>
-
         <tbody>
-          {pendingUsers.map((user) => (
+          {userList.map((user) => (
             <tr key={user.id}>
+              <td>{user.id}</td>
+              <td>{user.firstName}</td>
+              <td>{user.lastName}</td>
+              <td>{user.email}</td>
+              <td>{user.phone}</td>
+              <td>{user.role}</td>
+              <td>{user.status}</td>
+              <td>document here</td>
               <td>
-                <p>{user.id}</p>
-              </td>
-              <td>
-                <p>{user.firstName}</p>
-              </td>
-              <td>
-                <p>{user.lastName}</p>
-              </td>
-              <td>
-                <p>{user.email}</p>
-              </td>
-              <td>
-                <p>{user.phone}</p>
-              </td>
-              <td>
-                <p>{user.role}</p>
-              </td>
-              <td>
-                <p>{user.isVerified}</p>
-              </td>
-              <td>
-                <p>document here</p>
-              </td>
-              <td>
-                <button onClick={() => handleVerify(user.id)}>Verify</button>
+                <button
+                  onClick={() => handleVerify(user.id)}
+                  disabled={user.status === "verified"}
+                >
+                  Verify
+                </button>
               </td>
             </tr>
           ))}

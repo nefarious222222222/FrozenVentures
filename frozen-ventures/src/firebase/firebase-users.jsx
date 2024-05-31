@@ -116,12 +116,14 @@ export async function getUserRoleByEmailAndPassword(email, password) {
 export async function addUserAccountInfo(formData, userId) {
   try {
     const userRef = ref(realtimeDb, `users/${userId}/accountInfo`);
+    const shopName = formData.inputShopName || "Not Applicable";
     await set(userRef, {
       password: formData.inputPass,
       phone: formData.inputPhone,
       email: formData.inputEmail,
       role: formData.selectedRole,
-      shopName: formData.inputShopName,
+      shopName: shopName,
+      status: "pending",
     });
     console.log("User added successfully to Realtime Database");
   } catch (error) {
