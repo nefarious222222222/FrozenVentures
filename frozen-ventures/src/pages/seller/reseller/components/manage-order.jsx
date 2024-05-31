@@ -25,10 +25,7 @@ export const ManageOrder = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedOrders = await fetchMatchingOrdersForSeller(
-        userRole,
-        userId
-      );
+      const fetchedOrders = await fetchMatchingOrdersForSeller(userRole, userId);
       setOrders(fetchedOrders);
     };
 
@@ -53,12 +50,9 @@ export const ManageOrder = () => {
 
   const filteredOrders = orders.filter(({ order }) => {
     if (filter === "Order Request" && order.status === "pending") return true;
-    if (filter === "Accepted Order" && order.status === "to receive")
-      return true;
-    if (filter === "Cancel Requested" && order.status === "cancel requested")
-      return true;
-    if (filter === "Refund Request" && order.status === "refund request")
-      return true;
+    if (filter === "Accepted Order" && order.status === "to receive") return true;
+    if (filter === "Cancel Requested" && order.status === "cancel requested") return true;
+    if (filter === "Refund Request" && order.status === "refund request") return true;
     if (filter === "Completed" && order.status === "completed") return true;
     if (filter === "Cancelled" && order.status === "cancelled") return true;
     if (filter === "Returned Order" && order.status === "returned") return true;
@@ -81,12 +75,22 @@ export const ManageOrder = () => {
 
   const handleConfirmAction = async () => {
     if (selectedOrder) {
-      const { targetId, orderId } = selectedOrder;
-      console.log(selectedOrder)
+      const { targetId, orderId, order } = selectedOrder;
+      let productId;
+        if (userRole === "Retailer") {
+          productId = Object.keys(order).find((key) => key.startsWith("pid-"));
+        } else if (userRole === "Distributor") {
+          productId = Object.keys(order).find((key) => key.startsWith("dpid-"));
+        } else if (userRole === "Manufacturer") {
+          productId = Object.keys(order).find((key) => key.startsWith("mpid-"));
+        }
+
+      const quantityToSubtract = order.quantity;
+
       try {
         if (popupMessage.includes("order")) {
           await updateOrderStatus(userRole, targetId, orderId, "to receive");
-          await updateProductStockAndCheck(userRole, userId, productId, quantityToSubtract)
+          await updateProductStockAndCheck(userRole, userId, productId, quantityToSubtract);
         } else if (popupMessage.includes("request")) {
           await updateOrderStatus(userRole, targetId, orderId, "cancelled");
         }
@@ -181,8 +185,8 @@ export const ManageOrder = () => {
                 </div>
 
                 {Object.keys(order).map((key) => {
-                  const isRetailer = userRole === "retailer";
-                  const prefix = isRetailer ? "pid-" : "dpid-";
+                  const isRetailer = userRole === "Retailer";
+                  const prefix = isRetailer ? "pid-" : userRole === "Distributor" ? "dpid-" : "mpid-";
 
                   if (key.startsWith(prefix)) {
                     return (
@@ -229,8 +233,7 @@ export const ManageOrder = () => {
                         {order.status.toLowerCase() !== "completed" &&
                           order.status.toLowerCase() !== "cancelled" && (
                             <>
-                              {order.status.toLowerCase() ===
-                              "cancel requested" ? (
+                              {order.status.toLowerCase() === "cancel requested" ? (
                                 <button
                                   onClick={() =>
                                     handleAcceptRequest({
@@ -243,8 +246,7 @@ export const ManageOrder = () => {
                                 >
                                   Accept Request
                                 </button>
-                              ) : order.status.toLowerCase() ===
-                                "refund requested" ? (
+                              ) : order.status.toLowerCase() === "refund requested" ? (
                                 <button>Process Refund</button>
                               ) : order.shippingMode === "pickup" &&
                                 order.status.toLowerCase() !== "to receive" ? ( // Add this condition
@@ -260,8 +262,7 @@ export const ManageOrder = () => {
                                 >
                                   Accept Order
                                 </button>
-                              ) : order.status.toLowerCase() !==
-                                "to receive" ? ( // Add this condition
+                              ) : order.status.toLowerCase() !== "to receive" ? ( // Add this condition
                                 <button
                                   onClick={() =>
                                     handleAcceptOrder({

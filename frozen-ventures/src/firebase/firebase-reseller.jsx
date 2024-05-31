@@ -308,7 +308,7 @@ export async function fetchUserStatus(userId) {
 export const updateProductStockAndCheck = async (userRole, userId, productId, quantityToSubtract) => {
   let lowerCaseRole = userRole.toLowerCase();
   const productStockRef = ref(realtimeDb, `${lowerCaseRole}s/${userId}/products/${productId}/productStock`);
-
+console.log(productStockRef)
   try {
     const productSnapshot = await get(productStockRef);
     if (productSnapshot.exists()) {
