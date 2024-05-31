@@ -207,6 +207,8 @@ export const fetchProductStockByProductId = async (userRole, productId) => {
       targetRole = "retailers";
     } else if (userRole.toLowerCase() === "retailer") {
       targetRole = "distributors";
+    } else if (userRole.toLowerCase() === "distributor") {
+      targetRole = "manufacturers";
     } else {
       console.log("Invalid user role");
       return [];
@@ -249,6 +251,8 @@ export const fetchProductSizeByProductId = async (userRole, productId) => {
       targetRole = "retailers";
     } else if (userRole.toLowerCase() === "retailer") {
       targetRole = "distributors";
+    } else if (userRole.toLowerCase() === "distributor") {
+      targetRole = "manufacturers";
     } else {
       console.log("Invalid user role");
       return [];

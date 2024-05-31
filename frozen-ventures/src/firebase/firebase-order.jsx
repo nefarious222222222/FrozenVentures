@@ -49,9 +49,10 @@ export const generateNewOrderId = async (userId) => {
   return `oid-${String(newNumber).padStart(4, "0")}`;
 };
 
-export const fetchPurchaseHistory = async (userId) => {
+export const fetchPurchaseHistory = async (userRole, userId) => {
+  const lowerCaseUserRole = userRole.toLowerCase();
   try {
-    const ordersRef = ref(realtimeDb, `customers/${userId}/orders`);
+    const ordersRef = ref(realtimeDb, `${lowerCaseUserRole}s/${userId}/orders`);
     const snapshot = await get(ordersRef);
     const orders = snapshot.val();
 

@@ -112,6 +112,7 @@ const ConfirmPopup = ({ orderId, productName, onClose, onConfirm }) => {
 export const History = () => {
   const { user } = useContext(UserContext);
   const userId = user.userId;
+  const userRole = user.userRole;
 
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("pending");
@@ -128,7 +129,7 @@ export const History = () => {
   useEffect(() => {
     const getPurchaseHistory = async () => {
       try {
-        const orderData = await fetchPurchaseHistory(userId);
+        const orderData = await fetchPurchaseHistory(userRole, userId);
         console.log("Fetched order data:", orderData);
         setOrders(orderData);
       } catch (error) {
