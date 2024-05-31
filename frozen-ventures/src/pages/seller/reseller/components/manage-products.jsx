@@ -77,6 +77,12 @@ export const ManageProducts = () => {
     setShowEditProductPopup(true);
   };
 
+  const handleRemoveProduct = (productId) => {
+    setCurrentProductId(productId);
+    const productData = products[productId];
+    console.log("remove item");
+  };
+
   const handleProductFormChange = (e) => {
     const { name, value } = e.target;
     setNewProductData({ ...newProductData, [name]: value });
@@ -120,7 +126,9 @@ export const ManageProducts = () => {
     try {
       const productData = {
         ...newProductData,
-        productImage: newProductData.productImage || products[currentProductId].productImage,
+        productImage:
+          newProductData.productImage ||
+          products[currentProductId].productImage,
       };
 
       if (showAddProductPopup) {
@@ -183,6 +191,10 @@ export const ManageProducts = () => {
                       {products[productId].productPrice}
                     </p>
                     <p>
+                      <span>Product Size: </span>
+                      {products[productId].productSize}
+                    </p>
+                    <p>
                       <span>Stock:</span> {products[productId].productStock}
                     </p>
                   </div>
@@ -191,9 +203,14 @@ export const ManageProducts = () => {
                   </p>
                 </div>
 
-                <button onClick={() => handleEditProduct(productId)}>
-                  Edit
-                </button>
+                <div className="group-button">
+                  <button onClick={() => handleEditProduct(productId)}>
+                    Edit
+                  </button>
+                  <button onClick={() => handleRemoveProduct(productId)}>
+                    Remove
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -276,7 +293,9 @@ export const ManageProducts = () => {
                     onChange={handleProductFormChange}
                     required
                   >
-                    <option value="" disabled>Select a size</option>
+                    <option value="" disabled>
+                      Select a size
+                    </option>
                     <option value="Jr. Cup">Jr. Cup</option>
                     <option value="1 Pint">1 Pint</option>
                     <option value="1.7 Liters">1.7 Liters</option>

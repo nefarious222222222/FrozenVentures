@@ -188,6 +188,40 @@
     position: relative;
     z-index: 1;
 
+    .notify {
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: fit-content;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      gap: 10px;
+      padding: 20px;
+      border-radius: 20px;
+    }
+
+    .success {
+      border: solid 2px rgb(33, 114, 17);
+      background-color: rgb(190, 255, 181);
+
+      svg {
+        color: rgb(33, 114, 17);
+      }
+
+      p,
+      span {
+        font-size: 2rem;
+        font-weight: 500;
+        color: rgb(33, 114, 17);
+
+        span {
+          font-weight: 700;
+        }
+      }
+    }
+
     .search-bar {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -350,7 +384,7 @@
           border: solid 2px var(--color-violet);
           transition: all 0.3s ease;
         }
-  
+
         button:hover {
           background-color: var(--color-violet);
           color: white;
@@ -360,7 +394,7 @@
           display: flex;
           justify-content: flex-end;
           gap: 5vw;
-      
+
           button {
             width: 10vw;
             padding: 10px 20px;
@@ -370,24 +404,24 @@
             cursor: pointer;
             transition: all 0.3s ease;
           }
-      
+
           button:first-child {
             border: solid 2px var(--color-violet);
             background-color: white;
             color: var(--color-violet);
           }
-      
+
           button:last-child {
             border: solid 2px var(--color-red);
             background-color: var(--color-red);
             color: white;
           }
-      
+
           button:first-child:hover {
             background-color: var(--color-violet);
             color: white;
           }
-      
+
           button:last-child:hover {
             border: solid 2px var(--color-red);
             background-color: white;
@@ -405,28 +439,28 @@
       justify-content: space-between;
       padding-bottom: 20px;
       border-bottom: solid 2px var(--color-violet);
-  
+
       h1 {
         font-size: 2rem;
         font-weight: 800;
         color: var(--color-violet);
       }
-  
+
       .checkout {
         display: flex;
         align-items: center;
         gap: 2vw;
-  
+
         p,
         span {
           font-size: 1.5rem;
           font-weight: 500;
-  
+
           span {
             font-weight: 700;
           }
         }
-  
+
         button {
           font-size: 1.25rem;
           font-weight: 800;
@@ -438,7 +472,7 @@
           background-color: white;
           transition: all 0.3s ease;
         }
-  
+
         button:hover {
           color: white;
           background-color: var(--color-violet);
@@ -829,7 +863,7 @@
       .product-item {
         display: flex;
         flex-direction: column;
-        padding: 20px;
+        padding: 40px;
         border-radius: 20px;
         margin-bottom: 40px;
         box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
@@ -889,21 +923,27 @@
             }
           }
 
-          button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            cursor: pointer;
-            color: var(--color-violet);
-            background-color: var(--color-pale-stone);
-            transition: all 0.3s ease;
-          }
+          .group-button {
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+            button {
+              width: 100%;
+              padding: 10px 20px;
+              border: none;
+              border-radius: 10px;
+              font-size: 1.25rem;
+              font-weight: 800;
+              cursor: pointer;
+              color: var(--color-violet);
+              background-color: var(--color-pale-stone);
+              transition: all 0.3s ease;
+            }
 
-          button:hover {
-            background-color: var(--color-violet);
-            color: var(--color-pale-stone);
+            button:hover {
+              background-color: var(--color-violet);
+              color: var(--color-pale-stone);
+            }
           }
         }
       }
@@ -1042,6 +1082,42 @@
           }
         }
       }
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  pointer-events: all;
+
+  .message-container {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    border-radius: 20px;
+    gap: 2vh;
+    border: solid 2px rgb(114, 17, 17);
+    background-color: rgb(255, 181, 181);
+
+    h1 {
+      font-size: 3rem;
+      color: rgb(114, 17, 17);
+    }
+
+    p {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: rgb(114, 17, 17);
     }
   }
 }

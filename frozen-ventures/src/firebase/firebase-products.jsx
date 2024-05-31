@@ -167,6 +167,8 @@ export const fetchProductsBasedOnUserRole = async (userRole) => {
       targetRole = "retailers";
     } else if (userRole.toLowerCase() === "retailer") {
       targetRole = "distributors";
+    } else if (userRole.toLowerCase() === "distributor") {
+      targetRole = "manufacturers";
     } else {
       console.log("Invalid user role");
       return [];

@@ -24,6 +24,8 @@ export async function fetchMatchingOrdersForSeller(role, sellerId) {
       targetPath = "customers";
     } else if (lowerCaseRole === "distributor") {
       targetPath = "retailers";
+    } else if (lowerCaseRole === "manufacturer") {
+      targetPath = "distributors";
     } else {
       console.log("Invalid role specified.");
       return [];
@@ -121,6 +123,8 @@ export const updateOrderStatus = async (
       path = `customers/${customerId}/orders/${orderId}/status`;
     } else if (userRole.toLowerCase() === "distributor") {
       path = `retailers/${customerId}/orders/${orderId}/status`;
+    } else if (userRole.toLowerCase() === "manufacturer") {
+      path = `distributors/${customerId}/orders/${orderId}/status`;
     } else {
       throw new Error("Invalid user role");
     }
@@ -171,7 +175,20 @@ export const generateNewProductId = async (userRole, userId) => {
   const snapshot = await get(productsRef);
   const products = snapshot.val();
 
-  const prefix = lowerCaseUserRole === "retailer" ? "pid" : "dpid";
+  let prefix;
+  switch (lowerCaseUserRole) {
+    case "retailer":
+      prefix = "pid";
+      break;
+    case "distributor":
+      prefix = "dpid";
+      break;
+    case "manufacturer":
+      prefix = "mpid";
+      break;
+    default:
+      throw new Error("Invalid user role");
+  }
 
   if (!products) {
     return `${prefix}-0001`;
@@ -269,3 +286,22 @@ export const updateProductStockByProductId = async (
     throw error;
   }
 };
+
+
+// check wether seller is validated
+export async function fetchUserStatus(userId) {
+  try {
+    const userStatusRef = ref(realtimeDb, `users/${userId}/accountInfo/status`);
+    const userStatusSnapshot = await get(userStatusRef);
+
+    if (userStatusSnapshot.exists()) {
+      return userStatusSnapshot.val();
+    } else {
+      console.log("User status not found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user status:", error);
+    return null;
+  }
+}

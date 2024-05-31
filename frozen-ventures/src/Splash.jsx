@@ -16,7 +16,7 @@ export const Splash = () => {
         setTimeout(() => {
           window.location.href = "/admin";
         }, 3000);
-      } else if (user.userRole == "Retailer" || user.userRole == "Distributor") {
+      } else if (user.userRole == "Retailer" || user.userRole == "Distributor" || user.userRole == "Manufacturer") {
         setTimeout(() => {
           window.location.href = "/home-reseller";
         }, 3000);

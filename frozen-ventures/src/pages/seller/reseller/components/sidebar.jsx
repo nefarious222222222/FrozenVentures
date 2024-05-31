@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { UserContext } from "../../../../context/user-context";
 import {
   Gauge,
   Storefront,
@@ -14,7 +15,10 @@ import {
 } from "phosphor-react";
 
 export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
+  const { user } = useContext(UserContext);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const userRole = user.userRole;
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
@@ -49,30 +53,34 @@ export const Sidebar = ({ activeItem, onActiveItemChange, onToggle }) => {
           <Gauge size={40} />
           {isExpanded && <p>Shop Performance</p>}
         </li>
-        <li
-          className={activeItem === "shop" ? "active" : ""}
-          onClick={() => handleItemClick("shop")}
-          data-tooltip="Shop"
-        >
-          <Storefront size={40} />
-          {isExpanded && <p>Shop</p>}
-        </li>
-        <li
-          className={activeItem === "cart" ? "active" : ""}
-          onClick={() => handleItemClick("cart")}
-          data-tooltip="Cart"
-        >
-          <ShoppingCart size={40} />
-          {isExpanded && <p>Cart</p>}
-        </li>
-        <li
-          className={activeItem === "history" ? "active" : ""}
-          onClick={() => handleItemClick("history")}
-          data-tooltip="History"
-        >
-          <ClockCounterClockwise size={40} />
-          {isExpanded && <p>History</p>}
-        </li>
+        {userRole !== "Manufacturer" && (
+          <>
+            <li
+              className={activeItem === "shop" ? "active" : ""}
+              onClick={() => handleItemClick("shop")}
+              data-tooltip="Shop"
+            >
+              <Storefront size={40} />
+              {isExpanded && <p>Shop</p>}
+            </li>
+            <li
+              className={activeItem === "cart" ? "active" : ""}
+              onClick={() => handleItemClick("cart")}
+              data-tooltip="Cart"
+            >
+              <ShoppingCart size={40} />
+              {isExpanded && <p>Cart</p>}
+            </li>
+            <li
+              className={activeItem === "history" ? "active" : ""}
+              onClick={() => handleItemClick("history")}
+              data-tooltip="History"
+            >
+              <ClockCounterClockwise size={40} />
+              {isExpanded && <p>History</p>}
+            </li>
+          </>
+        )}
         <li
           className={activeItem === "manage-order" ? "active" : ""}
           onClick={() => handleItemClick("manage-order")}

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../../../assets/styles/reseller.css";
 import { UserContext } from "../../../context/user-context";
 import { useAuth } from "../../../context/auth-context";
@@ -11,12 +11,30 @@ import { History } from "./components/history";
 import { ManageOrder } from "./components/manage-order";
 import { ManageProducts } from "./components/manage-products";
 import { ManageInventory } from "./components/manage-inventory";
+import { Inbox } from "./components/inbox";
+import { fetchUserStatus } from "../../../firebase/firebase-reseller";
 
 export const HomeSeller = () => {
   const { user } = useContext(UserContext);
   const { userSignedIn } = useAuth();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [activeItem, setActiveItem] = useState("performance");
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      if (user && user.userId) {
+        const status = await fetchUserStatus(user.userId);
+        if (status === "pending") {
+          setIsOverlayVisible(true);
+        } else {
+          setIsOverlayVisible(false);
+        }
+      }
+    };
+
+    checkUserStatus();
+  }, [user]);
 
   const handleActiveItemChange = (item) => {
     setActiveItem(item);
@@ -26,19 +44,40 @@ export const HomeSeller = () => {
     setIsSidebarExpanded(expanded);
   };
 
-  if (!userSignedIn || (userSignedIn && user.userRole !== "Retailer" && user.userRole !== "Distributor")) {
+  if (
+    !userSignedIn ||
+    (userSignedIn &&
+      user.userRole !== "Retailer" &&
+      user.userRole !== "Distributor" &&
+      user.userRole !== "Manufacturer")
+  ) {
     return <Navigate to={"/"} replace={true} />;
   }
 
   return (
     <div className="container home-retailer">
+      {isOverlayVisible && (
+        <div className="overlay">
+          <div className="message-container">
+            <h1>Warning</h1>
+
+            <p>
+              Your account is not yet verified. Please wait for the
+              administrator to verify your account.
+            </p>
+          </div>
+        </div>
+      )}
       <Sidebar
         activeItem={activeItem}
         onActiveItemChange={handleActiveItemChange}
         onToggle={handleSidebarToggle}
       />
 
-      <div className="sidebar-content" style={{ marginLeft: isSidebarExpanded ? "15vw" : "5vw" }}>
+      <div
+        className="sidebar-content"
+        style={{ marginLeft: isSidebarExpanded ? "15vw" : "5vw" }}
+      >
         {activeItem === "performance" && <ShopPerformance />}
         {activeItem === "shop" && <Shop />}
         {activeItem === "cart" && <Cart />}
@@ -46,6 +85,7 @@ export const HomeSeller = () => {
         {activeItem === "manage-order" && <ManageOrder />}
         {activeItem === "manage-products" && <ManageProducts />}
         {activeItem === "manage-inventory" && <ManageInventory />}
+        {activeItem === "inbox" && <Inbox />}
       </div>
     </div>
   );
