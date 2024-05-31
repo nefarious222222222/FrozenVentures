@@ -327,3 +327,23 @@ console.log(productStockRef)
     console.error("Error updating product stock:", error);
   }
 };
+
+export const getProductsBelow20Stock = async (userRole, userId) => {
+  try {
+    const products = await fetchSellerProducts(userRole, userId);
+
+    const productsBelow20 = Object.entries(products).filter(
+      ([_, product]) => product.productStock <= 20
+    );
+
+    return productsBelow20.map(([productId, product]) => ({
+      productId,
+      productName: product.productName,
+      productStock: product.productStock,
+      productImage: product.productImage,
+    }));
+  } catch (error) {
+    console.error("Error fetching products with stock below 20:", error);
+    return [];
+  }
+};

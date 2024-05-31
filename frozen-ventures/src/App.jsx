@@ -9,6 +9,7 @@ import {
 import { UserContextProvider } from "./context/user-context";
 import { AuthProvider } from "./context/auth-context";
 import { OrderContextProvider } from "./context/order-context";
+import { NotificationProvider } from "./context/notification-context";
 import { Admin } from "./pages/admin/admin";
 import { AdminNavbar } from "./pages/admin/components/admin-navbar";
 import { Splash } from "./Splash";
@@ -30,27 +31,32 @@ function App() {
       <AuthProvider>
         <UserContextProvider>
           <OrderContextProvider>
-            <Router>
-              <AdminNavbar />
-              <Navbar />
-              <Routes>
-                <Route path="/" element={<Splash />} />
+            <NotificationProvider>
+              <Router>
+                <AdminNavbar />
+                <Navbar />
+                <Routes>
+                  <Route path="/" element={<Splash />} />
 
-                <Route path="/admin/*" element={<Admin />} />
+                  <Route path="/admin/*" element={<Admin />} />
 
-                <Route path="/home" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/individual-product/:productId" element={<IndividualProduct />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/order" element={<Order />} />
-                <Route path="/history" element={<History/>} />
-                <Route path="/sign" element={<Sign />} />
-                <Route path="/user-menu" element={<UserMenu />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route
+                    path="/individual-product/:productId"
+                    element={<IndividualProduct />}
+                  />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/order" element={<Order />} />
+                  <Route path="/history" element={<History />} />
+                  <Route path="/sign" element={<Sign />} />
+                  <Route path="/user-menu" element={<UserMenu />} />
 
-                <Route path="/home-reseller" element={<HomeSeller />} />
-              </Routes>
-              <FooterWithLocation />
-            </Router>
+                  <Route path="/home-reseller" element={<HomeSeller />} />
+                </Routes>
+                <FooterWithLocation />
+              </Router>
+            </NotificationProvider>
           </OrderContextProvider>
         </UserContextProvider>
       </AuthProvider>

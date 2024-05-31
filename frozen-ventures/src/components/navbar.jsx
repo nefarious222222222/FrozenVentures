@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../assets/styles/navbar.css";
 import { UserContext } from "../context/user-context";
 import { useAuth } from "../context/auth-context";
@@ -9,11 +9,10 @@ import {
   ShoppingCart,
   UserCircle,
   Cube,
-  Truck,
-  ShoppingBag,
-  Package,
   Bell,
 } from "phosphor-react";
+import { Notifications } from "../pages/seller/reseller/components/notifications";
+import { getProductsBelow20Stock } from "../firebase/firebase-reseller";
 
 export const Navbar = () => {
   const { user } = useContext(UserContext);
@@ -27,9 +26,27 @@ export const Navbar = () => {
   const isAdminPage = location.pathname === "/admin";
   const isAdminsPage = location.pathname.startsWith("/admin");
 
-  if (isSignInPage || isAdminPage) {
-    return null;
-  } else if (isAdminsPage) {
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [productsBelow20, setProductsBelow20] = useState([]);
+
+  useEffect(() => {
+    const fetchProductsBelow20 = async () => {
+      try {
+        const below20Stock = await getProductsBelow20Stock(user.userRole, user.userId);
+        setProductsBelow20(below20Stock);
+      } catch (error) {
+        console.error("Error fetching products with stock below 20:", error);
+      }
+    };
+  
+    fetchProductsBelow20();
+  }, [user]); 
+
+  const toggleNotifications = () => {
+    setShowNotifications((prevState) => !prevState);
+  };
+
+  if (isSignInPage || isAdminPage || isAdminsPage) {
     return null;
   }
 
@@ -44,31 +61,35 @@ export const Navbar = () => {
           <p className="link title">FrozenVentures</p>
         </Link>
       </div>
-      
+
       {!userSignedIn || (userSignedIn && user?.userRole === "Customer") ? (
         <input type="text" placeholder="Search" />
       ) : null}
 
       <div className="links">
-        <div className="links">
-          {!userSignedIn || (userSignedIn && user?.userRole === "Customer") ? (
-            <Link to="/shop" title="Shop">
-              <Storefront
-                className="link fake-button"
-                size={32}
-                color={"#fff"}
-              />
-            </Link>
-          ) : null}
-        </div>
-
-        {userSignedIn && user.userRole == "Retailer" ? (
-          <>
-            <Bell className="link fake-button" size={30} color={"#fff"} />
-          </>
+        {!userSignedIn || (userSignedIn && user?.userRole === "Customer") ? (
+          <Link to="/shop" title="Shop">
+            <Storefront className="link fake-button" size={32} color={"#fff"} />
+          </Link>
         ) : null}
 
-        {userSignedIn && user.userRole == "Customer" ? (
+        {userSignedIn && user.userRole === "Retailer" ? (
+          <div
+            className={`notif-container ${
+              productsBelow20.length > 0 ? "has-notifications" : ""
+            }`}
+          >
+            <Bell
+              className={"link fake-button"}
+              size={30}
+              color={"#fff"}
+              onClick={toggleNotifications}
+            />
+            {productsBelow20.length > 0 && <div className="red-dot"></div>}
+          </div>
+        ) : null}
+
+        {userSignedIn && user.userRole === "Customer" ? (
           <>
             <Link to="/cart" title="Cart">
               <ShoppingCart
@@ -86,11 +107,7 @@ export const Navbar = () => {
 
         {userSignedIn ? (
           <Link to="/user-menu" title="User Menu">
-            <UserCircle
-              className="link fake-button"
-              size={35}
-              color={"#fff"}
-            />
+            <UserCircle className="link fake-button" size={35} color={"#fff"} />
           </Link>
         ) : (
           <Link to="/sign">
@@ -98,6 +115,7 @@ export const Navbar = () => {
           </Link>
         )}
       </div>
+      {showNotifications && <Notifications />}
     </div>
   ) : null;
 };
