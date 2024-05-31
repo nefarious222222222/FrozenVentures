@@ -4,6 +4,7 @@ import {
   fetchMatchingOrdersForSeller,
   fetchUserPersonalInfo,
   updateOrderStatus,
+  updateProductStockAndCheck
 } from "../../../../firebase/firebase-reseller";
 
 const capitalizeFirstLetter = (string) => {
@@ -81,9 +82,11 @@ export const ManageOrder = () => {
   const handleConfirmAction = async () => {
     if (selectedOrder) {
       const { targetId, orderId } = selectedOrder;
+      console.log(selectedOrder)
       try {
         if (popupMessage.includes("order")) {
           await updateOrderStatus(userRole, targetId, orderId, "to receive");
+          await updateProductStockAndCheck(userRole, userId, productId, quantityToSubtract)
         } else if (popupMessage.includes("request")) {
           await updateOrderStatus(userRole, targetId, orderId, "cancelled");
         }

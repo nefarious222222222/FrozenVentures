@@ -287,7 +287,6 @@ export const updateProductStockByProductId = async (
   }
 };
 
-
 // check wether seller is validated
 export async function fetchUserStatus(userId) {
   try {
@@ -305,3 +304,26 @@ export async function fetchUserStatus(userId) {
     return null;
   }
 }
+
+export const updateProductStockAndCheck = async (userRole, userId, productId, quantityToSubtract) => {
+  let lowerCaseRole = userRole.toLowerCase();
+  const productStockRef = ref(realtimeDb, `${lowerCaseRole}s/${userId}/products/${productId}/productStock`);
+
+  try {
+    const productSnapshot = await get(productStockRef);
+    if (productSnapshot.exists()) {
+      const currentStock = productSnapshot.val();
+      if (quantityToSubtract > currentStock) {
+        console.error("Error: Given stock quantity is higher than current stock.");
+      } else {
+        const newStock = currentStock - quantityToSubtract;
+        await set(productStockRef, newStock);
+        console.log(`Product stock updated successfully for productId: ${productId}. New stock: ${newStock}`);
+      }
+    } else {
+      console.error("Error: Product not found for updating stock.");
+    }
+  } catch (error) {
+    console.error("Error updating product stock:", error);
+  }
+};

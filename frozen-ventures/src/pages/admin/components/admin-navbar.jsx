@@ -47,19 +47,19 @@ export const AdminNavbar = () => {
 
       <div className="links">
         <Link to="/admin/user-list">
-          <UserList className="link fake-button" size={35} color={"#533d70"} />
+          <UserList className="link fake-button" size={35} color={"#fff"} />
         </Link>
 
         <Link to="/admin/verify-docs">
           <CheckCircle
             className="link fake-button"
             size={35}
-            color={"#533d70"}
+            color={"#fff"}
           />
         </Link>
 
         <Link to="/admin/add-user">
-          <UserPlus className="link fake-button" size={35} color={"#533d70"} />
+          <UserPlus className="link fake-button" size={35} color={"#fff"} />
         </Link>
 
         <button onClick={handleSignOut}>Sign Out</button>

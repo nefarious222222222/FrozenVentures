@@ -329,3 +329,20 @@ export const fetchProductByProductId = async (userRole, productId) => {
     return null;
   }
 };
+
+export const updateProductStockByProductId = async (userRole, userId, productId, newStock) => {
+  let lowerCaseRole = userRole.toLowerCase();
+  const productRef = ref(realtimeDb, `${lowerCaseRole}s/${userId}/products/${productId}/productStock`);
+
+  try {
+    const productSnapshot = await get(productRef);
+    if (productSnapshot.exists()) {
+      await set(productRef, newStock);
+      console.log(`Product stock updated successfully for productId: ${productId}`);
+    } else {
+      console.error("Product not found for updating stock:", productId);
+    }
+  } catch (error) {
+    console.error("Error updating product stock:", error);
+  }
+};
