@@ -16,7 +16,6 @@ export const Cart = () => {
   const [errorProduct, setErrorProduct] = useState(null);
 
   const handleCheckout = async () => {
-    console.log("awit");
   };
 
   return (

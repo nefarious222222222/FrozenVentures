@@ -34,8 +34,6 @@ export const ManageOrder = () => {
     fetchData();
   }, [userRole, userId]);
 
-  console.log(userRole);
-
   useEffect(() => {
     const fetchCustomerInfo = async () => {
       if (orders.length > 0) {
@@ -245,7 +243,8 @@ export const ManageOrder = () => {
                               ) : order.status.toLowerCase() ===
                                 "refund requested" ? (
                                 <button>Process Refund</button>
-                              ) : order.shippingMode === "pickup" ? (
+                              ) : order.shippingMode === "pickup" &&
+                                order.status.toLowerCase() !== "to receive" ? ( // Add this condition
                                 <button
                                   onClick={() =>
                                     handleAcceptOrder({
@@ -258,7 +257,8 @@ export const ManageOrder = () => {
                                 >
                                   Accept Order
                                 </button>
-                              ) : (
+                              ) : order.status.toLowerCase() !==
+                                "to receive" ? ( // Add this condition
                                 <button
                                   onClick={() =>
                                     handleAcceptOrder({
@@ -271,7 +271,7 @@ export const ManageOrder = () => {
                                 >
                                   Ship Order
                                 </button>
-                              )}
+                              ) : null}
                             </>
                           )}
                       </div>
