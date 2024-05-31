@@ -952,6 +952,23 @@
 
   /* Manage Inventory Css */
   .manage-inventory {
+    .low-stock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      gap: 1vw;
+      border: solid 2px rgb(114, 17, 17);
+      background-color: rgb(255, 181, 181);
+
+      p {
+        color: rgb(114, 17, 17);
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+    }
     .popup {
       position: fixed;
       top: 50%;

@@ -12,6 +12,7 @@ import {
   Truck,
   ShoppingBag,
   Package,
+  Bell,
 } from "phosphor-react";
 
 export const Navbar = () => {
@@ -60,6 +61,12 @@ export const Navbar = () => {
             </Link>
           ) : null}
         </div>
+
+        {userSignedIn && user.userRole == "Retailer" ? (
+          <>
+            <Bell className="link fake-button" size={30} color={"#fff"} />
+          </>
+        ) : null}
 
         {userSignedIn && user.userRole == "Customer" ? (
           <>

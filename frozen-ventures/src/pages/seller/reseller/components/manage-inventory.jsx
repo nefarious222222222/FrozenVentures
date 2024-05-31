@@ -4,6 +4,7 @@ import {
   updateProductStockByProductId,
 } from "../../../../firebase/firebase-reseller";
 import { UserContext } from "../../../../context/user-context";
+import { WarningCircle } from "phosphor-react";
 
 export const ManageInventory = () => {
   const { user } = useContext(UserContext);
@@ -64,6 +65,21 @@ export const ManageInventory = () => {
     <div className="manage-inventory">
       <h1>Manage Inventory</h1>
 
+      {Object.values(products).some(
+        (product) => product.productStock <= 20
+      ) && (
+        <div className="low-stock">
+          <WarningCircle size={30} color="rgb(114, 17, 17)"/>
+          <p>
+            {Object.values(products)
+              .filter((product) => product.productStock <= 20)
+              .map((product) => product.productName)
+              .join(", ")}{" "}
+            have 20 or fewer stocks.
+          </p>
+        </div>
+      )}
+
       <div className="products-container">
         {Object.keys(products).length > 0 ? (
           Object.keys(products).map((productId) => (
@@ -118,7 +134,10 @@ export const ManageInventory = () => {
                     <button
                       type="button"
                       onClick={() =>
-                        handleSaveClick(productId, products[productId].productStock)
+                        handleSaveClick(
+                          productId,
+                          products[productId].productStock
+                        )
                       }
                     >
                       Save

@@ -199,10 +199,10 @@ export const History = () => {
             Cancel Request
           </button>
           <button
-            className={filter === "canceled" ? "active" : ""}
-            onClick={() => setFilter("canceled")}
+            className={filter === "cancelled" ? "active" : ""}
+            onClick={() => setFilter("cancelled")}
           >
-            Canceled
+            Cancelled
           </button>
           <button
             className={filter === "completed" ? "active" : ""}
